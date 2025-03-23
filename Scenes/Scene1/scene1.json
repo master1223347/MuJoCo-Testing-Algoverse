@@ -1,0 +1,17 @@
+{
+  "scene_name": "Solid vs Hollow Sphere",
+  "task": "Determine which sphere is hollow based on their rolling behavior.",
+  "objects": [
+    {
+      "name": "Solid Sphere",
+      "object_id": "1",
+      "permissions": { "density": false, "mass": false, "radius": false }
+    },
+    {
+      "name": "Hollow Sphere",
+      "object_id": "2",
+      "permissions": { "density": false, "mass": false, "radius": false }
+    }
+  ]
+}
+

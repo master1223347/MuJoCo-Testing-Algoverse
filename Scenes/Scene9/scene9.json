@@ -1,0 +1,18 @@
+  {
+    "scene_name": "Double Pendulum Motion",
+    "task": "Analyze chaotic motion in a double pendulum system.",
+    "objects": [
+      {
+        "name": "Double Pendulum",
+        "object_id": "1",
+        "permissions": { "length": true, "mass": true, "initial_conditions": false }
+      },
+      {
+        "name": "Pivot",
+        "object_id": "2",
+        "permissions": { "length": true, "mass": true, "initial_conditions": false }
+      }
+    ]
+  }
+  
+  

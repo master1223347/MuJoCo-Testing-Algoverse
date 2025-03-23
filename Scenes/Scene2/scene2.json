@@ -1,0 +1,13 @@
+{
+  "scene_name": "Unknown Mass on Spring Scale",
+  "task": "Determine which sphere is hollow based on their rolling behavior.",
+  "objects": [
+    {
+      "name": "Spring Scale",
+      "object_id": "1",
+      "permissions": { "spring_constant": false, "mass": false, "displacement": false }
+    }
+  ]
+}
+
+

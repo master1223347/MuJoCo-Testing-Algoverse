@@ -1,0 +1,18 @@
+  {
+    "scene_name": "Mass-Spring System with External Force",
+    "task": "Apply a force to a mass-spring system and analyze its oscillatory motion.",
+    "objects": [
+      {
+        "name": "Spring",
+        "object_id": "1",
+        "permissions": { "spring_constant": true, "mass": true, "damping": true, "external_force": false}
+      },
+      {
+        "name": "External Force",
+        "object_id": "2",
+        "permissions": { "spring_constant": true, "mass": true, "damping": true, "external_force": false}
+      }
+    ]
+  }
+  
+  

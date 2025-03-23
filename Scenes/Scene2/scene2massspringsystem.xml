@@ -1,0 +1,38 @@
+<mujoco model="spring_scale">
+    <compiler angle="radian"/>
+    <option gravity="0 0 -9.81"/>  <!-- Standard gravity -->
+
+    <worldbody>
+        <!-- Ground Plane (with high friction to prevent rolling) -->
+        <geom name="ground" type="plane" pos="0 0 0" size="2 2 0.1" rgba="0.7 0.7 0.7 1" friction="1 1 1"/>
+
+        <!-- Fixed anchor point -->
+        <body name="anchor" pos="0 0 1">
+            <geom type="sphere" size="0.05" rgba="0 0 1 1"/>  <!-- Blue anchor sphere -->
+            <site name="anchor_site" pos="0 0 0"/>
+
+            <!-- Moving platform (spring scale slider) -->
+            <body name="slider" pos="0 0 -0.3">
+                <joint name="slider_joint" type="slide" axis="0 0 1" damping="1"/>
+                <geom type="cylinder" size="0.05 0.02" rgba="0 1 0 1"/>  <!-- Green slider -->
+                <site name="slider_site" pos="0 0 0"/>
+            </body>
+        </body>
+
+        <!-- The red ball is now detached and placed on the ground -->
+        <body name="mass" pos="0 0 0.05">  <!-- Slightly above the ground to prevent penetration -->
+            <geom name="test_mass" type="sphere" size="0.05" density="1000" rgba="1 0 0 1"/>
+        </body>
+    </worldbody>
+
+    <!-- Tendons for the Spring Scale -->
+    <tendon>
+        <!-- Spring from anchor to slider -->
+        <spatial name="spring1" range="0.3 0.7" stiffness="50" damping="2">
+            <site site="anchor_site"/>
+            <site site="slider_site"/>
+        </spatial>
+    </tendon>
+<!-- The only question I have is whether the LLM can attach the red ball to the green cylinder (called the slider
+in this case) through the use of a tendon -->
+</mujoco>

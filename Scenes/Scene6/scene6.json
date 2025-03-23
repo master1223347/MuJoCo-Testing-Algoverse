@@ -1,0 +1,19 @@
+  
+  {
+    "scene_name": "Block on Inclined Plane",
+    "task": "Determine the coefficient of friction for the block.",
+    "objects": [
+      {
+        "name": "Inclined Plane",
+        "object_id": "1",
+        "permissions": { "angle": true, "mass": true, "friction": false }
+      },
+      {
+        "name": "Block",
+        "object_id": "2",
+        "permissions": { "angle": true, "mass": true, "friction": false }
+      }
+    ]
+  }
+  
+  

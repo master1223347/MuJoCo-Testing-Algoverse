@@ -1,0 +1,12 @@
+{
+  "scene_name": "Mass-Spring System Damping",
+  "task": "Determine the damping coefficient of the system.",
+  "objects": [
+    {
+      "name": "Spring System",
+      "object_id": "1",
+      "permissions": { "spring_constant": true, "mass": true, "damping": false }
+    }
+  ]
+}
+

@@ -1,0 +1,15 @@
+{
+    "scene_name": "Pendulum Gravity Test",
+    "task": "Determine the local acceleration due to gravity.",
+    "objects": [
+      {
+        "name": "Pendulum",
+        "object_id": "1",
+        "permissions": { "length": false, "time": false, "gravity": false }
+      }
+    ]
+  }
+  
+  
+
+  

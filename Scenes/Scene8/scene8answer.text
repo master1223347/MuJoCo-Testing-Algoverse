@@ -1,0 +1,3 @@
+Moment of inertia is determined using the relationship τ = Iα, where τ is applied torque and α is angular acceleration.
+    "testing_method": "Apply a known torque and measure angular acceleration to compute moment of inertia (I = τ/α).",
+    "expected_behavior": "A larger moment of inertia results in lower angular acceleration for the same applied torque.",

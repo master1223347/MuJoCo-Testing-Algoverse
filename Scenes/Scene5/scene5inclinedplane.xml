@@ -1,0 +1,23 @@
+<mujoco>
+        <option gravity="0 0 -9.81"/>
+        <worldbody>
+            <light diffuse="0.5 0.5 0.5" pos="0 0 3" dir="0 0 -1"/>
+
+            <!-- Inclined Plane -->
+            <body name="incline" pos="0 0 0">
+                <geom type="plane" size="5 15 0.1" rgba="0.7 0 0 1" friction="0.371 0.371 0.371" quat="0.5 0.86 0 0"/>
+            </body>
+
+            <!-- Big Plane -->
+            <body name="surface" pos="-10 0 -10">
+                <geom type="plane" size="30 30 0.1" rgba="0.7 0.7 0.7 1" friction="1 1 1"/>
+            </body>
+
+            <!-- Box of mass 10 kg -->
+            <body name="box" pos="15 0 -8">  <!-- Positioned above the ground -->
+            <joint type="free"/>  <!-- Allows free movement and rotation -->
+            <geom name="box_geom" type="box" size="0.5 1 2" density="10" rgba="1 0 0 1"/>
+            <!-- Density chosen so mass = 10 kg -->
+        </body>
+        </worldbody>
+</mujoco>

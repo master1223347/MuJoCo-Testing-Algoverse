@@ -1,0 +1,3 @@
+The damping coefficient can be determined by measuring the decay rate of the oscillations using x(t) = A e^(-bt/2m) cos(ωt).
+  "testing_method": "Observe the decay of oscillations and use the equation x(t) = A e^(-bt/2m) cos(ωt).",
+  "expected_behavior": "A higher damping coefficient results in faster decay of oscillations.",

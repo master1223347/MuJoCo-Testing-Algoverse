@@ -1,0 +1,23 @@
+  {
+    "scene_name": "Elastic vs Inelastic Collision",
+    "task": "Determine whether the collision is elastic or inelastic.",
+    "objects": [
+      {
+        "name": "Track",
+        "object_id": "1",
+        "permissions": { "velocity": false, "mass": false}
+      },
+      {
+        "name": "Collison Object1",
+        "object_id": "2",
+        "permissions": { "velocity": false, "mass": false}
+      },
+      {
+        "name": "Collison Object2",
+        "object_id": "3",
+        "permissions": { "velocity": false, "mass": false}
+      }
+    ]
+  }
+  
+  

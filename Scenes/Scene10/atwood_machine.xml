@@ -1,0 +1,42 @@
+<mujoco model="atwood_machine">
+    <compiler angle="radian"/>
+    <option timestep="0.01"/>
+
+    <default>
+        <joint armature="0" damping="0.1" stiffness="0"/>
+        <geom condim="3" friction="0.5 0.1 0.1"/>
+    </default>
+
+    <worldbody>
+        <!-- Pulley -->
+        <body name="pulley" pos="0 0 1.5">
+            <geom type="cylinder" size="0.05 0.1" rgba="0.5 0.5 0.5 1"/>
+        </body>
+
+        <!-- Left Mass -->
+        <body name="mass1" pos="-0.2 0 1">
+            <joint name="j1" type="slide" axis="0 0 1"/>
+            <geom type="sphere" size="0.05" mass="0.5" rgba="0 0 1 1"/>
+            <site name="mass1_site" pos="0 0 0"/>
+        </body>
+
+        <!-- Right Mass -->
+        <body name="mass2" pos="0.2 0 1.2">
+            <joint name="j2" type="slide" axis="0 0 1"/>
+            <geom type="sphere" size="0.05" mass="1.0" rgba="1 0 0 1"/>
+            <site name="mass2_site" pos="0 0 0"/>
+        </body>
+
+        <!-- Pulley site -->
+        <site name="pulley_site" pos="0 0 1.5"/>
+    </worldbody>
+
+    <!-- Tendon to model the rope -->
+    <tendon>
+        <spatial>
+            <site site="mass1_site"/>
+            <site site="pulley_site"/>
+            <site site="mass2_site"/>
+        </spatial>
+    </tendon>
+</mujoco>

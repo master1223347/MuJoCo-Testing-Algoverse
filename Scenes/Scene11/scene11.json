@@ -1,0 +1,23 @@
+  {
+    "scene_name": "Rolling Cylinder vs Sliding Block",
+    "task": "Determine which reaches the bottom first.",
+    "objects": [
+      {
+        "name": "Inclined Plane",
+        "object_id": "1",
+        "permissions": { "friction": true, "mass": true, "moment_of_inertia": false }
+      },
+      {
+        "name": "Cylinder",
+        "object_id": "2",
+        "permissions": { "friction": true, "mass": true, "moment_of_inertia": false }
+      },
+      {
+        "name": "Block",
+        "object_id": "3",
+        "permissions": { "friction": true, "mass": true, "moment_of_inertia": false }
+      }
+    ]
+  }
+  
+  

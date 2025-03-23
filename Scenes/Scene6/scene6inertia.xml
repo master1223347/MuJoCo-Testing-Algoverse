@@ -1,0 +1,24 @@
+<mujoco model="irregular_object">
+    <compiler angle="radian"/>
+    <option gravity="0 0 -9.81"/>  <!-- Standard gravity -->
+
+    <worldbody>
+        <!-- Ground Plane (to interact with the object) -->
+        <geom name="ground" type="plane" pos="0 0 0" size="5 5 0.1"
+              rgba="0.7 0.7 0.7 1" friction="1 1 1"/>
+
+        <!-- Irregular Shape (Combination of multiple geoms) -->
+        <body name="irregular_body" pos="0 0 1">  <!-- Positioned above the ground -->
+            <joint type="hinge" axis="0 0 1"/>  <!-- Allows free rotation and movement -->
+
+            <!-- Base Part of Irregular Object -->
+            <geom name="part1" type="box" size="0.2 0.1 0.05" pos="0 0 0" density="500" rgba="1 0 0 1"/>
+
+            <!-- Asymmetric Extension -->
+            <geom name="part2" type="cylinder" size="0.05 0.2" pos="0.2 0 0.05" density="500" rgba="0 1 0 1"/>
+
+            <!-- Another Asymmetric Part -->
+            <geom name="part3" type="ellipsoid" size="0.1 0.05 0.05" pos="-0.2 -0.1 0.05" density="500" rgba="0 0 1 1"/>
+        </body>
+    </worldbody>
+</mujoco>

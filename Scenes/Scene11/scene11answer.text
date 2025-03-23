@@ -1,0 +1,3 @@
+The sliding block reaches the bottom first because rolling objects convert some energy into rotational motion, reducing translational speed.
+    "testing_method": "Compare motion dynamics of rolling vs sliding objects.",
+    "expected_behavior": "The rolling object is slower due to rotational energy conservation.",
