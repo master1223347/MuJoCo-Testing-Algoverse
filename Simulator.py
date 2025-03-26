@@ -1,6 +1,7 @@
 import mujoco
 import mujoco.viewer
 import numpy as np
+import time
 
 class Simulation:
     def __init__(self, model_path):
@@ -12,8 +13,6 @@ class Simulation:
     def render(self):
         self.viewer.sync()
         return self.viewer.capture_frame()
-    
-
     
     def apply_force(self, obj_name, force_vector):
         obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
@@ -73,6 +72,8 @@ class Simulation:
         self.data.qvel[:] = 0  # Stop movement
         mujoco.mj_forward(self.model, self.data)
     
-    def step(self):
-        mujoco.mj_step(self.model, self.data)
-        self.viewer.sync()
+    def step(self, duration):
+        start_time = time.time()
+        while time.time() - start_time < duration:
+            mujoco.mj_step(self.model, self.data)
+            self.viewer.sync()
