@@ -77,24 +77,28 @@ class Simulation:
         mujoco.mj_step(self.model, self.data)
         self.viewer.sync()
 
+from simulator import Simulator  # Import the Simulator class
+from openai_agent import OpenAIAgent  # Import the OpenAI Agent class
+
 class Experimental:
-    def __init__(self, api_key, sim_time=5.0):
+    def __init__(self, api_key, model_path, sim_time=5.0):
         """
         Initialize the Experimental class.
 
         Parameters:
         - api_key: str, OpenAI API key.
+        - model_path: str, Path to the MuJoCo model file.
         - sim_time: float, duration of the experiment (in seconds).
         """
-        self.simulator = Simulator() 
+        self.simulator = Simulator(model_path)  # Use the Simulator class
         self.sim_time = sim_time
         self.agent = OpenAIAgent(api_key)  # AI interaction layer
 
     def run_experiment(self):
         """Run the experiment using the simulator and AI agent."""
-        self.simulator.reset()  # Reset simulation
+        self.simulator.reset()  # Reset the simulation
 
-        total_steps = int(self.sim_time / self.simulator.get_timestep())  # Use simulator's time step
+        total_steps = int(self.sim_time / 0.01)  # Assuming 0.01s time step
 
         for _ in range(total_steps):
             state = self.simulator.get_state()  # Get state from the simulator
