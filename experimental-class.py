@@ -76,3 +76,33 @@ class Simulation:
     def step(self):
         mujoco.mj_step(self.model, self.data)
         self.viewer.sync()
+
+class Experimental:
+    def __init__(self, api_key, sim_time=5.0):
+        """
+        Initialize the Experimental class.
+
+        Parameters:
+        - api_key: str, OpenAI API key.
+        - sim_time: float, duration of the experiment (in seconds).
+        """
+        self.simulator = Simulator() 
+        self.sim_time = sim_time
+        self.agent = OpenAIAgent(api_key)  # AI interaction layer
+
+    def run_experiment(self):
+        """Run the experiment using the simulator and AI agent."""
+        self.simulator.reset()  # Reset simulation
+
+        total_steps = int(self.sim_time / self.simulator.get_timestep())  # Use simulator's time step
+
+        for _ in range(total_steps):
+            state = self.simulator.get_state()  # Get state from the simulator
+            user_input = f"Current state: {state}. What should I do next?"
+            action = self.agent.interact(user_input)  # Ask AI agent for action
+            self.simulator.apply_action(eval(action))  # Apply action to the simulator
+            self.simulator.step()  # Advance simulation
+
+    def close(self):
+        """Close the simulator."""
+        self.simulator.close()
