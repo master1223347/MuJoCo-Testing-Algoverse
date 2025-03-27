@@ -105,7 +105,7 @@ if __name__ == "__main__":
 
 # Experimental Class
 class Experimental:
-    def __init__(self, scene_id):
+    def __init__(self, scene_id, timeout=30):
         """
         Initialize the Experimental class with a Scene ID.
 
