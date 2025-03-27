@@ -1,3 +1,0 @@
-The unknown mass is determined using Hooke’s Law: F = kx. Given the spring constant and displacement, the object’s weight (mg) is derived.
-testing_method: "Use Hooke’s Law to calculate mass from displacement.",
-expected_behavior": "The object's mass is calculated using F = kx, where k is the spring constant and x is displacement.",
