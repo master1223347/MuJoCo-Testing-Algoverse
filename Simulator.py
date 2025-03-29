@@ -11,6 +11,7 @@ class Simulation:
         self.data = mujoco.MjData(self.model)
         self.viewer = mujoco.viewer.launch_passive(self.model, self.data)
         self.start_pos = np.copy(self.data.qpos)
+        self.time = 0
     
     def render(self):
         self.viewer.sync()
@@ -80,6 +81,7 @@ class Simulation:
         self.data.qpos[:] = self.start_pos  # Reset position
         self.data.qvel[:] = 0  # Stop movement
         mujoco.mj_forward(self.model, self.data)
+        self.time = 0
     
     # THIS SHOULD STEP THE SIMULATOR A CERTAIN NUMBER OF TIMES BASED ON THE DT PARAMETER, NOT HUMAN TIME. LOOK THIS UP
     def step(self, duration):
@@ -87,6 +89,7 @@ class Simulation:
         while time.time() - start_time < duration:
             mujoco.mj_step(self.model, self.data)
             self.viewer.sync()
+        self.time += duration
 
 #GET RID OF THIS
  def load_scene(self, model_path):
