@@ -90,11 +90,3 @@ class Simulation:
             mujoco.mj_step(self.model, self.data)
             self.viewer.sync()
         self.time += duration
-
-#GET RID OF THIS
- def load_scene(self, model_path):
-        """Reload or load a new scene into the simulation."""
-        self.model = mujoco.MjModel.from_xml_path(model_path)  # Reload model
-        self.data = mujoco.MjData(self.model)  # Reinitialize the simulation data
-        self.viewer = mujoco.viewer.launch_passive(self.model, self.data)  # Reinitialize the viewer
-        self.start_pos = np.copy(self.data.qpos)  # Reset the start position
