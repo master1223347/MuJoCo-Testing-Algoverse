@@ -144,3 +144,12 @@ class Experimental:
         }
         return experiment_results
 
+
+
+
+
+def generate_prompt.self
+self.scene.prompt = scene.prompt
+
+
+#utkarsh tooling-convention
