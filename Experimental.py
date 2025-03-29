@@ -19,8 +19,8 @@ class Experimental:
         Initialize the Experimental class with a Scene ID.
         """
         self.max_iterations = max_iterations
-        self.scene = Scene(scene_id)  # Scene takes scene_id as input
-        self.simulator = Simulator(self.scene)  # Pass Scene object into Simulator constructor THIS IS THE OPPOSITE OF WHAT WE TALKED ABOUT
+        self.simulator = Simulator()  # Create Simulator object first
+        self.scene = Scene(scene_id, self.simulator)  # Pass Simulator object into Scene constructor
         self.agent = OpenAIAgent(api_key)
 
         # Bind instance methods from self.simulator
@@ -36,10 +36,6 @@ class Experimental:
             "step": self.simulator.step,
             "load_scene": self.simulator.load_scene,
         }
-
-    def generate_tool_descriptions(self) -> str:
-        """Generate a formatted description of all available tools."""
-        return "\n".join([f"- {tool}: {func.__doc__}" for tool, func in self.tool_mapping.items()])
 
     def execute_tool_calls(self, tool_calls_json: str) -> List[Dict[str, Any]]:
         """Execute the provided tool calls and log the results."""
@@ -90,40 +86,59 @@ class Experimental:
 
         # Get prompt and tool descriptions from the Scene
         scene_prompt = self.scene.get_prompt()
-        tool_descriptions = self.generate_tool_descriptions() #FIX THIS WILL NOW BE DONE IN SCENE.PY SO NO NEED
+        tool_descriptions = self.scene.generate_tool_descriptions()
         full_prompt = f"{scene_prompt}\n\nAvailable Tools:\n{tool_descriptions}"
 
         results = []
+        num_tool_calls = 0  # Initialize tool call counter
         for itr in range(self.max_iterations):
-            user_input = f"{full_prompt}\nPrevious Results: {json.dumps(results, indent=2)}\nWhat should I do next?" #FIX WE ONLY WANT FULL PROMPT THE FRIST TIME AROUND
+            # Only include previous results after the first iteration
+            if itr == 0:
+                user_input = f"{full_prompt}\nWhat should I do next?"
+            else:
+                user_input = f"{scene_prompt}\nPrevious Results: {json.dumps(results, indent=2)}\nWhat should I do next?"
+
             llm_response = self.agent.interact(user_input)
 
             try:
                 tool_calls_json = self.extract_json_response(llm_response)
             except ValueError as e:
                 logging.error(f"Error extracting JSON: {e}")
-                # DONT BREAK RETURN THIS ERROR TO LLM
-                break
+                # Return the error to LLM instead of breaking
+                user_input = f"Error extracting the tool calls. Error: {e}\nWhat should I do next?"
+                continue  # Continue the loop to ask the LLM again
 
             logging.info(f"\n=== Executing Tool Calls (Iteration {itr + 1}) ===")
 
-            # Check if an answer was provided
-            for call in results: #DONT CHECK RESULTS CHECK TOOL_CALLS_JSON
+            # Check if an answer is already provided before executing
+            answer_found = False
+            for call in tool_calls_json:
                 if call['tool'] == 'answer':
                     final_answer = call['parameters'].get('answer')  # Use .get() to avoid KeyError
                     if final_answer is not None:
                         correct_answer = self.scene.get_correct_answer()
                         correct_answer_found = str(final_answer).strip().lower() == str(correct_answer).strip().lower()
+                        answer_found = True
                     break  # Stop immediately if 'answer' tool was used
 
+            # Execute the tool calls if no answer is found
+            if not answer_found:
+                results = self.execute_tool_calls(tool_calls_json)
+                num_tool_calls += len(results)  # Update the tool call count after execution
+
+                # Check again if an answer was provided
+                for call in tool_calls_json:
+                    if call['tool'] == 'answer':
+                        final_answer = call['parameters'].get('answer')
+                        if final_answer is not None:
+                            correct_answer = self.scene.get_correct_answer()
+                            correct_answer_found = str(final_answer).strip().lower() == str(correct_answer).strip().lower()
+                        break
+
+            # If an answer is found, break out of the loop
             if correct_answer_found:
                 break  # Stop looping if we found a correct answer
-                
-            #I MOVED THIS TO ONLY EXECUTE IF THERE IS NO ANSWER
-            results = self.execute_tool_calls(tool_calls_json)
-            #MAKE THE NEXT PROMPT DOWN HERE
-        
-        #THIS ELSE HAS NO IF??
+
         else:  # No break if answer not found
             timeout_occurred = True
 
@@ -131,8 +146,7 @@ class Experimental:
         experiment_results = {
             'correct': correct_answer_found,
             'timeout': timeout_occurred,
-            'num_tool_calls': len(results), #WRONG NUMBER
-            'iterations': len(results) if not timeout_occurred else self.max_iterations #WRONG NUMBER
+            'num_tool_calls': num_tool_calls,  
+            'iterations': itr + 1 if not timeout_occurred else self.max_iterations
         }
         return experiment_results
-
