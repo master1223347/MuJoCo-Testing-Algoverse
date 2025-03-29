@@ -2,6 +2,7 @@ import json
 from dotenv import load_dotenv
 import os
 from simulator import Simulator  # Import the Simulator class
+from scene import Scene  # Import the Scene class
 from openai_agent import OpenAIAgent  # Import the OpenAI Agent class
 from typing import Any, Dict, List
 
@@ -10,62 +11,55 @@ load_dotenv()
 
 api_key = os.getenv('OPENAI_API_KEY')
 
-#[DYLAN] BOTH OF THESE SHOULD BE METHODS AND THEREFORE NOT NEED TO TAKE IN SIMULATOR ???
-
-# Answer checking tool 
-#[DYLAN] PRINTING DOES NOTHING FOR US NEEDS TO RETURN. done
+# Answer checking tool
 def answer_tool(answer: Any, correct_answer: Any):
     if answer == correct_answer:
         return("[Answer Tool] ✅ Correct answer!")
     else:
         return(f"[Answer Tool] ❌ Incorrect answer! Got {answer}, expected {correct_answer}")
 
-
 # Generalized execution of tool calls with try-except and timestep logging
 def execute_tool_calls(sim: Simulator, tool_calls_json: str) -> List[Dict[str, Any]]:
     tool_calls = json.loads(tool_calls_json)
     aggregated_results = []
 
-    # [DYLAN] ADD MORE TOOLS THAN THIS done
     tool_mapping = {
-    # Core functionalities
-        "get_state": sim.get_state,  # Retrieves the current simulation state
-        "set_state": sim.set_state,  # Sets a new simulation state
-        "step": sim.step,  # Advances the simulation by one step
-        "run_steps": sim.run_steps,  # Runs multiple steps in sequence
+        # Core functionalities
+        "get_state": sim.get_state,
+        "set_state": sim.set_state,
+        "step": sim.step,
+        "run_steps": sim.run_steps,
 
-    # Simulation control
-        "reset": sim.reset,  # Resets simulation to initial state
-        "pause": sim.pause,  # Pauses the simulation
-        "resume": sim.resume,  # Resumes the simulation
+        # Simulation control
+        "reset": sim.reset,
+        "pause": sim.pause,
+        "resume": sim.resume,
 
-    # State management
-        "save_state": sim.save_state,  # Saves the current state
-        "load_state": sim.load_state,  # Loads a previously saved state
-        "export_state": sim.export_state,  # Exports the state snapshot
+        # State management
+        "save_state": sim.save_state,
+        "load_state": sim.load_state,
+        "export_state": sim.export_state,
 
-    # Information retrieval
-        "get_actions": sim.get_actions,  # Retrieves available actions
-        "get_metadata": sim.get_metadata,  # Retrieves simulation metadata
-        "get_parameters": sim.get_parameters,  # Gets current simulation parameters
-        "get_observation": sim.get_observation,  # Retrieves observation data (if applicable)
+        # Information retrieval
+        "get_actions": sim.get_actions,
+        "get_metadata": sim.get_metadata,
+        "get_parameters": sim.get_parameters,
+        "get_observation": sim.get_observation,
 
-    # Logging and Debugging
-        "enable_logging": sim.enable_logging,  # Turns on logging for debugging
-        "disable_logging": sim.disable_logging,  # Turns off logging
-        "get_logs": sim.get_logs,  # Retrieves simulation logs
+        # Logging and Debugging
+        "enable_logging": sim.enable_logging,
+        "disable_logging": sim.disable_logging,
+        "get_logs": sim.get_logs,
 
-    # Configuration and Customization
-        "set_parameters": sim.set_parameters,  # Sets new simulation parameters
-        "load_config": sim.load_config,  # Loads a configuration file
-        "save_config": sim.save_config,  # Saves the current configuration
+        # Configuration and Customization
+        "set_parameters": sim.set_parameters,
+        "load_config": sim.load_config,
+        "save_config": sim.save_config,
 
-    # Visualization and Export
-        "render": sim.render,  # Renders the simulation state
-        "export_results": sim.export_results,  # Exports data/results for analysis
+        # Visualization and Export
+        "render": sim.render,
+        "export_results": sim.export_results,
     }
-
-
 
     for call in tool_calls:
         tool = call['tool']
@@ -81,7 +75,6 @@ def execute_tool_calls(sim: Simulator, tool_calls_json: str) -> List[Dict[str, A
             else:
                 raise ValueError(f"Unknown tool '{tool}'")
         except Exception as e:
-            #[DYLAN] HAVE TO THINK ABOUT THIS ONE MORE, BUT I THINK IF A TOOL RAISES AN ERROR THEN WE SHOULD NOT EXECUTE THE REMAINING TOOLS
             print(f"[Error] Exception during '{tool}': {str(e)}")
             result = {"error": str(e)}
 
@@ -94,6 +87,121 @@ def execute_tool_calls(sim: Simulator, tool_calls_json: str) -> List[Dict[str, A
 
     return aggregated_results
 
+# JSON extraction helper from your desired LLM output format
+def extract_json_response(llm_output: str) -> str:
+    try:
+        json_start = llm_output.index("{")
+        json_part = llm_output[json_start:]
+        json_obj = json.loads(json_part)
+        return json.dumps(json_obj["response"])
+    except Exception as e:
+        raise ValueError(f"Invalid response format: {e}")
+
+# Experimental Class
+class Experimental:
+    def __init__(self, scene_id, max_iterations=5):
+        """
+        Initialize the Experimental class with a Scene ID.
+
+        Parameters:
+        - scene_id: str, Identifier for the scene to load in the simulator.
+        - max_iterations: int, Maximum number of iterations to run the experiment.
+        """
+        api_key = os.getenv('OPENAI_API_KEY')  # Get API key from environment variable
+        self.max_iterations = max_iterations
+        # Create the Scene and Simulator objects
+        self.scene = Scene(scene_id)  # Scene takes scene_id as input
+        self.simulator = Simulator(self.scene)  # Pass Scene object into Simulator constructor
+        self.agent = OpenAIAgent(api_key)
+
+    import json
+from dotenv import load_dotenv
+import os
+from simulator import Simulator  # Import the Simulator class
+from scene import Scene  # Import the Scene class
+from openai_agent import OpenAIAgent  # Import the OpenAI Agent class
+from typing import Any, Dict, List
+
+# Load environment variables from the .env file
+load_dotenv()
+
+api_key = os.getenv('OPENAI_API_KEY')
+
+# Answer checking tool
+def answer_tool(answer: Any, correct_answer: Any):
+    if answer == correct_answer:
+        return("[Answer Tool] ✅ Correct answer!")
+    else:
+        return(f"[Answer Tool] ❌ Incorrect answer! Got {answer}, expected {correct_answer}")
+
+# Generalized execution of tool calls with try-except and timestep logging
+def execute_tool_calls(sim: Simulator, tool_calls_json: str) -> List[Dict[str, Any]]:
+    tool_calls = json.loads(tool_calls_json)
+    aggregated_results = []
+
+    tool_mapping = {
+        # Core functionalities
+        "get_state": sim.get_state,
+        "set_state": sim.set_state,
+        "step": sim.step,
+        "run_steps": sim.run_steps,
+
+        # Simulation control
+        "reset": sim.reset,
+        "pause": sim.pause,
+        "resume": sim.resume,
+
+        # State management
+        "save_state": sim.save_state,
+        "load_state": sim.load_state,
+        "export_state": sim.export_state,
+
+        # Information retrieval
+        "get_actions": sim.get_actions,
+        "get_metadata": sim.get_metadata,
+        "get_parameters": sim.get_parameters,
+        "get_observation": sim.get_observation,
+
+        # Logging and Debugging
+        "enable_logging": sim.enable_logging,
+        "disable_logging": sim.disable_logging,
+        "get_logs": sim.get_logs,
+
+        # Configuration and Customization
+        "set_parameters": sim.set_parameters,
+        "load_config": sim.load_config,
+        "save_config": sim.save_config,
+
+        # Visualization and Export
+        "render": sim.render,
+        "export_results": sim.export_results,
+    }
+
+    for call in tool_calls:
+        tool = call['tool']
+        params = call['parameters']
+
+        result = None
+        try:
+            if tool in tool_mapping:
+                func = tool_mapping[tool]
+                result = func(**params)
+            elif tool == "answer":
+                result = {"answer_provided": params["answer"]}
+            else:
+                raise ValueError(f"Unknown tool '{tool}'")
+        except Exception as e:
+            print(f"[Error] Exception during '{tool}': {str(e)}")
+            result = {"error": str(e)}
+
+        aggregated_results.append({
+            "tool": tool,
+            "parameters": params,
+            "result": result,
+            "sim_time": sim.time  # logging current timestep (from tool execution)
+        })
+
+    return aggregated_results
 
 # JSON extraction helper from your desired LLM output format
 def extract_json_response(llm_output: str) -> str:
@@ -105,102 +213,104 @@ def extract_json_response(llm_output: str) -> str:
     except Exception as e:
         raise ValueError(f"Invalid response format: {e}")
 
-
-# Example Usage
-if __name__ == "__main__":
-    simulator = Simulator()
-
-    # Example simulated LLM response with chain-of-thought reasoning
-    llm_response = """
-    I think, after setting the ball to rolling and advancing 3 seconds, 
-    the ball will still be rolling.
-
-    my answer is:
-    {
-        "response": [
-            {"tool": "set_state", "parameters": {"object": "ball", "state": "rolling"}},
-            {"tool": "step", "parameters": {"seconds": 3}},
-            {"tool": "get_state", "parameters": {"object": "ball"}},
-            {"tool": "answer", "parameters": {"answer": "rolling"}}
-        ]
-    }
-    """
-
-    # Extract and execute JSON tool calls
-    tool_calls_json = extract_json_response(llm_response)
-    print("\n=== Executing Tool Calls ===")
-    results = execute_tool_calls(simulator, tool_calls_json)
-
-    # Aggregated results with simulator timestep logged
-    print("\n=== Aggregated Results ===")
-    print(json.dumps(results, indent=2))
-
-    # Evaluate final answer correctness
-    final_answer = results[-1]['parameters']['answer']
-    correct_answer = "rolling"
-    answer_tool(final_answer, correct_answer)
-
-
 # Experimental Class
 class Experimental:
-    def __init__(self, scene_id, timeout=30): #[DYLAN] WE TALKED ABOUT THIS, IT SHOULDNT BE 30 SECONDS IT SHOULD BE LIKE 5 ITERATIONS, ALSO YOU DONT DO ANYTHING W THIS VARIABLE
+    def __init__(self, scene_id, max_iterations=5):
         """
         Initialize the Experimental class with a Scene ID.
 
         Parameters:
         - scene_id: str, Identifier for the scene to load in the simulator.
+        - max_iterations: int, Maximum number of iterations to run the experiment.
         """
         api_key = os.getenv('OPENAI_API_KEY')  # Get API key from environment variable
-        self.simulator = Simulator()  # Initialize the simulator
-        self.agent = OpenAIAgent(api_key)  # Initialize OpenAI agent with API key
-        self.scene_id = scene_id
-
-        #[DYLAN] WHERE IS THE SCENE CLASS? WE TALKED ABOUT THIS IN DETAIL
-        
-        # Load the scene based on the scene_id
-        self.load_scene(self.scene_id) #[DYLAN] THIS SHOULD NOT BE HERE, ALL LOADING OF SIMULATOR SHOLD BE IN SIMULATOR CONSTRUCTOR
-
-    def load_scene(self, scene_id):
-        """Load a specific scene into the simulator based on the scene ID."""
-        # Assuming the simulator has a method to load a scene by its ID
-        print(f"Loading scene with ID: {scene_id}")
-        self.simulator.load_scene(scene_id)  # This assumes the simulator class has this method
+        self.max_iterations = max_iterations
+        # Create the Scene and Simulator objects
+        self.scene = Scene(scene_id)  # Scene takes scene_id as input
+        self.simulator = Simulator(self.scene)  # Pass Scene object into Simulator constructor
+        self.agent = OpenAIAgent(api_key)
 
     def run_experiment(self):
         """Run the experiment using the simulator and AI agent."""
         self.simulator.reset()  # Reset the simulation
+        correct_answer_found = False
+        iterations_count = 0
+        timeout_occurred = False
 
-        #[DYLAN] OK THIS PART NEEDS A LOT OF WORK WE TALKED ABOUT GETTING THE PROMPT FROM SELF.SCENE.GET_PROMPT
-        #ALSO THIS FILE IS MISSING THE TOOL DESCRIPTION PROMPT WE TALKED ABOUT (VERY IMPORTANT TO DESCRIBE ALL THE TOOLS
-        #AFTER THE FIRST PROMPT THE INPUT TO THE MODEL SHOULD BE THE AGGREGATED RESULT
-        
-        # Run the experiment for an unspecified amount of time based on the tool-calling convention loop
-        while True:  # [DYLAN] THIS SHOULD BE FOR ITR IN RANGE(MAX_ITR)
-            state = self.simulator.get_state('ball')  # Get state of 'ball' from the simulator WHY ARE YOU HARDCODING BALL
-            user_input = f"Current state: {state}. What should I do next?" 
+        # Get prompt from Scene (per Dylan's feedback)
+        scene_prompt = self.scene.get_prompt()
+
+        # Describe all tools (per Dylan's feedback)
+        tool_descriptions = "\n".join([f"- {tool}: {func.__doc__}" for tool, func in execute_tool_calls.__globals__["tool_mapping"].items()])
+        full_prompt = f"{scene_prompt}\n\nAvailable Tools:\n{tool_descriptions}"
+
+        # Run the experiment for a specified number of iterations
+        for itr in range(self.max_iterations):
+            state = self.simulator.get_state()  # Get current state of the simulator
+
+            # Use aggregated results after first iteration
+            if itr == 0:
+                user_input = f"{full_prompt}\nCurrent state: {state}. What should I do next?"
+            else:
+                user_input = f"Previous Results: {json.dumps(results, indent=2)}\nWhat should I do next?"
+
             llm_response = self.agent.interact(user_input)  # Ask AI agent for action
-            
+
             # Extract the tool calls from the LLM's response
             tool_calls_json = extract_json_response(llm_response)
-            
+            tool_calls = json.loads(tool_calls_json)
+
+            # Check if answer is present before executing any tool calls
+            for call in tool_calls:
+                if call['tool'] == 'answer':
+                    correct_answer_found = True
+                    break
+
+            if correct_answer_found:
+                break
+
             # Execute tool calls and aggregate the results
             print("\n=== Executing Tool Calls ===")
             results = execute_tool_calls(self.simulator, tool_calls_json)
 
-            #[DYLAN] THIS LOGIC IS ALL MESSED UP IT SHOULD ONLY DO THE ANSWER LOGIC AND BREAK IF ANSWER IS PRESENT IN TOOL_CALLS_JSON
-            # Evaluate final answer correctness
-            final_answer = results[-1]['parameters']['answer']
-            correct_answer = "rolling"  # Assuming correct answer is "rolling"
-            print("\n=== Aggregated Results ===")
-            print(json.dumps(results, indent=2))
-            answer_tool(final_answer, correct_answer)
+            iterations_count += 1
 
-            # Stop the loop when the agent provides an answer
-            if final_answer:
-                break
+        if not correct_answer_found:
+            timeout_occurred = True
 
-    #[DYLAN] SHOULD ULTIMATELY RETURN SOME DATA, LIKE CORRECT: BOOL, NUMBER OF ENV_ITRS: INT, TIMEOUT: BOOL, NUM TOOL CALLS: INT
+        # Return the results of the experiment
+        experiment_results = {
+            'correct': correct_answer_found,
+            'iterations': iterations_count,
+            'timeout': timeout_occurred,
+        }
+        return experiment_results
 
-    def close(self): #[DYLAN] NOT NEEDED 
-        """Close the simulator."""
-        self.simulator.close()  # Ensure the simulator is properly closed at the end of the experiment
+
+# Example Usage
+if __name__ == "__main__":
+    scene_id = "scene_01"  # Replace with your scene ID
+    experiment = Experimental(scene_id)
+    results = experiment.run_experiment()
+
+    # Output the experiment results
+    print("\n=== Experiment Results ===")
+    print(results)
+    if results['correct']:
+        print("[Answer Tool] ✅ Correct answer!")
+    else:
+        print("[Answer Tool] ❌ Incorrect answer.")
+
+# Example Usage
+if __name__ == "__main__":
+    scene_id = "scene_01"  # Replace with your scene ID
+    experiment = Experimental(scene_id)
+    results = experiment.run_experiment()
+
+    # Output the experiment results
+    print("\n=== Experiment Results ===")
+    print(results)
+    if results['correct']:
+        print("[Answer Tool] ✅ Correct answer!")
+    else:
+        print("[Answer Tool] ❌ Incorrect answer.")
