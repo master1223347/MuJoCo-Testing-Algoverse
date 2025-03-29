@@ -1,5 +1,6 @@
 import json
 import os
+import numpy as np
 
 class Scene:
     def __init__(self):
@@ -35,13 +36,78 @@ class Scene:
             print("Not successful")
             self.data = None
 
-    def metadata(self):
-        """Returns the metadata of the scene."""
-        return self.data.get("metadata") if self.data else None
+        self.scene_desc = ""
+        self.scene_task = ""
+        self.problem_type = ""
+        self.prompt = ""
+        self.permissions = ""
+        self.objects = ""
+        self.answer = ""
+        self.expected_behavior = ""
+        self.reasoning = ""
+        self.object_list = []  # Reset object list before populating
+        self.permissions = {}
 
-    def objects(self):
-        """Returns the objects data of the scene."""
-        return self.data.get("objects") if self.data else None
+    def metadata(self):
+        """Defines the data found in the metadata array"""
+        metadata = self.data.get("metadata", {})  # Default to empty dict
+        self.scene_desc = metadata.get("scene_desc", "")
+        self.scene_task = metadata.get("scene_task", "")
+        self.problem_type = metadata.get("problem_type", "")
+
+    def tool_mapping(self):
+        """Defines available tools and their corresponding simulator functions."""
+        return {
+            "render": self.simulator.render,
+            "apply_force": self.simulator.apply_force,
+            "get_velocity": self.simulator.get_velocity,
+            "detect_collision": self.simulator.detect_collision,
+            "get_parameters": self.simulator.get_parameters,
+            "move_object": self.simulator.move_object,
+            "get_position": self.simulator.get_position,
+            "reset_sim": self.simulator.reset_sim,
+            "step": self.simulator.step,
+            "load_scene": self.simulator.load_scene,
+        }
+
+    def extract_tool_mapping(self):
+        """Extracts available tools and formats them into a readable string."""
+        tools = self.tool_mapping()  # Call tool_mapping() to get available tools
+        self.tool_mapping_str = "\n".join(tools.keys())  # List tools on separate lines
+        
+    def extract_objects_id_names_and_permissions(self):
+        """Extracts objects and their permissions."""
+        self.object_list = []  # Reset object list
+        self.object_permissions = {}  # Reset permissions
+
+        try:
+            num_objects = int(self.data.get("number_of_objects", "0"))
+        except ValueError:
+            num_objects = 0  
+
+        objects_data = self.data.get("objects", {})
+        permissions_data = self.data.get("object_permissions", {})
+
+        if not isinstance(objects_data, dict) or not isinstance(permissions_data, dict):
+            return  
+
+        for i in range(1, num_objects + 1):
+            object_key = f"object_{i}"
+            permission_key = f"object_{i}_permissions"
+
+            if object_key in objects_data:
+                obj = objects_data[object_key]
+                self.object_list.append({
+                    "object_id": obj.get("object_id", "Unknown"),
+                    "name": obj.get("name", "Unnamed Object")
+                })
+
+            if permission_key in permissions_data:
+                self.object_permissions[obj.get("object_id", "Unknown")] = permissions_data[permission_key]
+
+    def object_permissions_for_sim(self):
+        self.permissions = self.data.get("permissions")
+        self.simulator.set_permissions(self.permissions)
 
     def answer(self):
         """Returns the answer dataset of the scene."""
@@ -54,12 +120,65 @@ class Scene:
     def reasoning(self):
         """Returns the reasoning dataset of the scene."""
         return self.data.get("reasoning") if self.data else None
+        
+    def generate_prompt(self):
+        """Generates a formatted prompt using all parts of the json file, as well as the tool mapping."""
+        
+        # Format object list as a string
+        self.objects_str = ", ".join(
+            [f"{obj['object_id']} ({obj['name']})" for obj in self.object_list]
+        ) if self.object_list else "No objects found."
 
-# Example Usage
-if __name__ == "__main__":
-    scene = Scene()
-    print("Metadata:", scene.metadata())
-    print("Objects:", scene.objects())
-    print("Answer:", scene.answer())
-    print("Expected Behavior:", scene.expected_behavior())
-    print("Reasoning:", scene.reasoning())
+        # Format permissions (Ensure every permission is fully listed)
+        self.permissions_str = ""
+        for obj in self.object_list:
+            obj_id = obj["object_id"]
+            obj_name = obj["name"]
+            if obj_id in self.object_permissions:
+                perms = self.object_permissions[obj_id]
+                permissions_details = "\n    ".join(
+                    [f"{key}: {'can be accessed and modified' if value else 'cannot be accessed or modified'}" 
+                     for key, value in perms.items()]
+                )
+                
+                permissions_str += f"\n- {obj_name} (ID: {obj_id}):\n    {permissions_details}"
+                
+        self.prompt = (
+            f"You are trying to analyze a physics problem that is given when a scene_number is entered. Your goal is to interact with the environment and figure out the correct answer. The answers are either integers or float values." 
+            f"\n\nThe scene's description is of the following: {self.scene_desc}."
+            f"Your task is defined as: {self.scene_task}."
+            f"These are the object IDs and object names found in the scene: {self.objects_str}"
+            f"\n\nEach object has specific permissions defining whether its properties can be accessed or modified. "
+            f"Here are the permissions for each object:{self.permissions_str}"
+            f"\n\nThese are the different tools and functions you can use to interact with the environment/scene rendered in MuJoCo:\n{self.tool_mapping_str}"
+            f"\n\nThe names of the tools above are functions that are found in the simulator class that you can call back when interacting with the environment."
+            f"\n\nHowever, you might get an error if you call back a function to interact with the environment if it requires accessing or modifying permissions of objects that you are not allowed to."
+            f"\n\nThe environment will be set up by rendering an xml file within MuJoCo - your goal is to change different attributes of certain objects to figure out how to answer the problem."
+            f"\n\nFor example, say you want to figure out the final velocity of a sphere when impacting the surface at a height of 10 units/meters. The scene will start off with the sphere on the ground"
+            f"\nand you will move the sphere up 10 units using the move_object function from the simulator class, and render it in MuJoCo, in which it would show the sphere falling from 10 units above the surface."
+            f"\n\nYou will be given 5 attempts to try and give the correct answer to the problem. You will check your answer each time with the answer checking tool found in the EXPERIMENTS class."
+            f"\nThe answer checking function will not give you the correct answer - it will only tell you whether you got the answer right or wrong. If you use all 5 attempts, you must call the expected behavior"
+            f"\nfunction from the SCENE class, and then try and attempt to solve the problem 3 more times. If you still can't get the correct answer, you must call the amswer function and the reasoning function,"
+            f"\nwhich are both found in the SCENE class as well."
+            f"\n\nRemember to log all your interactions with the environment, the results of the interaction per time step of the simulator, as well as functions you called back on from all classes. Format all"
+            f"\ndata from every experiment run you do into a table or matrix so that it can be visualized into a plot or diagram of some sort using python libraries, such as matplotlib and sci-kit learn."
+        )
+        if self.problem_type == "comparison":
+            self.prompt += (
+                f"\n\nSince this problem is a comparison problem, your answer should be the object id number of the object that satisfies the task."
+                f"\nIf all objects being compared to each other satisfy the task, output 0. "
+                f"\nIf some satisfy the task, while other objects do not, output the object id's of the objects that satisfy the task, separated by commas."
+            )
+        elif self.problem_type == "computation":
+            self.prompt += (
+                f"\n\nSince the problem is a computation problem, your answer should be the calculated number that satisfies the task"
+                f"\nrounded to the nearest thousandths place if applicable."
+            )
+        elif self.problem_type == "boolean":
+            self.prompt += (
+                f"\n\nSince the problem is a true or false question, output 0 for true, and 1 for false."
+            )
+
+    def get_prompt(self):
+       return self.prompt
+        
