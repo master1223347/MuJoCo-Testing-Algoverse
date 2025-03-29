@@ -5,13 +5,42 @@ import time
 
 #BIG TODO USE CHATGPT TO WRITE A VERY DETAILED DOCSTRING FOR EVERY METHOD HERE, SHOULD INCLUDE PARAMETERS AND TYPES AS WELL AS RETURN AND RETURN TYPE
 
+import mujoco
+import numpy as np
+import os
+
 class Simulation:
-    def __init__(self, model_path): #TAKE IN SCENE ID ONLY
-        self.model = mujoco.MjModel.from_xml_path(model_path)
+    def __init__(self, scene_id: str):
+        """
+        Initialize the Simulation class with the provided scene ID.
+        The model is automatically loaded based on the scene_id.
+        """
+        self.scene_id = scene_id
+
+        # Dynamically determine the model path using the scene_id
+        self.model_path = self.get_model_path(scene_id)
+
+        # Load the model and create the MjModel and MjData
+        self.model = mujoco.MjModel.from_xml_path(self.model_path)
         self.data = mujoco.MjData(self.model)
+
+        # Launch the viewer in passive mode
         self.viewer = mujoco.viewer.launch_passive(self.model, self.data)
         self.start_pos = np.copy(self.data.qpos)
         self.time = 0
+
+    def get_model_path(self, scene_id: str) -> str:
+        """Generate the model path based on the scene_id."""
+        # Assuming model files are stored in a directory that corresponds to the scene_id
+        model_dir = "/path/to/models"  # Adjust to where your models are stored
+        model_file = f"scene_{scene_id}.xml"  # Assuming the file follows this naming pattern
+        model_path = os.path.join(model_dir, model_file)
+
+        # Ensure the path is valid
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"Model file for scene {scene_id} not found at {model_path}")
+
+        return model_path
     
     def render(self):
         self.viewer.sync()
