@@ -243,31 +243,3 @@ class Experimental:
         }
         return experiment_results
 
-# Example Usage
-if __name__ == "__main__":
-    scene_id = "scene_01"  # Replace with your scene ID
-    experiment = Experimental(scene_id)
-    results = experiment.run_experiment()
-
-    # Output the experiment results
-    logging.info("\n=== Experiment Results ===")
-    logging.info(results)
-    if results['correct']:
-        logging.info("[Answer Tool] ✅ Correct answer!")
-    else:
-        logging.info("[Answer Tool] ❌ Incorrect answer.")
-
-
-# Example Usage
-if __name__ == "__main__":
-    scene_id = "scene_01"  # Replace with your scene ID
-    experiment = Experimental(scene_id)
-    results = experiment.run_experiment()
-
-    # Output the experiment results
-    logging.info("\n=== Experiment Results ===")
-    logging.info(results)
-    if results['correct']:
-        logging.info("[Answer Tool] ✅ Correct answer!")
-    else:
-        logging.info("[Answer Tool] ❌ Incorrect answer.")
