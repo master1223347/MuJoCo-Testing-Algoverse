@@ -1,45 +1,28 @@
 {
-  "metadata": [
-    {
-      "scene_name": "Solid vs Hollow Sphere"
-    },
-    {
-      "task": "Determine which sphere is hollow based on their rolling behavior."
-    },
-    {
-      "problem_type": "Comparison"
-    },
-    {
-      "prompt": "In the MuJoCo simulator, you are given two spheres - one is hollow and the other is uniformly solid. Your goal is to print out the number of the object id that corresponds with the hollow sphere. The permissions for each object is given in the permissions function. Make sure update the different components of the scene as you interact with the environment, and store all necessary data within a matrix or a table."
-    }
-  ],
+  "metadata": {
+      "scene_name": "Solid vs Hollow Sphere",
+      "task": "Determine which sphere is hollow based on their rolling behavior.",
+      "problem_type": "comparison"
+  },
 
   "answer": "2",
 
   "expected_behavior": "The LLM changes the positions of the centers of the spheres to roll down the ramp and records which object went down the fastest",
 
   "reasoning": "The hollow sphere rolls down slower due to its greater moment of inertia, which would be object 2",
+
+  "number_of_objects": "4",
   
-  "objects": [
-    {
-      "name": "solid_sphere",
-      "object_id": "1",
-      "permissions": { "density": false, "mass": false, "radius": false }
-    },
-    {
-      "name": "hollow_sphere",
-      "object_id": "2",
-      "permissions": { "density": false, "mass": false, "radius": false }
-    },
-    {
-      "name": "surface",
-      "object_id": "3",
-      "permissions": { "position": true, "size": true, "rgba": true, "friction": true } 
-    },
-    {
-      "name": "incline",
-      "object_id": "4",
-      "permissions": {"position": true, "size": true, "rgba": true, "friction": true, "quat": true }
-    }
-  ]
+  "objects": {
+    "object_1": { "name": "solid_sphere", "object_id": "1" },
+    "object_2": { "name": "hollow_sphere", "object_id": "2" },
+    "object_3": { "name": "surface", "object_id": "3" },
+    "object_4": { "name": "incline", "object_id": "4" }
+  }
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "intertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "intertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "intertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "intertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
 }
