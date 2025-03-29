@@ -10,8 +10,10 @@ load_dotenv()
 
 api_key = os.getenv('OPENAI_API_KEY')
 
+#[DYLAN] BOTH OF THESE SHOULD BE METHODS AND THEREFORE NOT NEED TO TAKE IN SIMULATOR
 
-# Answer checking tool
+# Answer checking tool 
+#[DYLAN] PRINTING DOES NOTHING FOR US NEEDS TO RETURN. ALSO THIS FUNCTION IS PRETTY POINTLESS UNLESS WE REGISTER IT IN THE TOOL MAPPING AND GET RID OF THE SPECIAL IF STATEMENT FOR THIS TOOL
 def answer_tool(answer: Any, correct_answer: Any):
     if answer == correct_answer:
         print("[Answer Tool] ✅ Correct answer!")
@@ -24,6 +26,7 @@ def execute_tool_calls(sim: Simulator, tool_calls_json: str) -> List[Dict[str, A
     tool_calls = json.loads(tool_calls_json)
     aggregated_results = []
 
+    # [DYLAN] ADD MORE TOOLS THAN THIS
     tool_mapping = {
         "get_state": sim.get_state,
         "set_state": sim.set_state,
@@ -44,6 +47,7 @@ def execute_tool_calls(sim: Simulator, tool_calls_json: str) -> List[Dict[str, A
             else:
                 raise ValueError(f"Unknown tool '{tool}'")
         except Exception as e:
+            #[DYLAN] HAVE TO THINK ABOUT THIS ONE MORE, BUT I THINK IF A TOOL RAISES AN ERROR THEN WE SHOULD NOT EXECUTE THE REMAINING TOOLS
             print(f"[Error] Exception during '{tool}': {str(e)}")
             result = {"error": str(e)}
 
@@ -105,7 +109,7 @@ if __name__ == "__main__":
 
 # Experimental Class
 class Experimental:
-    def __init__(self, scene_id, timeout=30):
+    def __init__(self, scene_id, timeout=30): #[DYLAN] WE TALKED ABOUT THIS, IT SHOULDNT BE 30 SECONDS IT SHOULD BE LIKE 5 ITERATIONS, ALSO YOU DONT DO ANYTHING W THIS VARIABLE
         """
         Initialize the Experimental class with a Scene ID.
 
@@ -117,8 +121,10 @@ class Experimental:
         self.agent = OpenAIAgent(api_key)  # Initialize OpenAI agent with API key
         self.scene_id = scene_id
 
+        #[DYLAN] WHERE IS THE SCENE CLASS? WE TALKED ABOUT THIS IN DETAIL
+        
         # Load the scene based on the scene_id
-        self.load_scene(self.scene_id)
+        self.load_scene(self.scene_id) #[DYLAN] THIS SHOULD NOT BE HERE, ALL LOADING OF SIMULATOR SHOLD BE IN SIMULATOR CONSTRUCTOR
 
     def load_scene(self, scene_id):
         """Load a specific scene into the simulator based on the scene ID."""
@@ -130,10 +136,14 @@ class Experimental:
         """Run the experiment using the simulator and AI agent."""
         self.simulator.reset()  # Reset the simulation
 
+        #[DYLAN] OK THIS PART NEEDS A LOT OF WORK WE TALKED ABOUT GETTING THE PROMPT FROM SELF.SCENE.GET_PROMPT
+        #ALSO THIS FILE IS MISSING THE TOOL DESCRIPTION PROMPT WE TALKED ABOUT (VERY IMPORTANT TO DESCRIBE ALL THE TOOLS
+        #AFTER THE FIRST PROMPT THE INPUT TO THE MODEL SHOULD BE THE AGGREGATED RESULT
+        
         # Run the experiment for an unspecified amount of time based on the tool-calling convention loop
-        while True:  # This is assuming you have a loop function in the tool-calling convention that handles time
-            state = self.simulator.get_state('ball')  # Get state of 'ball' from the simulator
-            user_input = f"Current state: {state}. What should I do next?"
+        while True:  # [DYLAN] THIS SHOULD BE FOR ITR IN RANGE(MAX_ITR)
+            state = self.simulator.get_state('ball')  # Get state of 'ball' from the simulator WHY ARE YOU HARDCODING BALL
+            user_input = f"Current state: {state}. What should I do next?" 
             llm_response = self.agent.interact(user_input)  # Ask AI agent for action
             
             # Extract the tool calls from the LLM's response
@@ -142,7 +152,8 @@ class Experimental:
             # Execute tool calls and aggregate the results
             print("\n=== Executing Tool Calls ===")
             results = execute_tool_calls(self.simulator, tool_calls_json)
-            
+
+            #[DYLAN] THIS LOGIC IS ALL MESSED UP IT SHOULD ONLY DO THE ANSWER LOGIC AND BREAK IF ANSWER IS PRESENT IN TOOL_CALLS_JSON
             # Evaluate final answer correctness
             final_answer = results[-1]['parameters']['answer']
             correct_answer = "rolling"  # Assuming correct answer is "rolling"
@@ -154,6 +165,8 @@ class Experimental:
             if final_answer:
                 break
 
-    def close(self):
+    #[DYLAN] SHOULD ULTIMATELY RETURN SOME DATA, LIKE CORRECT: BOOL, NUMBER OF ENV_ITRS: INT, TIMEOUT: BOOL, NUM TOOL CALLS: INT
+
+    def close(self): #[DYLAN] NOT NEEDED 
         """Close the simulator."""
         self.simulator.close()  # Ensure the simulator is properly closed at the end of the experiment
