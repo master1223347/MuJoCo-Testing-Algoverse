@@ -148,8 +148,8 @@ class Experimental:
 
 
 
-def generate_prompt.self
-self.scene.prompt = scene.prompt
+#def generate_prompt.self
+#self.scene.prompt = scene.prompt
 
 
 #utkarsh tooling-convention
