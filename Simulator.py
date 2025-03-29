@@ -88,7 +88,7 @@ class Simulation:
         mujoco.mj_forward(self.model, self.data)
         self.time = 0
     
-# THIS SHOULD STEP THE SIMULATOR A CERTAIN NUMBER OF TIMES BASED ON THE DT PARAMETER, NOT HUMAN TIME. LOOK THIS UP  //  done
+
     def step(self, duration):
         num_steps = int(duration / self.model.opt.timestep)  # Compute steps based on dt
         remaining_time = duration - (num_steps * self.model.opt.timestep)  # Compute leftover time
