@@ -13,7 +13,6 @@ load_dotenv()
 # API Key loaded once globally
 api_key = os.getenv('OPENAI_API_KEY')
 
-# Tool mapping only for existing simulator methods
 class Experimental:
     def __init__(self, scene_id: str, max_iterations: int = 5):
         """
@@ -37,6 +36,10 @@ class Experimental:
             "step": self.simulator.step,
             "load_scene": self.simulator.load_scene,
         }
+
+    def generate_tool_descriptions(self) -> str:
+        """Generate a formatted description of all available tools."""
+        return "\n".join([f"- {tool}: {func.__doc__}" for tool, func in self.tool_mapping.items()])
 
     def execute_tool_calls(self, tool_calls_json: str) -> List[Dict[str, Any]]:
         """Execute the provided tool calls and log the results."""
@@ -87,7 +90,7 @@ class Experimental:
 
         # Get prompt and tool descriptions from the Scene
         scene_prompt = self.scene.get_prompt()
-        tool_descriptions = generate_tool_descriptions()
+        tool_descriptions = self.generate_tool_descriptions()
         full_prompt = f"{scene_prompt}\n\nAvailable Tools:\n{tool_descriptions}"
 
         results = []
@@ -104,16 +107,17 @@ class Experimental:
             logging.info(f"\n=== Executing Tool Calls (Iteration {itr + 1}) ===")
             results = self.execute_tool_calls(tool_calls_json)
 
+            # Check if an answer was provided
             for call in results:
                 if call['tool'] == 'answer':
                     final_answer = call['parameters'].get('answer')  # Use .get() to avoid KeyError
                     if final_answer is not None:
                         correct_answer = self.scene.get_correct_answer()
                         correct_answer_found = str(final_answer).strip().lower() == str(correct_answer).strip().lower()
-                    break  # Exit loop immediately if 'answer' tool was used
+                    break  # Stop immediately if 'answer' tool was used
 
-            if any(call['tool'] == 'answer' for call in results):
-                break  # Stop looping if we found an answer
+            if correct_answer_found:
+                break  # Stop looping if we found a correct answer
 
         else:  # No break if answer not found
             timeout_occurred = True
@@ -126,3 +130,4 @@ class Experimental:
             'iterations': len(results) if not timeout_occurred else self.max_iterations
         }
         return experiment_results
+
