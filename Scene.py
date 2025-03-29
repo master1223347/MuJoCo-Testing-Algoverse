@@ -3,7 +3,14 @@ import os
 import numpy as np
 
 class Scene:
-    def __init__(self):
+    def __init__(self, scene_id: str, simulator: Simulator):
+        self.scene_id = scene_id
+        self.simulator = simulator  # Store the simulator object
+
+    def generate_tool_descriptions(self) -> str:
+        """Generate a formatted description of all available tools."""
+        return "\n".join([f"- {tool}: {func.__doc__}" for tool, func in self.simulator.tool_mapping.items()])
+
         # Get scene number from user input
         self.scene_number = int(input("Enter the scene number: "))
         
