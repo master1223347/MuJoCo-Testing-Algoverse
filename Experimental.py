@@ -20,7 +20,7 @@ class Experimental:
         """
         self.max_iterations = max_iterations
         self.scene = Scene(scene_id)  # Scene takes scene_id as input
-        self.simulator = Simulator(self.scene)  # Pass Scene object into Simulator constructor
+        self.simulator = Simulator(self.scene)  # Pass Scene object into Simulator constructor THIS IS THE OPPOSITE OF WHAT WE TALKED ABOUT
         self.agent = OpenAIAgent(api_key)
 
         # Bind instance methods from self.simulator
@@ -90,25 +90,25 @@ class Experimental:
 
         # Get prompt and tool descriptions from the Scene
         scene_prompt = self.scene.get_prompt()
-        tool_descriptions = self.generate_tool_descriptions()
+        tool_descriptions = self.generate_tool_descriptions() #FIX THIS WILL NOW BE DONE IN SCENE.PY SO NO NEED
         full_prompt = f"{scene_prompt}\n\nAvailable Tools:\n{tool_descriptions}"
 
         results = []
         for itr in range(self.max_iterations):
-            user_input = f"{full_prompt}\nPrevious Results: {json.dumps(results, indent=2)}\nWhat should I do next?"
+            user_input = f"{full_prompt}\nPrevious Results: {json.dumps(results, indent=2)}\nWhat should I do next?" #FIX WE ONLY WANT FULL PROMPT THE FRIST TIME AROUND
             llm_response = self.agent.interact(user_input)
 
             try:
                 tool_calls_json = self.extract_json_response(llm_response)
             except ValueError as e:
                 logging.error(f"Error extracting JSON: {e}")
+                # DONT BREAK RETURN THIS ERROR TO LLM
                 break
 
             logging.info(f"\n=== Executing Tool Calls (Iteration {itr + 1}) ===")
-            results = self.execute_tool_calls(tool_calls_json)
 
             # Check if an answer was provided
-            for call in results:
+            for call in results: #DONT CHECK RESULTS CHECK TOOL_CALLS_JSON
                 if call['tool'] == 'answer':
                     final_answer = call['parameters'].get('answer')  # Use .get() to avoid KeyError
                     if final_answer is not None:
@@ -118,7 +118,12 @@ class Experimental:
 
             if correct_answer_found:
                 break  # Stop looping if we found a correct answer
-
+                
+            #I MOVED THIS TO ONLY EXECUTE IF THERE IS NO ANSWER
+            results = self.execute_tool_calls(tool_calls_json)
+            #MAKE THE NEXT PROMPT DOWN HERE
+        
+        #THIS ELSE HAS NO IF??
         else:  # No break if answer not found
             timeout_occurred = True
 
@@ -126,8 +131,8 @@ class Experimental:
         experiment_results = {
             'correct': correct_answer_found,
             'timeout': timeout_occurred,
-            'num_tool_calls': len(results),
-            'iterations': len(results) if not timeout_occurred else self.max_iterations
+            'num_tool_calls': len(results), #WRONG NUMBER
+            'iterations': len(results) if not timeout_occurred else self.max_iterations #WRONG NUMBER
         }
         return experiment_results
 
