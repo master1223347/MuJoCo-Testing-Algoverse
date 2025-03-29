@@ -17,8 +17,13 @@ class Simulation:
         self.viewer.sync()
         return self.viewer.capture_frame()
 
-    # NEED A SET VELOCITY METHOD
-    
+    def set_velocity(self, obj_name, velocity_vector):
+    obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
+    if obj_id == -1:
+        raise ValueError("Object not found")
+    self.data.qvel[obj_id * 6 : obj_id * 6 + 3] = velocity_vector  # Apply velocity to the object
+    mujoco.mj_forward(self.model, self.data)  # Update simulation state
+        
     def apply_force(self, obj_name, force_vector):
         obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
         if obj_id == -1:
