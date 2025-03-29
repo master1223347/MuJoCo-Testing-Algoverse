@@ -10,15 +10,15 @@ load_dotenv()
 
 api_key = os.getenv('OPENAI_API_KEY')
 
-#[DYLAN] BOTH OF THESE SHOULD BE METHODS AND THEREFORE NOT NEED TO TAKE IN SIMULATOR
+#[DYLAN] BOTH OF THESE SHOULD BE METHODS AND THEREFORE NOT NEED TO TAKE IN SIMULATOR ???
 
 # Answer checking tool 
-#[DYLAN] PRINTING DOES NOTHING FOR US NEEDS TO RETURN. ALSO THIS FUNCTION IS PRETTY POINTLESS UNLESS WE REGISTER IT IN THE TOOL MAPPING AND GET RID OF THE SPECIAL IF STATEMENT FOR THIS TOOL
+#[DYLAN] PRINTING DOES NOTHING FOR US NEEDS TO RETURN. done
 def answer_tool(answer: Any, correct_answer: Any):
     if answer == correct_answer:
-        print("[Answer Tool] ✅ Correct answer!")
+        return("[Answer Tool] ✅ Correct answer!")
     else:
-        print(f"[Answer Tool] ❌ Incorrect answer! Got {answer}, expected {correct_answer}")
+        return(f"[Answer Tool] ❌ Incorrect answer! Got {answer}, expected {correct_answer}")
 
 
 # Generalized execution of tool calls with try-except and timestep logging
@@ -26,12 +26,46 @@ def execute_tool_calls(sim: Simulator, tool_calls_json: str) -> List[Dict[str, A
     tool_calls = json.loads(tool_calls_json)
     aggregated_results = []
 
-    # [DYLAN] ADD MORE TOOLS THAN THIS
+    # [DYLAN] ADD MORE TOOLS THAN THIS done
     tool_mapping = {
-        "get_state": sim.get_state,
-        "set_state": sim.set_state,
-        "step": sim.step,
+    # Core functionalities
+        "get_state": sim.get_state,  # Retrieves the current simulation state
+        "set_state": sim.set_state,  # Sets a new simulation state
+        "step": sim.step,  # Advances the simulation by one step
+        "run_steps": sim.run_steps,  # Runs multiple steps in sequence
+
+    # Simulation control
+        "reset": sim.reset,  # Resets simulation to initial state
+        "pause": sim.pause,  # Pauses the simulation
+        "resume": sim.resume,  # Resumes the simulation
+
+    # State management
+        "save_state": sim.save_state,  # Saves the current state
+        "load_state": sim.load_state,  # Loads a previously saved state
+        "export_state": sim.export_state,  # Exports the state snapshot
+
+    # Information retrieval
+        "get_actions": sim.get_actions,  # Retrieves available actions
+        "get_metadata": sim.get_metadata,  # Retrieves simulation metadata
+        "get_parameters": sim.get_parameters,  # Gets current simulation parameters
+        "get_observation": sim.get_observation,  # Retrieves observation data (if applicable)
+
+    # Logging and Debugging
+        "enable_logging": sim.enable_logging,  # Turns on logging for debugging
+        "disable_logging": sim.disable_logging,  # Turns off logging
+        "get_logs": sim.get_logs,  # Retrieves simulation logs
+
+    # Configuration and Customization
+        "set_parameters": sim.set_parameters,  # Sets new simulation parameters
+        "load_config": sim.load_config,  # Loads a configuration file
+        "save_config": sim.save_config,  # Saves the current configuration
+
+    # Visualization and Export
+        "render": sim.render,  # Renders the simulation state
+        "export_results": sim.export_results,  # Exports data/results for analysis
     }
+
+
 
     for call in tool_calls:
         tool = call['tool']
