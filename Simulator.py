@@ -56,16 +56,23 @@ class Simulation:
         self.permissions = permissions
 
     
-    # UPDATE THIS TO MATCH THE PERMISSIONS PASED IN BY THE SCENE CLASS
     def get_parameters(self, obj_name):
-        obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
-        if obj_id == -1:
-            raise ValueError("Object not found")
-        return {
-            "mass": self.model.body_mass[obj_id],
-            "bounding_box": self.model.body_inertia[obj_id], #IM NOT SURE IF THE BODY_INIERTIA IS THE RIGHT ATTRIBUTE
-            "type": self.model.body_parentid[obj_id]
-        }
+    """Retrieve parameters of an object, respecting scene-defined permissions."""
+    obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
+    if obj_id == -1:
+        raise ValueError("Object not found")
+
+    # Check if the scene-defined permissions allow access to this object's parameters
+    permissions = self.permissions.get(obj_name, {})
+    if not permissions.get("get_parameters", False):
+        raise PermissionError(f"Access to parameters of '{obj_name}' is not allowed.")
+
+    return {
+        "mass": self.model.body_mass[obj_id],
+        "bounding_box": self.model.body_inertia[obj_id],  # Ensure this is the correct attribute
+        "type": self.model.body_parentid[obj_id]
+    }
+
     
     def move_object(self, name, x, y, z):
         obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, name)
