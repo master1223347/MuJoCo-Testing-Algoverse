@@ -25,7 +25,7 @@ class OpenAIAgent:
         self.context.append({"role": "user", "content": user_input})
 
         response = openai.ChatCompletion.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=self.context,
             api_key=self.api_key
         )
