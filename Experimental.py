@@ -15,25 +15,16 @@ api_key = os.getenv('OPENAI_API_KEY')
 
 # Tool mapping only for existing simulator methods
 tool_mapping = {
-    "step": Simulator.step,
-    "run_steps": Simulator.run_steps,
-    "reset": Simulator.reset,
-    "pause": Simulator.pause,
-    "resume": Simulator.resume,
-    "save_state": Simulator.save_state,
-    "load_state": Simulator.load_state,
-    "get_actions": Simulator.get_actions,
-    "get_metadata": Simulator.get_metadata,
-    "get_parameters": Simulator.get_parameters,
-    "get_observation": Simulator.get_observation,
-    "enable_logging": Simulator.enable_logging,
-    "disable_logging": Simulator.disable_logging,
-    "get_logs": Simulator.get_logs,
-    "set_parameters": Simulator.set_parameters,
-    "load_config": Simulator.load_config,
-    "save_config": Simulator.save_config,
-    "render": Simulator.render,
-    "export_results": Simulator.export_results,
+    "render": Simulator.render,  # Renders the scene
+    "apply_force": Simulator.apply_force,  # Applies a force to an object
+    "get_velocity": Simulator.get_velocity,  # Retrieves the velocity of an object
+    "detect_collision": Simulator.detect_collision,  # Detects collisions between two objects
+    "get_parameters": Simulator.get_parameters,  # Retrieves parameters of an object
+    "move_object": Simulator.move_object,  # Moves an object to a new position
+    "get_position": Simulator.get_position,  # Gets the position of an object
+    "reset_sim": Simulator.reset_sim,  # Resets the simulation to its initial state
+    "step": Simulator.step,  # Steps through the simulation for a specified duration
+    "load_scene": Simulator.load_scene,  # Loads a new scene into the simulation
 }
 
 # Function to generate tool descriptions
@@ -144,12 +135,3 @@ class Experimental:
         }
         return experiment_results
 
-
-
-
-
-#def generate_prompt.self
-#self.scene.prompt = scene.prompt
-
-
-#utkarsh tooling-convention
