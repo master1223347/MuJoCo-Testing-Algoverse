@@ -14,24 +14,6 @@ load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY')
 
 # Tool mapping only for existing simulator methods
-tool_mapping = {
-    "render": Simulator.render,
-    "apply_force": Simulator.apply_force,
-    "get_velocity": Simulator.get_velocity,
-    "detect_collision": Simulator.detect_collision,
-    "get_parameters": Simulator.get_parameters,
-    "move_object": Simulator.move_object,
-    "get_position": Simulator.get_position,
-    "reset_sim": Simulator.reset_sim,
-    "step": Simulator.step,
-    "load_scene": Simulator.load_scene,
-}
-
-# Function to generate tool descriptions
-def generate_tool_descriptions() -> str:
-    """Generate a formatted description of all available tools."""
-    return "\n".join([f"- {tool}: {func.__doc__}" for tool, func in tool_mapping.items()])
-
 class Experimental:
     def __init__(self, scene_id: str, max_iterations: int = 5):
         """
@@ -41,6 +23,20 @@ class Experimental:
         self.scene = Scene(scene_id)  # Scene takes scene_id as input
         self.simulator = Simulator(self.scene)  # Pass Scene object into Simulator constructor
         self.agent = OpenAIAgent(api_key)
+
+        # Bind instance methods from self.simulator
+        self.tool_mapping = {
+            "render": self.simulator.render,
+            "apply_force": self.simulator.apply_force,
+            "get_velocity": self.simulator.get_velocity,
+            "detect_collision": self.simulator.detect_collision,
+            "get_parameters": self.simulator.get_parameters,
+            "move_object": self.simulator.move_object,
+            "get_position": self.simulator.get_position,
+            "reset_sim": self.simulator.reset_sim,
+            "step": self.simulator.step,
+            "load_scene": self.simulator.load_scene,
+        }
 
     def execute_tool_calls(self, tool_calls_json: str) -> List[Dict[str, Any]]:
         """Execute the provided tool calls and log the results."""
@@ -53,9 +49,9 @@ class Experimental:
             result = None
 
             try:
-                if tool in tool_mapping:
-                    func = tool_mapping[tool]
-                    result = func(self.simulator, **params)  # Pass the simulator instance explicitly
+                if tool in self.tool_mapping:  # Access instance-bound methods
+                    func = self.tool_mapping[tool]
+                    result = func(**params)  # Now calls methods directly
                 else:
                     raise ValueError(f"Unknown tool '{tool}'")
             except Exception as e:
@@ -66,7 +62,7 @@ class Experimental:
                 "tool": tool,
                 "parameters": params,
                 "result": result,
-                "sim_time": self.simulator.time  # logging current timestep (from tool execution)
+                "sim_time": self.simulator.time  # Logging current timestep
             })
 
         return aggregated_results
