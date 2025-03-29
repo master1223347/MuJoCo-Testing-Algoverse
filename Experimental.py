@@ -1,11 +1,11 @@
 import json
-from dotenv import load_dotenv
 import os
+import logging
+from dotenv import load_dotenv
 from simulator import Simulator
 from scene import Scene
 from openai_agent import OpenAIAgent
 from typing import Any, Dict, List
-import logging
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -15,16 +15,16 @@ api_key = os.getenv('OPENAI_API_KEY')
 
 # Tool mapping only for existing simulator methods
 tool_mapping = {
-    "render": Simulator.render,  # Renders the scene
-    "apply_force": Simulator.apply_force,  # Applies a force to an object
-    "get_velocity": Simulator.get_velocity,  # Retrieves the velocity of an object
-    "detect_collision": Simulator.detect_collision,  # Detects collisions between two objects
-    "get_parameters": Simulator.get_parameters,  # Retrieves parameters of an object
-    "move_object": Simulator.move_object,  # Moves an object to a new position
-    "get_position": Simulator.get_position,  # Gets the position of an object
-    "reset_sim": Simulator.reset_sim,  # Resets the simulation to its initial state
-    "step": Simulator.step,  # Steps through the simulation for a specified duration
-    "load_scene": Simulator.load_scene,  # Loads a new scene into the simulation
+    "render": Simulator.render,
+    "apply_force": Simulator.apply_force,
+    "get_velocity": Simulator.get_velocity,
+    "detect_collision": Simulator.detect_collision,
+    "get_parameters": Simulator.get_parameters,
+    "move_object": Simulator.move_object,
+    "get_position": Simulator.get_position,
+    "reset_sim": Simulator.reset_sim,
+    "step": Simulator.step,
+    "load_scene": Simulator.load_scene,
 }
 
 # Function to generate tool descriptions
@@ -50,6 +50,7 @@ class Experimental:
         for call in tool_calls:
             tool = call['tool']
             params = call['parameters']
+            result = None
 
             try:
                 if tool in tool_mapping:
@@ -84,7 +85,7 @@ class Experimental:
 
     def run_experiment(self) -> Dict[str, Any]:
         """Run the experiment using the simulator and AI agent."""
-        self.simulator.reset()  # Reset the simulation
+        self.simulator.reset_sim()  # Reset the simulation
         correct_answer_found = False
         timeout_occurred = False
 
@@ -95,33 +96,28 @@ class Experimental:
 
         results = []
         for itr in range(self.max_iterations):
-            # Generate user input prompt dynamically
             user_input = f"{full_prompt}\nPrevious Results: {json.dumps(results, indent=2)}\nWhat should I do next?"
+            llm_response = self.agent.interact(user_input)
 
-            llm_response = self.agent.interact(user_input)  # Ask AI agent for action
+            try:
+                tool_calls_json = self.extract_json_response(llm_response)
+            except ValueError as e:
+                logging.error(f"Error extracting JSON: {e}")
+                break
 
-            # Extract the tool calls from the LLM's response
-            tool_calls_json = self.extract_json_response(llm_response)
-
-            # Execute tool calls and aggregate the results
-            logging.info(f"\n=== Executing Tool Calls (Iteration {itr+1}) ===")
+            logging.info(f"\n=== Executing Tool Calls (Iteration {itr + 1}) ===")
             results = self.execute_tool_calls(tool_calls_json)
 
-            # Check for the correct answer in the results
-            answer_found = False
             for call in results:
                 if call['tool'] == 'answer':
-                    final_answer = call['parameters']['answer']
-                    correct_answer = self.scene.get_correct_answer()
-                    correct_answer_found = (final_answer == correct_answer)
-                    answer_found = True
-                    break
+                    final_answer = call['parameters'].get('answer')  # Use .get() to avoid KeyError
+                    if final_answer is not None:
+                        correct_answer = self.scene.get_correct_answer()
+                        correct_answer_found = str(final_answer).strip().lower() == str(correct_answer).strip().lower()
+                    break  # Exit loop immediately if 'answer' tool was used
 
-            logging.info("\n=== Aggregated Results ===")
-            logging.debug(json.dumps(results, indent=2))
-
-            if answer_found:
-                break
+            if any(call['tool'] == 'answer' for call in results):
+                break  # Stop looping if we found an answer
 
         else:  # No break if answer not found
             timeout_occurred = True
@@ -134,4 +130,3 @@ class Experimental:
             'iterations': len(results) if not timeout_occurred else self.max_iterations
         }
         return experiment_results
-
