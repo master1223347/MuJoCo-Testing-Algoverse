@@ -1,3 +1,32 @@
+"""
+Experiment Runner Script
+
+This script iterates through a predefined list of scene IDs, runs experiments 
+using the `Experimental` class, and aggregates the results. The results are 
+stored in a dictionary and optionally saved to a JSON file.
+
+Dependencies:
+- openai_agent.py
+- scene.py
+- simulator.py
+- experimental.py
+
+Functions:
+- main(): Initializes and runs experiments for each scene ID, stores results, 
+  and saves them to a JSON file.
+
+Usage:
+Run the script directly to execute experiments and generate results.
+
+Example:
+$ python script.py
+
+Output:
+- Results for each scene are printed to the console.
+- Aggregated results are saved in `aggregated_results.json`.
+
+"""
+
 import os
 import json
 # Assuming all files are in the same directory and correctly implemented
@@ -6,9 +35,12 @@ from scene import Scene
 from simulator import Simulator
 from experimental import Experimental
 
-
-
 def main():
+    """
+    Executes experiments for predefined scene IDs, collects results, 
+    and saves them to a JSON file.
+    """
+    
     # Predefined list of scene IDs to iterate through
     scene_ids = ["Scene1", "Scene2", "Scene3"]  # Replace with actual scene IDs
     
