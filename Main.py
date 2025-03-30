@@ -2,9 +2,9 @@ import os
 import json
 # Assuming all files are in the same directory and correctly implemented
 from openai_agent import OpenAIAgent
-from Scene import Scene
-from Simulator import Simulator
-from Experimental import Experimental
+from scene import Scene
+from simulator import Simulator
+from experimental import Experimental
 
 
 
