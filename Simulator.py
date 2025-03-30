@@ -3,8 +3,9 @@ import mujoco.viewer
 import numpy as np
 import time
 import os
+import xml.etree.ElementTree as ET
 
-class Simulation:
+class Simulator:
     def __init__(self, scene_id: str):
         """
         Initialize the Simulation class with the provided scene ID.
@@ -13,7 +14,7 @@ class Simulation:
         self.scene_id = scene_id
 
         # Dynamically determine the model path using the scene_id
-        self.model_path = self.get_model_path(scene_id)
+        self.model_path = self.simulator.get_model_path(scene_id)
 
         # Load the model and create the MjModel and MjData
         self.model = mujoco.MjModel.from_xml_path(self.model_path)
@@ -26,16 +27,45 @@ class Simulation:
 
     def get_model_path(self, scene_id: str) -> str:
         """Generate the model path based on the scene_id."""
-        model_dir = "/path/to/models"  # Adjust to where your models are stored
-        model_file = f"scene_{scene_id}.xml"  # Assuming the file follows this naming pattern
-        model_path = os.path.join(model_dir, model_file)
+        self.scene_number_for_sim = int(scene_id.split("_")[-1])
 
-        # Ensure the path is valid
-        if not os.path.exists(model_path):
-            raise FileNotFoundError(f"Model file for scene {scene_id} not found at {model_path}")
+        # Get the absolute path of the current working directory
+        try:
+            drive = os.path.splitdrive(os.getcwd())[0].lower().rstrip(":") + ":/"
+        except Exception as e:
+            print(f"Warning! {e}. Retrying Simulator Class . . . ")
+            return None  # Or handle the error appropriately
 
-        return model_path
-    
+        # Construct the correct base directory
+        base_dir = os.path.join(drive, "Users", "inbox", "Algoverse")
+
+        # Construct the full file path
+        self.file_path = os.path.join(
+            base_dir, "MuJoCo-Testing-Algoverse", "Scenes",
+            f"Scene{self.scene_number_for_sim}", f"scene{self.scene_number_for_sim}.xml"
+        )
+
+        # Normalize the path
+        self.file_path = self.file_path.replace("\\", "/")
+
+        # Debugging: Print the file path to verify correctness
+        print("Looking for file at:", self.file_path)
+
+        # Check if the file exists
+        if os.path.exists(self.file_path):
+            print("File successfully found")
+            try:
+                tree = ET.parse(self.file_path)  # Load XML correctly
+                self.data = tree.getroot()  # Get root of XML tree
+            except ET.ParseError as e:
+                print(f"Error parsing XML: {e}")
+                self.data = None
+        else:
+            print("File not found.")
+            self.data = None
+
+        return self.file_path if self.data is not None else None
+        
     def render(self):
         """Render the current simulation frame."""
         self.viewer.sync()
