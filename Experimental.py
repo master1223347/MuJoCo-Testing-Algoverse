@@ -151,11 +151,10 @@ class Experimental:
             for call in tool_calls_json:
                 if call['tool'] == 'answer':
                     final_answer = call['parameters'].get('answer')  # Get the answer from parameters
-                    if final_answer is not None:
-                        # Compare the answer with the correct answer from the scene
-                        correct_answer = self.scene.get_correct_answer()
-                        correct_answer_found = str(final_answer).strip().lower() == str(correct_answer).strip().lower()
-                        answer_found = True
+                    correct_answer = self.scene.get_correct_answer()  # Retrieve correct answer from scene
+
+                        if final_answer and correct_answer:
+                            correct_answer_found = final_answer.strip().lower() in correct_answer.strip().lower()
                     break  # Stop immediately if 'answer' tool was used
 
             # If no answer is found, execute the tool calls as planned
