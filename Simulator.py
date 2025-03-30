@@ -41,6 +41,50 @@ class Simulation:
         self.viewer.sync()
         return self.viewer.capture_frame()
 
+    def get_displacement(self, object_id: str) -> float:
+        """
+        Calculate the displacement of a given object in the simulation.
+        
+        Args:
+            object_id (str): The identifier of the object to measure displacement.
+        
+        Returns:
+            float: The displacement of the object in meters (or your unit of measurement).
+        """
+        # Example logic: calculate displacement based on object's initial and current position
+        initial_position = self.get_position(object_id)  # Assume this returns a dictionary with x, y, z
+        current_position = self.get_position(object_id)  # Get the position at the current time step
+        
+        # Simple Euclidean distance formula for displacement
+        displacement = ((current_position['x'] - initial_position['x']) ** 2 + 
+                        (current_position['y'] - initial_position['y']) ** 2 + 
+                        (current_position['z'] - initial_position['z']) ** 2) ** 0.5
+        return displacement
+
+    def compute_force(self, object_id: str, mass: float) -> Dict[str, float]:
+        """
+        Compute the force on an object using F = ma (Force = mass * acceleration).
+        
+        Args:
+            object_id (str): The identifier of the object to compute force.
+            mass (float): The mass of the object (in kilograms or your unit of mass).
+        
+        Returns:
+            Dict[str, float]: The force applied to the object in the x, y, and z directions.
+        """
+        # Example logic: calculate force based on acceleration (you could use more detailed physics here)
+        # Get the velocity of the object at the current time step
+        velocity = self.get_velocity(object_id)  # Assuming `get_velocity` is implemented
+        
+        
+        # Calculate force using F = ma
+        force_x = mass * acceleration * velocity['x']
+        force_y = mass * acceleration * velocity['y']
+        force_z = mass * acceleration * velocity['z']
+        
+        return {"x": force_x, "y": force_y, "z": force_z}
+
+
     def set_velocity(self, obj_name, velocity_vector):
         """
         Set the velocity of an object.
