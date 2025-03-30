@@ -94,18 +94,15 @@ class Experimental:
         for itr in range(self.max_iterations):
             # Only include previous results after the first iteration
             if itr == 0:
-                user_input = f"{full_prompt}\nWhat should I do next?"
+                llm_response = self.agent.interact(f"{full_prompt}\nWhat should I do next?")
             else:
-                user_input = f"{scene_prompt}\nPrevious Results: {json.dumps(results, indent=2)}\nWhat should I do next?"
-
-            llm_response = self.agent.interact(user_input)
+                llm_response = self.agent.interact(f"{scene_prompt}\nPrevious Results: {json.dumps(results, indent=2)}\nWhat should I do next?")
 
             try:
                 tool_calls_json = self.extract_json_response(llm_response)
             except ValueError as e:
                 logging.error(f"Error extracting JSON: {e}")
                 # Return the error to LLM instead of breaking
-                user_input = f"Error extracting the tool calls. Error: {e}\nWhat should I do next?"
                 continue  # Continue the loop to ask the LLM again
 
             logging.info(f"\n=== Executing Tool Calls (Iteration {itr + 1}) ===")
