@@ -6,12 +6,12 @@ import os
 import xml.etree.ElementTree as ET
 
 class Simulator:
-    def __init__(self, scene_id: str):
+    def __init__(self, scene_id: str, scene: "Scene"):
         """
         Initialize the Simulation class with the provided scene ID.
         The model is automatically loaded based on the scene_id.
         """
-        self.scene_id = scene_id
+        self.scene_id = scene.scene_id
 
         # Dynamically determine the model path using the scene_id
         self.model_path = self.simulator.get_model_path(scene_id)
