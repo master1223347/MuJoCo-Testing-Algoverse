@@ -148,32 +148,25 @@ class Experimental:
 
             # Answer logic: Check if any tool call contains an answer and check if it's correct
             answer_found = False
+            correct_answer_found = False
             for call in tool_calls_json:
                 if call['tool'] == 'answer':
                     final_answer = call['parameters'].get('answer')  # Get the answer from parameters
                     correct_answer = self.scene.get_correct_answer()  # Retrieve correct answer from scene
+                    
+                    # Mark the answer as found
+                    answer_found = True
+                    correct_answer_found = final_answer.strip().lower() in correct_answer.strip().lower() if final_answer and correct_answer else False
+                    break  # Stop the experiment as soon as we get an answer (whether correct or not)
 
-                        if final_answer and correct_answer:
-                            correct_answer_found = final_answer.strip().lower() in correct_answer.strip().lower()
-                    break  # Stop immediately if 'answer' tool was used
+            # If an answer is found (correct or not), exit the loop early
+            if answer_found:
+                break  # Stop looping once an answer is provided by the LLM
 
             # If no answer is found, execute the tool calls as planned
             if not answer_found:
                 results = self.execute_tool_calls(tool_calls_json)  # Execute tool calls and get results
                 num_tool_calls += len(results)  # Increment the tool call count after execution
-
-                # After execution, check again for any answer in the results
-                for call in tool_calls_json:
-                    if call['tool'] == 'answer':
-                        final_answer = call['parameters'].get('answer')
-                        if final_answer is not None:
-                            correct_answer = self.scene.get_correct_answer()
-                            correct_answer_found = str(final_answer).strip().lower() == str(correct_answer).strip().lower()
-                        break
-
-            # If an answer is found, exit the loop early
-            if correct_answer_found:
-                break  # Stop looping if the correct answer is found
 
         else:  # If the loop completes without finding the answer, set the timeout flag
             timeout_occurred = True
@@ -185,5 +178,5 @@ class Experimental:
             'num_tool_calls': num_tool_calls,  # Total number of tool calls made
             'iterations': itr + 1 if not timeout_occurred else self.max_iterations  # Total iterations performed
         }
-        return experiment_results
 
+        return experiment_results
