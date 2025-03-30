@@ -28,7 +28,7 @@ class Experimental:
         self.agent = OpenAIAgent(api_key)  # Initialize AI agent with the API key
 
         # Tool mapping to bind methods from the simulator to be called dynamically
-        self.tool_mapping = {
+       self.tool_mapping = {
             "render": self.simulator.render,
             "apply_force": self.simulator.apply_force,
             "get_velocity": self.simulator.get_velocity,
@@ -39,6 +39,8 @@ class Experimental:
             "reset_sim": self.simulator.reset_sim,
             "step": self.simulator.step,
             "load_scene": self.simulator.load_scene,
+            "get_displacement": self.simulator.get_displacement,  # Added tool for displacement
+            "compute_force": self.simulator.compute_force  # Added tool for computing force
         }
 
     def execute_tool_calls(self, tool_calls_json: str) -> List[Dict[str, Any]]:
