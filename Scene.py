@@ -65,15 +65,6 @@ class Scene:
         self.object_list = []  # Reset object list before populating
         self.permissions = {}
 
-    def generate_tool_descriptions(self) -> str:
-        """
-        Generates a formatted description of all available tools in the simulator.
-        
-        Returns:
-            str: A string listing all available tools and their descriptions.
-        """
-        return "\n".join([f"- {tool}: {func.__doc__}" for tool, func in self.simulator.tool_mapping.items()])
-
     def metadata(self):
         """
         Extracts metadata from the scene JSON file and assigns it to class attributes.
@@ -197,11 +188,22 @@ class Scene:
                 )
                 self.permissions_str += f"\n- {obj_name} (ID: {obj_id}):\n    {permissions_details}"
 
-        # Generate tool descriptions dynamically from the simulator instance
-        if hasattr(self, 'simulator') and hasattr(self.simulator, 'generate_tool_descriptions'):
-            self.tool_mapping_str = self.simulator.generate_tool_descriptions()
-        else:
-            self.tool_mapping_str = "No tools available."
+        self.tool_mapping_str = (
+        '{\n'
+        '    "apply_force": "Applies a force to a specified object in the scene.",\n'
+        '    "get_velocity": "Retrieves the velocity of a specified object.",\n'
+        '    "detect_collision": "Detects whether two or more objects have collided.",\n'
+        '    "get_parameters": "Retrieves physical parameters of an object (e.g., mass, inertia).",\n'
+        '    "move_object": "Moves an object to a specified position within the simulation.",\n'
+        '    "get_position": "Retrieves the current position of an object.",\n'
+        '    "reset_sim": "Resets the simulation environment to its initial state.",\n'
+        '    "step": "Advances the simulation by a single time step.",\n'
+        '    "load_scene": "Loads a predefined scene setup into the simulation.",\n'
+        '    "get_displacement": "Computes the displacement of an object from its initial position.",\n'
+        '    "compute_force": "Computes the force applied to an object based on its motion parameters.",\n'
+        '    "set_permissions": "Defines or updates access and modification permissions for scene objects."\n'
+        '}'
+    )
 
         self.exp_results_format = (
         f"\n\n### Expected Experiment Results Format"
