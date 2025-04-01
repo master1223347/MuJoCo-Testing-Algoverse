@@ -2,9 +2,9 @@ import json
 import os
 import logging
 from dotenv import load_dotenv
-from simulator import Simulator
-from scene import Scene
-from openai_agent import OpenAIAgent
+from Simulator import Simulator
+from Scene import Scene
+from OpenAIAgent import OpenAIAgent
 from typing import Any, Dict, List
 
 # Load environment variables from the .env file
@@ -23,12 +23,12 @@ class Experimental:
             max_iterations (int): The maximum number of iterations allowed for the experiment (default is 5).
         """
         self.max_iterations = max_iterations
-        self.simulator = Simulator()  # Create the Simulator object
+        self.simulator = Simulator(scene_id)  # Create the Simulator object
         self.scene = Scene(scene_id, self.simulator)  # Initialize Scene with the simulator
         self.agent = OpenAIAgent(api_key)  # Initialize AI agent with the API key
 
         # Tool mapping to bind methods from the simulator to be called dynamically
-       self.tool_mapping = {
+        self.tool_mapping = {
             "render": self.simulator.render,
             "apply_force": self.simulator.apply_force,
             "get_velocity": self.simulator.get_velocity,
@@ -38,7 +38,6 @@ class Experimental:
             "get_position": self.simulator.get_position,
             "reset_sim": self.simulator.reset_sim,
             "step": self.simulator.step,
-            "load_scene": self.simulator.load_scene,
             "get_displacement": self.simulator.get_displacement,  # Added tool for displacement
             "compute_force": self.simulator.compute_force  # Added tool for computing force
         }
@@ -125,9 +124,7 @@ class Experimental:
         timeout_occurred = False  # Flag to track if the maximum number of iterations was reached
 
         # Get the scene prompt and tool descriptions from the Scene object
-        scene_prompt = self.scene.get_prompt()
-        tool_descriptions = self.scene.generate_tool_descriptions()
-        full_prompt = f"{scene_prompt}\n\nAvailable Tools:\n{tool_descriptions}"  # Construct the full prompt
+        scene_prompt = self.scene.generate_prompt()
 
         results = []  # List to store the results of tool calls during each iteration
         num_tool_calls = 0  # Counter to track the number of tool calls made during the experiment
@@ -135,7 +132,7 @@ class Experimental:
         for itr in range(self.max_iterations):
             # Construct the prompt for the LLM, either including previous results or starting fresh
             if itr == 0:
-                llm_response = self.agent.interact(f"{full_prompt}\nWhat should I do next?")
+                llm_response = self.agent.interact(f"{scene_prompt}\nWhat should I do next?")
             else:
                 llm_response = self.agent.interact(f"{scene_prompt}\nPrevious Results: {json.dumps(results, indent=2)}\nWhat should I do next?")
 
