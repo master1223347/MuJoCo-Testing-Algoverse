@@ -1,70 +1,59 @@
+from __future__ import annotations
 import mujoco
 import mujoco.viewer
 import numpy as np
 import time
 import os
 import xml.etree.ElementTree as ET
+import Scene
+from typing import Dict
+import logging
+
+
+
 
 class Simulator:
-    def __init__(self, scene_id: str, scene: "Scene"):
+    def __init__(self, scene_id: str):
         """
         Initialize the Simulation class with the provided scene ID.
         The model is automatically loaded based on the scene_id.
         """
-        self.scene_id = scene.scene_id
-
-        # Dynamically determine the model path using the scene_id
-        self.model_path = self.simulator.get_model_path(scene_id)
-
-        # Load the model and create the MjModel and MjData
-        self.model = mujoco.MjModel.from_xml_path(self.model_path)
-        self.data = mujoco.MjData(self.model)
-
-        # Launch the viewer in passive mode
-        self.viewer = mujoco.viewer.launch_passive(self.model, self.data)
-        self.start_pos = np.copy(self.data.qpos)
-        self.time = 0
+        self.scene_id = scene_id
+        self.model_path = self.get_model_path(scene_id)
+        
+        try:
+            # Load model with error handling
+            self.model = mujoco.MjModel.from_xml_path(self.model_path)
+            self.data = mujoco.MjData(self.model)
+            
+            # Initialize viewer
+            self.viewer = mujoco.viewer.launch_passive(self.model, self.data)
+            self.start_pos = np.copy(self.data.qpos)
+            
+        except Exception as e:
+            logging.error(f"MuJoCo initialization failed: {e}")
+            raise
 
     def get_model_path(self, scene_id: str) -> str:
-        """Generate the model path based on the scene_id."""
-        self.scene_number_for_sim = int(scene_id.split("_")[-1])
-
-        # Get the absolute path of the current working directory
         try:
-            drive = os.path.splitdrive(os.getcwd())[0].lower().rstrip(":") + ":/"
+            # Get the directory of the current script
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            scenes_dir = os.path.join(script_dir, "Scenes")
+            
+            # Extract scene number and construct XML path
+            scene_number = scene_id.split("_")[-1]
+            xml_path = os.path.join(scenes_dir, f"Scene{scene_number}", f"scene{scene_number}.xml")
+            
+            # Verify if the file exists
+            if not os.path.exists(xml_path):
+                raise FileNotFoundError(f"Scene XML not found at: {xml_path}")
+            
+            return xml_path.replace("\\", "/")
         except Exception as e:
-            print(f"Warning! {e}. Retrying Simulator Class . . . ")
-            return None  # Or handle the error appropriately
+            logging.error(f"Path construction failed: {e}")
+            raise
 
-        # Construct the correct base directory
-        base_dir = os.path.join(drive, "Users", "inbox", "Algoverse")
 
-        # Construct the full file path
-        self.file_path = os.path.join(
-            base_dir, "MuJoCo-Testing-Algoverse", "Scenes",
-            f"Scene{self.scene_number_for_sim}", f"scene{self.scene_number_for_sim}.xml"
-        )
-
-        # Normalize the path
-        self.file_path = self.file_path.replace("\\", "/")
-
-        # Debugging: Print the file path to verify correctness
-        print("Looking for file at:", self.file_path)
-
-        # Check if the file exists
-        if os.path.exists(self.file_path):
-            print("File successfully found")
-            try:
-                tree = ET.parse(self.file_path)  # Load XML correctly
-                self.data = tree.getroot()  # Get root of XML tree
-            except ET.ParseError as e:
-                print(f"Error parsing XML: {e}")
-                self.data = None
-        else:
-            print("File not found.")
-            self.data = None
-
-        return self.file_path if self.data is not None else None
         
     def render(self):
         """Render the current simulation frame."""
@@ -107,12 +96,12 @@ class Simulator:
         velocity = self.get_velocity(object_id)  # Assuming `get_velocity` is implemented
         
         
-        # Calculate force using F = ma
-        force_x = mass * acceleration * velocity['x']
-        force_y = mass * acceleration * velocity['y']
-        force_z = mass * acceleration * velocity['z']
-        
-        return {"x": force_x, "y": force_y, "z": force_z}
+        acceleration = self.get_acceleration(object_id)  # New method needed
+        return {
+        "x": mass * acceleration['x'],
+        "y": mass * acceleration['y'],
+        "z": mass * acceleration['z']
+    }
 
 
     def set_velocity(self, obj_name, velocity_vector):
