@@ -388,6 +388,67 @@ class Simulator:
         return {"x": angular_momentum[0], "y": angular_momentum[1], "z": angular_momentum[2]}
 
 
+    #change pos
+    def change_position(self, obj_name, dx, dy, dz, in_world_frame=True):
+    """
+    Change the position of an object by a given displacement.
+    
+    Parameters:
+    - obj_name (str): The name of the object.
+    - dx (float): The displacement in the x-direction.
+    - dy (float): The displacement in the y-direction.
+    - dz (float): The displacement in the z-direction.
+    - in_world_frame (bool): Whether the displacement is in world frame (True) 
+                             or object's local frame (False).
+    """
+    obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
+    if obj_id == -1:
+        raise ValueError(f"Object '{obj_name}' not found.")
+    
+    # Get current position
+    pos_x = self.data.qpos[obj_id * 7]
+    pos_y = self.data.qpos[obj_id * 7 + 1]
+    pos_z = self.data.qpos[obj_id * 7 + 2]
+    
+    if in_world_frame:
+        # Apply displacement directly in world frame
+        self.data.qpos[obj_id * 7] = pos_x + dx
+        self.data.qpos[obj_id * 7 + 1] = pos_y + dy
+        self.data.qpos[obj_id * 7 + 2] = pos_z + dz
+    else:
+        # Apply displacement in local frame
+        # Get quaternion (w, x, y, z format)
+        quat = self.data.qpos[obj_id * 7 + 3:obj_id * 7 + 7]
+        
+        # Create rotation matrix from quaternion
+        def quat_to_rot_matrix(q):
+            # Normalize quaternion to ensure it represents a valid rotation
+            q = q / np.linalg.norm(q)
+            w, x, y, z = q
+            
+            # Construct rotation matrix
+            return np.array([
+                [1 - 2*y*y - 2*z*z, 2*x*y - 2*w*z, 2*x*z + 2*w*y],
+                [2*x*y + 2*w*z, 1 - 2*x*x - 2*z*z, 2*y*z - 2*w*x],
+                [2*x*z - 2*w*y, 2*y*z + 2*w*x, 1 - 2*x*x - 2*y*y]
+            ])
+        
+        rot_matrix = quat_to_rot_matrix(quat)
+        
+        # Rotate displacement vector
+        local_disp = np.array([dx, dy, dz])
+        world_disp = rot_matrix @ local_disp
+        
+        # Apply rotated displacement
+        self.data.qpos[obj_id * 7] = pos_x + world_disp[0]
+        self.data.qpos[obj_id * 7 + 1] = pos_y + world_disp[1]
+        self.data.qpos[obj_id * 7 + 2] = pos_z + world_disp[2]
+    
+    # Update simulation
+    mujoco.mj_forward(self.model, self.data)
+
+
+
     
 
 
