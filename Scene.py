@@ -20,25 +20,41 @@ class Scene:
         self.scene_id = scene_id
         self.simulator = simulator  # Store the simulator object
         self.scene_number = int(scene_id.split("_")[-1])
+        self.terminal = "utkarsh" #For setting it up, switch this to the following - robin, abhinav, or sid.
 
-        # Get the absolute path of the current working directory
-        try:
+        # Get the absolute path of the current working directory through a bunch of if else statements.
+        if (self.terminal == "utkarsh"):
             drive = os.path.splitdrive(os.getcwd())[0].lower().rstrip(":") + ":/"  # Ensure single ':'
-        except Exception as e:
-            print(f"Warning! {e}. Retrying Scene Class . . . ")
-            scene = Scene(self, scene_id, simulator)
         
-        # Construct the correct base directory
-        base_dir = os.path.join(drive, "Users", "inbox", "Algoverse")
+            # Construct the correct base directory
+            base_dir = os.path.join(drive, "Users", "inbox", "Algoverse")
         
-        # Construct the full file path
-        self.file_path = os.path.join(
-            base_dir, "MuJoCo-Testing-Algoverse", "Scenes", 
-            f"Scene{self.scene_number}", f"scene{self.scene_number}.json"
-        )
+            # Construct the full file path
+            self.file_path = os.path.join(
+                base_dir, "MuJoCo-Testing-Algoverse", "Scenes", 
+                f"Scene{self.scene_number}", f"scene{self.scene_number}.json"
+            )
         
-        # Normalize the path: replace backslashes with forward slashes
-        self.file_path = self.file_path.replace("\\", "/")
+            # Normalize the path: replace backslashes with forward slashes
+            self.file_path = self.file_path.replace("\\", "/")
+
+        else if(self.terminal == "robin"):
+            
+            base_dir = r"C:\Users\robin\OneDrive\Documents\Algoverse\MuJoCo-Testing-Algoverse\Scenes"
+
+            self.file_path = os.path.join(base_dir, f"Scene{self.scene_number}", f"scene{self.scene_number}.json")
+
+        else if(self.terminal == "abhinav"):
+
+            base_dir = r"C:\Users\epicg\Algoverse\MuJoCo-Testing-Algoverse\Scenes"
+
+            self.file_path = os.path.join(base_dir, f"Scene{self.scene_number}", f"scene{self.scene_number}.json")
+
+        else if(self.terminal == "sid"):
+
+            base_dir = r"C:\Users\siddh\OneDrive\Desktop\Algoverse\MuJoCo-Testing-Algoverse\Scenes"
+
+            self.file_path = os.path.join(base_dir, f"Scene{self.scene_number}", f"scene{self.scene_number}.json")
         
         # Debugging: Print the file path to verify correctness
         print("Looking for file at:", self.file_path)
