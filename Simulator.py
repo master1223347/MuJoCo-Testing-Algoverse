@@ -268,5 +268,126 @@ class Simulator:
                 self.viewer.sync()
 
         self.time += duration  # Now accurately reflects total time
+        def get_acceleration(self, obj_name):
+    """
+    Retrieve the acceleration of an object using finite differences.
+
+    Parameters:
+    - obj_name (str): The name of the object.
+
+    Returns:
+    - acceleration (dict): The acceleration in x, y, and z directions.
+    """
+    obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
+    if obj_id == -1:
+        raise ValueError(f"Object '{obj_name}' not found.")
+
+    vel_prev = np.copy(self.get_velocity(obj_name))  # Previous velocity
+    mujoco.mj_step(self.model, self.data)  # Step simulation
+    vel_curr = np.copy(self.get_velocity(obj_name))  # Current velocity
+
+    dt = self.model.opt.timestep
+    acceleration = (vel_curr - vel_prev) / dt
+
+    return {"x": acceleration[0], "y": acceleration[1], "z": acceleration[2]}
+
+
+    def get_kinetic_energy(self, obj_name, mass):
+        """
+        Calculate the kinetic energy of an object.
+
+        Parameters:
+        - obj_name (str): The name of the object.
+        - mass (float): The mass of the object.
+
+        Returns:
+        - float: The kinetic energy of the object.
+        """
+        velocity = self.get_velocity(obj_name)
+        return 0.5 * mass * np.sum(velocity**2)
+
+
+    def get_potential_energy(self, obj_name, mass, gravity=9.81):
+        """
+        Calculate the potential energy of an object.
+    
+        Parameters:
+        - obj_name (str): The name of the object.
+        - mass (float): The mass of the object.
+        - gravity (float): The gravitational acceleration (default is 9.81 m/s²).
+    
+        Returns:
+        - float: The potential energy of the object.
+        """
+        position, _ = self.get_position(obj_name)
+        return mass * gravity * position[2]  # Using z as height
+
+
+    def get_momentum(self, obj_name, mass):
+        """
+        Calculate the linear momentum of an object.
+    
+        Parameters:
+        - obj_name (str): The name of the object.
+        - mass (float): The mass of the object.
+    
+        Returns:
+        - dict: The momentum in x, y, and z directions.
+        """
+        velocity = self.get_velocity(obj_name)
+        return {"x": mass * velocity[0], "y": mass * velocity[1], "z": mass * velocity[2]}
+    
+    
+    def get_torque(self, obj_name):
+        """
+        Calculate the torque acting on an object.
+    
+        Parameters:
+        - obj_name (str): The name of the object.
+    
+        Returns:
+        - dict: The torque in x, y, and z directions.
+        """
+        obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
+        if obj_id == -1:
+            raise ValueError(f"Object '{obj_name}' not found.")
+    
+        torque = self.data.qfrc_applied[obj_id * 6 + 3: obj_id * 6 + 6]
+        return {"x": torque[0], "y": torque[1], "z": torque[2]}
+    
+    
+    def get_center_of_mass(self):
+        """
+        Calculate the center of mass of the entire scene.
+    
+        Returns:
+        - dict: The center of mass in x, y, and z directions.
+        """
+        total_mass = np.sum(self.model.body_mass)
+        weighted_positions = np.sum(self.model.body_mass[:, None] * self.data.xpos, axis=0)
+        
+        center_of_mass = weighted_positions / total_mass
+        return {"x": center_of_mass[0], "y": center_of_mass[1], "z": center_of_mass[2]}
+    
+    
+    def get_angular_momentum(self, obj_name, mass):
+        """
+        Calculate the angular momentum of an object.
+    
+        Parameters:
+        - obj_name (str): The name of the object.
+        - mass (float): The mass of the object.
+    
+        Returns:
+        - dict: The angular momentum in x, y, and z directions.
+        """
+        position, _ = self.get_position(obj_name)
+        velocity = self.get_velocity(obj_name)
+    
+        angular_momentum = np.cross(position, mass * velocity)
+        return {"x": angular_momentum[0], "y": angular_momentum[1], "z": angular_momentum[2]}
+
+
+    
 
 
