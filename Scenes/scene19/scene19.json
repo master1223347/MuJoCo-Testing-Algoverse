@@ -1,0 +1,24 @@
+{
+    "metadata": {
+      "scene_name": "Lever Equilibrium",
+      "task": "Determine the correct placement for an additional weight to maintain beam equilibrium.",
+      "problem_type": "conceptual"
+    },
+    "answer": "Place the weight at a distance that produces a counter torque equal to the net torque from the existing weights.",
+    "expected_behavior": "The LLM computes torques based on weight positions and identifies the balance point.",
+    "reasoning": "Equilibrium is maintained when the sum of clockwise torques equals the sum of anticlockwise torques.",
+    "number_of_objects": "4",
+    "objects": {
+      "object_1": { "name": "beam", "object_id": "1" },
+      "object_2": { "name": "weight1", "object_id": "2" },
+      "object_3": { "name": "weight2", "object_id": "3" },
+      "object_4": { "name": "fulcrum", "object_id": "4" }
+    },
+    "object_permissions": {
+      "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+      "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+      "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+      "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+    }
+  }
+  
