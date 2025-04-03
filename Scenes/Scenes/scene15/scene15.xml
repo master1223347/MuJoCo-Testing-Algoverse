@@ -1,0 +1,19 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <!-- Fixed Support -->
+    <body name="support" pos="0 0 2">
+      <geom type="box" size="0.2 0.2 0.2" rgba="0.5 0.5 0.5 1"/>
+    </body>
+    <!-- Short Pendulum -->
+    <body name="pendulum_short" pos="-2 0 2">
+      <geom type="capsule" fromto="0 0 0 0 0 -1" radius="0.05" rgba="1 0 0 1"/>
+      <joint name="pendulum_short_joint" type="hinge" axis="0 1 0"/>
+    </body>
+    <!-- Long Pendulum -->
+    <body name="pendulum_long" pos="2 0 2">
+      <geom type="capsule" fromto="0 0 0 0 0 -2" radius="0.05" rgba="0 0 1 1"/>
+      <joint name="pendulum_long_joint" type="hinge" axis="0 1 0"/>
+    </body>
+  </worldbody>
+</mujoco>

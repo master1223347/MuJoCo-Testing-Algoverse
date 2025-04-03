@@ -1,0 +1,18 @@
+{
+    "metadata": {
+      "scene_name": "Variable Mass System (Rocket)",
+      "task": "Determine the change in velocity of a rocket using the rocket equation.",
+      "problem_type": "calculation"
+    },
+    "answer": "Δv = ve ln(m0/m1)",
+    "expected_behavior": "The LLM applies the Tsiolkovsky rocket equation to compute the velocity change.",
+    "reasoning": "The rocket equation relates the exhaust velocity and mass ratio to the change in velocity.",
+    "number_of_objects": "1",
+    "objects": {
+      "object_1": { "name": "rocket", "object_id": "1" }
+    },
+    "object_permissions": {
+      "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+    }
+  }
+  

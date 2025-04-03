@@ -1,0 +1,18 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <!-- Support for the string -->
+    <body name="support" pos="0 0 3">
+      <geom type="box" size="0.2 0.2 0.2" rgba="0.5 0.5 0.5 1"/>
+    </body>
+    <!-- Ball -->
+    <body name="ball" pos="0 0 2">
+      <geom type="sphere" size="0.3" density="1" rgba="0.8 0.3 0.3 1"/>
+      <joint name="ball_joint" type="free"/>
+    </body>
+    <!-- String (visualized as a thin capsule) -->
+    <body name="string" pos="0 0 3">
+      <geom type="capsule" fromto="0 0 0 0 0 -1" radius="0.03" rgba="0.8 0.8 0.8 1"/>
+    </body>
+  </worldbody>
+</mujoco>
