@@ -1,0 +1,33 @@
+{
+  "metadata": {
+    "scene_name": "Measuring Coefficient of Friction",
+    "task": "Determine the coefficient of static friction using the critical angle at which the block begins to slide.",
+    "problem_type": "friction"
+  },
+  "answer": "mu = tan(theta)",
+  "expected_behavior": "The LLM adjusts the ramp angle and observes when the block starts sliding to compute friction.",
+  "reasoning": "At the critical angle, static friction equals the component of gravity down the incline: mu = tan(theta).",
+  "number_of_objects": "3",
+  "objects": {
+    "object_1": {"name": "block", "object_id": "1"},
+    "object_2": {"name": "ramp", "object_id": "2"},
+    "object_3": {"name": "ground", "object_id": "3"}
+  },
+  "object_permissions": {
+    "object_1_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_2_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_3_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    }
+  }
+}
