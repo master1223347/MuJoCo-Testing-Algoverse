@@ -1,0 +1,23 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <!-- Launch Platform -->
+    <body name="launch_platform" pos="0 0 0">
+      <geom type="box" size="1 1 0.1" rgba="0.7 0.7 0.7 1"/>
+    </body>
+    <!-- Ground -->
+    <body name="ground" pos="0 0 -10">
+      <geom type="plane" size="30 30 0.1" rgba="0.7 0.7 0.7 1" friction="1 1 1"/>
+    </body>
+    <!-- Projectile 1 (High angle) -->
+    <body name="projectile_1" pos="-5 0 2">
+      <geom type="sphere" size="0.5" density="1" rgba="1 0 0 1"/>
+      <joint name="projectile_1_joint" type="free"/>
+    </body>
+    <!-- Projectile 2 (Low angle) -->
+    <body name="projectile_2" pos="5 0 2">
+      <geom type="sphere" size="0.5" density="1" rgba="0 0 1 1"/>
+      <joint name="projectile_2_joint" type="free"/>
+    </body>
+  </worldbody>
+</mujoco>
