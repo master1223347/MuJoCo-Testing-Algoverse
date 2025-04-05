@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "scene_name": "Torque Balance Seesaw",
+    "task": "Determine whether the seesaw will rotate clockwise or counter-clockwise, or stay balanced.",
+    "problem_type": "rotational equilibrium"
+  },
+  "answer": "Compare torques (mass × distance); larger total torque determines rotation.",
+  "expected_behavior": "LLM observes angular motion after releasing the seesaw.",
+  "reasoning": "Torque is τ = r × F. Net torque determines angular acceleration about pivot.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": {"name": "mass_left", "object_id": "1"},
+    "object_2": {"name": "mass_right", "object_id": "2"},
+    "object_3": {"name": "seesaw", "object_id": "3"},
+    "object_4": {"name": "ground", "object_id": "4"}
+  },
+  "object_permissions": {
+    "object_1_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_2_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_3_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_4_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    }
+  }
+}
