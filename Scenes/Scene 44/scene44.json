@@ -1,0 +1,33 @@
+{
+  "metadata": {
+    "scene_name": "Collision Momentum Comparison",
+    "task": "Determine which cart had greater momentum before the collision.",
+    "problem_type": "momentum analysis"
+  },
+  "answer": "2",
+  "expected_behavior": "The LLM lets the carts collide and observes the post-collision motion.",
+  "reasoning": "If one cart continues to push the other post-collision, it had greater initial momentum. Cart 2 keeps moving forward.",
+  "number_of_objects": "3",
+  "objects": {
+    "object_1": {"name": "cart_1", "object_id": "1"},
+    "object_2": {"name": "cart_2", "object_id": "2"},
+    "object_3": {"name": "track", "object_id": "3"}
+  },
+  "object_permissions": {
+    "object_1_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_2_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_3_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    }
+  }
+}
