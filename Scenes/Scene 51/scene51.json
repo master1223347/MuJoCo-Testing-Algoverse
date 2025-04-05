@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "scene_name": "Pulley Tension Comparison",
+    "task": "Determine the tension in the strings and identify the heavier mass.",
+    "problem_type": "tension"
+  },
+  "answer": "Heavier mass accelerates downward; tension differs on each side.",
+  "expected_behavior": "The LLM runs the simulation and observes acceleration and string behavior.",
+  "reasoning": "Using Newton’s second law and free-body diagrams for each mass: T = m*a + m*g.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": {"name": "mass_1", "object_id": "1"},
+    "object_2": {"name": "mass_2", "object_id": "2"},
+    "object_3": {"name": "pulley", "object_id": "3"},
+    "object_4": {"name": "ground", "object_id": "4"}
+  },
+  "object_permissions": {
+    "object_1_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_2_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_3_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_4_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    }
+  }
+}
