@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "scene_name": "Static Friction Threshold",
+    "task": "Find the minimum force required to overcome static friction and make the block slide.",
+    "problem_type": "friction"
+  },
+  "answer": "F = μ * N = μ * mg. Apply increasing force until block moves.",
+  "expected_behavior": "LLM increases horizontal force until motion starts.",
+  "reasoning": "Static friction resists motion up to its maximum value.",
+  "number_of_objects": "3",
+  "objects": {
+    "object_1": {"name": "block", "object_id": "1"},
+    "object_2": {"name": "table", "object_id": "2"},
+    "object_3": {"name": "ground", "object_id": "3"}
+  },
+  "object_permissions": {
+    "object_1_permissions": {"mass": true, "friction": true, "pos": true},
+    "object_2_permissions": {"type": true},
+    "object_3_permissions": {"type": true}
+  }
+}
