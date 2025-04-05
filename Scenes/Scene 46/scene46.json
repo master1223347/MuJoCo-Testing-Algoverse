@@ -1,0 +1,33 @@
+{
+  "metadata": {
+    "scene_name": "Torque and Rotational Inertia",
+    "task": "Determine which rod requires more torque to achieve the same angular acceleration.",
+    "problem_type": "rotational dynamics"
+  },
+  "answer": "2",
+  "expected_behavior": "LLM applies torque to both rods and compares angular accelerations.",
+  "reasoning": "Moment of inertia is larger when rotating about the end than about the center, so rod 2 needs more torque.",
+  "number_of_objects": "3",
+  "objects": {
+    "object_1": {"name": "rod_center", "object_id": "1"},
+    "object_2": {"name": "rod_end", "object_id": "2"},
+    "object_3": {"name": "ground", "object_id": "3"}
+  },
+  "object_permissions": {
+    "object_1_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_2_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_3_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    }
+  }
+}
