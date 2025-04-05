@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "scene_name": "Pulley Tension Problem",
+    "task": "Compare tension in the pulley to the weight of the lighter block.",
+    "problem_type": "tension analysis"
+  },
+  "answer": "less",
+  "expected_behavior": "LLM analyzes or measures string tension and compares it to the lighter block's weight.",
+  "reasoning": "In an accelerating system, tension is less than the weight of the hanging lighter block.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": {"name": "block_heavy", "object_id": "1"},
+    "object_2": {"name": "block_light", "object_id": "2"},
+    "object_3": {"name": "pulley_support", "object_id": "3"},
+    "object_4": {"name": "ground_plane", "object_id": "4"}
+  },
+  "object_permissions": {
+    "object_1_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_2_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_3_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_4_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    }
+  }
+}
