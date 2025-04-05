@@ -1,0 +1,22 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <!-- Elevator -->
+    <body name="elevator" pos="0 0 0">
+      <geom type="box" size="2 2 1" rgba="0.8 0.8 0.8 1"/>
+      <joint name="elevator_joint" type="slide" axis="0 0 1"/>
+    </body>
+    <!-- Block -->
+    <body name="block" pos="0 0 1">
+      <geom type="box" size="0.5 0.5 0.5" density="1" rgba="1 0 0 1"/>
+    </body>
+    <!-- Scale -->
+    <body name="scale" pos="0 0 -0.5">
+      <geom type="box" size="0.5 0.5 0.1" rgba="0.7 0.7 0.7 1"/>
+    </body>
+    <!-- Shaft -->
+    <body name="shaft" pos="0 0 -5">
+      <geom type="cylinder" size="1 10" rgba="0.3 0.3 0.3 1"/>
+    </body>
+  </worldbody>
+</mujoco>
