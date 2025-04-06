@@ -2,7 +2,7 @@
   "metadata": {
     "scene_name": "Pulley Tension Problem",
     "task": "Compare tension in the pulley to the weight of the lighter block.",
-    "problem_type": "tension analysis"
+    "problem_type": "Comparison"
   },
   "answer": "less",
   "expected_behavior": "LLM analyzes or measures string tension and compares it to the lighter block's weight.",
