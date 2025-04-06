@@ -40,6 +40,8 @@ class Experimental:
             "step": self.simulator.step,
             "get_displacement": self.simulator.get_displacement,  # Added tool for displacement
             "compute_force": self.simulator.compute_force  # Added tool for computing force
+            
+
         }
 
     def execute_tool_calls(self, tool_calls_json: str) -> List[Dict[str, Any]]:
@@ -88,44 +90,63 @@ class Experimental:
         Extract a JSON response from the output of the LLM (Large Language Model).
 
         Args:
-            llm_output (str): The raw output string from the LLM.
+        llm_output (str): The raw output string from the LLM.
 
         Returns:
             str: A valid JSON string representing the response extracted from the LLM output.
 
         Raises:
-            ValueError: If the LLM output is not in valid JSON format.
+        ValueError: If the LLM output is not in valid JSON format.
+
         """
+        
         try:
-            # Find the first occurrence of a JSON object and extract it
-            json_start = llm_output.index("{")
-            json_part = llm_output[json_start:]  # Extract JSON part from the output string
-            json_obj = json.loads(json_part)  # Parse it into a dictionary
-            return json.dumps(json_obj.get("response", {}))  # Return the "response" field from the JSON object
-        except json.JSONDecodeError as e:
-            raise ValueError(f"Invalid JSON format: {e}")  # Raise an error if the JSON is invalid
+            # First try to find a JSON array [...]
+            json_start = llm_output.find("[")
+            json_end = llm_output.rfind("]")
+            
+            if json_start != -1 and json_end != -1:
+                json_str = llm_output[json_start:json_end+1]
+                # Try parsing as array
+                json.loads(json_str)  # Verify it's valid JSON
+                return json_str
+                
+            # If no array found, try to find object {...}
+            json_start = llm_output.find("{")
+            if json_start == -1:
+                return json.dumps([{"tool": "reset_sim", "parameters": {}}])
+                
+            # Extract JSON part
+            json_part = llm_output[json_start:]
+            # Try parsing it
+            json_obj = json.loads(json_part)
+            
+            # Return appropriate format
+            if isinstance(json_obj, list):
+                return json.dumps(json_obj)
+            return json.dumps([json_obj])  # Wrap single object in array
         except Exception as e:
-            raise ValueError(f"Unexpected error: {e}")  # Raise an error for unexpected issues
+            logging.warning(f"JSON parsing error: {e}, response: {llm_output}")
+            return json.dumps([{"tool": "reset_sim", "parameters": {}}])
+
 
     def run_experiment(self) -> Dict[str, Any]:
         """
-        Run the experiment using the simulator and AI agent. This method orchestrates the experiment by 
+        Run the experiment using the simulator and AI agent. This method orchestrates the experiment by
         interacting with the simulation and utilizing the AI agent to decide the next steps.
-
         The loop will continue until the correct answer is found or the maximum number of iterations is reached.
 
         Returns:
-            Dict[str, Any]: A dictionary containing the results of the experiment, including whether the 
-                             correct answer was found, if a timeout occurred, the number of tool calls made, 
-                             and the number of iterations performed.
+            Dict[str, Any]: A dictionary containing the results of the experiment, including whether the
+            correct answer was found, if a timeout occurred, the number of tool calls made,
+            and the number of iterations performed.
         """
         self.simulator.reset_sim()  # Reset the simulator to its initial state
         correct_answer_found = False  # Flag to track if the correct answer was found
         timeout_occurred = False  # Flag to track if the maximum number of iterations was reached
-
+        
         # Get the scene prompt and tool descriptions from the Scene object
         scene_prompt = self.scene.generate_prompt()
-
         results = []  # List to store the results of tool calls during each iteration
         num_tool_calls = 0  # Counter to track the number of tool calls made during the experiment
         
@@ -135,20 +156,25 @@ class Experimental:
                 llm_response = self.agent.interact(f"{scene_prompt}\nWhat should I do next?")
             else:
                 llm_response = self.agent.interact(f"{scene_prompt}\nPrevious Results: {json.dumps(results, indent=2)}\nWhat should I do next?")
-
+            
             try:
                 # Extract JSON tool calls from the LLM response
-                tool_calls_json = self.extract_json_response(llm_response)
+                tool_calls_json_str = self.extract_json_response(llm_response)
+                tool_calls_json_obj = json.loads(tool_calls_json_str)  # Parse the JSON string
             except ValueError as e:
                 logging.error(f"Error extracting JSON: {e}")
                 continue  # Skip this iteration and request new instructions from the LLM
-
+            except json.JSONDecodeError as e:
+                logging.error(f"Error parsing JSON: {e}")
+                continue
+            
             logging.info(f"\n=== Executing Tool Calls (Iteration {itr + 1}) ===")
-
+            
             # Answer logic: Check if any tool call contains an answer and check if it's correct
             answer_found = False
             correct_answer_found = False
-            for call in tool_calls_json:
+            
+            for call in tool_calls_json_obj:  # Use the parsed object, not the string
                 if call['tool'] == 'answer':
                     final_answer = call['parameters'].get('answer')  # Get the answer from parameters
                     correct_answer = self.scene.get_correct_answer()  # Retrieve correct answer from scene
@@ -157,19 +183,20 @@ class Experimental:
                     answer_found = True
                     correct_answer_found = final_answer.strip().lower() in correct_answer.strip().lower() if final_answer and correct_answer else False
                     break  # Stop the experiment as soon as we get an answer (whether correct or not)
-
+            
             # If an answer is found (correct or not), exit the loop early
             if answer_found:
                 break  # Stop looping once an answer is provided by the LLM
-
+            
             # If no answer is found, execute the tool calls as planned
             if not answer_found:
-                results = self.execute_tool_calls(tool_calls_json)  # Execute tool calls and get results
+                results = self.execute_tool_calls(tool_calls_json_str)  # Execute tool calls and get results
                 num_tool_calls += len(results)  # Increment the tool call count after execution
-
-        else:  # If the loop completes without finding the answer, set the timeout flag
+        
+        # If the loop completes without finding the answer, set the timeout flag
+        if itr == self.max_iterations - 1 and not answer_found:
             timeout_occurred = True
-
+        
         # Return the results of the experiment, including whether the correct answer was found and other statistics
         experiment_results = {
             'correct': correct_answer_found,  # Whether the correct answer was found
@@ -177,5 +204,6 @@ class Experimental:
             'num_tool_calls': num_tool_calls,  # Total number of tool calls made
             'iterations': itr + 1 if not timeout_occurred else self.max_iterations  # Total iterations performed
         }
-
+        
         return experiment_results
+
