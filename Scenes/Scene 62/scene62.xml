@@ -1,0 +1,19 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <body name="track" pos="0 0 -0.05">
+      <geom type="box" size="10 0.2 0.05" rgba="0.7 0.7 0.7 1"/>
+    </body>
+    <body name="wall" pos="10 0 0.5">
+      <geom type="box" size="0.1 1 1" rgba="0.2 0.2 0.2 1"/>
+    </body>
+    <body name="elastic_cart" pos="-8 0 0.2">
+      <geom type="box" size="0.5 0.2 0.2" density="1" rgba="0 0.7 1 1" elasticity="1"/>
+      <joint name="elastic_cart_slide" type="slide" axis="1 0 0"/>
+    </body>
+    <body name="inelastic_cart" pos="-5 0 0.2">
+      <geom type="box" size="0.5 0.2 0.2" density="1" rgba="1 0.3 0.3 1" elasticity="0"/>
+      <joint name="inelastic_cart_slide" type="slide" axis="1 0 0"/>
+    </body>
+  </worldbody>
+</mujoco>
