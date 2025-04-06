@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "scene_name": "Sliding Friction Comparison",
+    "task": "Compare sliding distances of two blocks on different surfaces.",
+    "problem_type": "comparison"
+  },
+  "answer": "1",
+  "expected_behavior": "LLM applies same force and observes which block travels farther.",
+  "reasoning": "Lower friction surface causes the block to travel farther before stopping.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": { "name": "low_friction_block", "object_id": "1" },
+    "object_2": { "name": "high_friction_block", "object_id": "2" },
+    "object_3": { "name": "surface_low_friction", "object_id": "3" },
+    "object_4": { "name": "surface_high_friction", "object_id": "4" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}
