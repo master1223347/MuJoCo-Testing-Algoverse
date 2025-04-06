@@ -1,0 +1,19 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <body name="surface_low_friction" pos="-3 0 0">
+      <geom type="box" size="2 1 0.1" rgba="0.8 0.8 0.8 1" friction="0.1 0.1 0.1"/>
+    </body>
+    <body name="surface_high_friction" pos="3 0 0">
+      <geom type="box" size="2 1 0.1" rgba="0.6 0.6 0.6 1" friction="1.0 1.0 1.0"/>
+    </body>
+    <body name="low_friction_block" pos="-3 0 0.2">
+      <geom type="box" size="0.3 0.3 0.3" density="1" rgba="0 0.7 1 1"/>
+      <joint name="low_friction_joint" type="slide" axis="1 0 0"/>
+    </body>
+    <body name="high_friction_block" pos="3 0 0.2">
+      <geom type="box" size="0.3 0.3 0.3" density="1" rgba="1 0.4 0.4 1"/>
+      <joint name="high_friction_joint" type="slide" axis="1 0 0"/>
+    </body>
+  </worldbody>
+</mujoco>
