@@ -297,9 +297,10 @@ class Simulator:
         if hasattr(self, 'viewer') and self.viewer is not None:
             self.viewer.close()
 
+        scene_id = str(scene_id)  # ensure it's a string
         self.model_path = self.get_model_path(scene_id)
         logging.info(f"Loading model from: {self.model_path}")
-        
+
         self.model = mujoco.MjModel.from_xml_path(self.model_path)
         self.data = mujoco.MjData(self.model)
 
