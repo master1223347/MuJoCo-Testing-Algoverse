@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "scene_name": "Torque Comparison",
+    "task": "Determine which setup has more torque on one side using mass and distance.",
+    "problem_type": "torque"
+  },
+  "answer": "1",
+  "expected_behavior": "LLM observes beam rotation direction due to weight placement.",
+  "reasoning": "Torque = Force × Distance. Greater distance or heavier weight yields more torque.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": { "name": "beam_1", "object_id": "1" },
+    "object_2": { "name": "weight_1", "object_id": "2" },
+    "object_3": { "name": "beam_2", "object_id": "3" },
+    "object_4": { "name": "weight_2", "object_id": "4" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "pos": true, "quat": true, "size": true, "joint": true, "name": true },
+    "object_2_permissions": { "type": true, "mass": true, "pos": true, "size": true, "name": true },
+    "object_3_permissions": { "type": true, "pos": true, "quat": true, "size": true, "joint": true, "name": true },
+    "object_4_permissions": { "type": true, "mass": true, "pos": true, "size": true, "name": true }
+  }
+}
