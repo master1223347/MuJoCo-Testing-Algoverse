@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "scene_name": "Newton's Second Law",
+    "task": "Apply the same force to both blocks and determine which accelerates faster.",
+    "problem_type": "comparison"
+  },
+  "answer": "1",
+  "expected_behavior": "LLM applies equal force and measures acceleration by observing displacement or velocity.",
+  "reasoning": "According to F = ma, the smaller mass experiences greater acceleration under the same force.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": { "name": "light_block", "object_id": "1" },
+    "object_2": { "name": "heavy_block", "object_id": "2" },
+    "object_3": { "name": "track", "object_id": "3" },
+    "object_4": { "name": "ground", "object_id": "4" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}
