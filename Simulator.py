@@ -293,23 +293,23 @@ class Simulator:
         mujoco.mj_forward(self.model, self.data)
 
     def load_scene(self, scene_id: str):
-    try:
-        if hasattr(self, 'viewer') and self.viewer is not None:
-            self.viewer.close()
-
-        scene_id = str(scene_id)  # ensure it's a string
-        self.model_path = self.get_model_path(scene_id)
-        logging.info(f"Loading model from: {self.model_path}")
-
-        self.model = mujoco.MjModel.from_xml_path(self.model_path)
-        self.data = mujoco.MjData(self.model)
-
-        self.viewer = mujoco.viewer.launch_passive(self.model, self.data)
-        self.start_pos = np.copy(self.data.qpos)
-        self.time = 0
-
-    except Exception as e:
-        logging.error(f"Failed to load scene {scene_id}: {e}")
+        try:
+            if hasattr(self, 'viewer') and self.viewer is not None:
+                self.viewer.close()
+    
+            scene_id = str(scene_id)  # ensure it's a string
+            self.model_path = self.get_model_path(scene_id)
+            logging.info(f"Loading model from: {self.model_path}")
+    
+            self.model = mujoco.MjModel.from_xml_path(self.model_path)
+            self.data = mujoco.MjData(self.model)
+    
+            self.viewer = mujoco.viewer.launch_passive(self.model, self.data)
+            self.start_pos = np.copy(self.data.qpos)
+            self.time = 0
+    
+        except Exception as e:
+            logging.error(f"Failed to load scene {scene_id}: {e}")
 
     def __del__(self):
         """Clean up resources when the Simulator object is destroyed."""
