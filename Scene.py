@@ -20,7 +20,7 @@ class Scene:
         self.scene_id = scene_id
         self.simulator = simulator  # Store the simulator object
         self.scene_number = int(scene_id.split("_")[-1])
-        self.terminal = "utkarsh" #For setting it up, switch this to the following - robin, abhinav, or sid.
+        self.terminal = "robin" #For setting it up, switch this to the following - robin, abhinav, or sid.
 
         # Get the absolute path of the current working directory through a bunch of if else statements.
         if (self.terminal == "utkarsh"):
@@ -38,19 +38,19 @@ class Scene:
             # Normalize the path: replace backslashes with forward slashes
             self.file_path = self.file_path.replace("\\", "/")
 
-        else if(self.terminal == "robin"):
+        elif(self.terminal == "robin"):
             
-            base_dir = r"C:\Users\robin\OneDrive\Documents\Algoverse\MuJoCo-Testing-Algoverse\Scenes"
+            base_dir = r"C:\Users\robin\OneDrive\Documents\Algoverse\MuJoCo-Testing-Algoverse-main\Scenes"
 
             self.file_path = os.path.join(base_dir, f"Scene{self.scene_number}", f"scene{self.scene_number}.json")
 
-        else if(self.terminal == "abhinav"):
+        elif(self.terminal == "abhinav"):
 
             base_dir = r"C:\Users\epicg\Algoverse\MuJoCo-Testing-Algoverse\Scenes"
 
             self.file_path = os.path.join(base_dir, f"Scene{self.scene_number}", f"scene{self.scene_number}.json")
 
-        else if(self.terminal == "sid"):
+        elif(self.terminal == "sid"):
 
             base_dir = r"C:\Users\siddh\OneDrive\Desktop\Algoverse\MuJoCo-Testing-Algoverse\Scenes"
 
@@ -279,3 +279,8 @@ class Scene:
             )
 
         return self.prompt
+
+    def get_correct_answer(self):
+        """Returns the correct answer for the scene."""
+        return self.answer() if self.data else ""
+
