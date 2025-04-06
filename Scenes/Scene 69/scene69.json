@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "scene_name": "Ramp Incline and Acceleration",
+    "task": "Identify which ramp causes a block to accelerate more.",
+    "problem_type": "comparison"
+  },
+  "answer": "1",
+  "expected_behavior": "LLM observes which block reaches the bottom faster.",
+  "reasoning": "Greater incline means more gravitational force component parallel to ramp, leading to more acceleration.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": { "name": "block_1", "object_id": "1" },
+    "object_2": { "name": "block_2", "object_id": "2" },
+    "object_3": { "name": "ramp_1", "object_id": "3" },
+    "object_4": { "name": "ramp_2", "object_id": "4" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}
