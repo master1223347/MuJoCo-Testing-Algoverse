@@ -293,22 +293,22 @@ class Simulator:
         mujoco.mj_forward(self.model, self.data)
 
     def load_scene(self, scene_id: str):
-        """Load/reload a scene from XML and reset simulation state"""
-        # Close existing viewer if active
+    try:
         if hasattr(self, 'viewer') and self.viewer is not None:
             self.viewer.close()
-        
-        # Get new model path
+
         self.model_path = self.get_model_path(scene_id)
+        logging.info(f"Loading model from: {self.model_path}")
         
-        # Load new model
         self.model = mujoco.MjModel.from_xml_path(self.model_path)
         self.data = mujoco.MjData(self.model)
-        
-        # Reinitialize viewer and state
+
         self.viewer = mujoco.viewer.launch_passive(self.model, self.data)
         self.start_pos = np.copy(self.data.qpos)
         self.time = 0
+
+    except Exception as e:
+        logging.error(f"Failed to load scene {scene_id}: {e}")
 
     def __del__(self):
         """Clean up resources when the Simulator object is destroyed."""
