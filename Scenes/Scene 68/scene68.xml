@@ -1,0 +1,19 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <body name="rope_1" pos="-1 0 2">
+      <geom type="capsule" fromto="0 0 0 0 0 -1" size="0.02" rgba="0.6 0.6 0.6 1"/>
+    </body>
+    <body name="mass_1" pos="-1 0 1">
+      <geom type="sphere" size="0.1" density="1" rgba="0.3 0.7 0.3 1"/>
+      <joint type="free"/>
+    </body>
+    <body name="rope_2" pos="1 0 2">
+      <geom type="capsule" fromto="0 0 0 0 0 -1" size="0.02" rgba="0.6 0.6 0.6 1"/>
+    </body>
+    <body name="mass_2" pos="1 0 1">
+      <geom type="sphere" size="0.1" density="2" rgba="0.3 0.3 0.7 1"/>
+      <joint type="free"/>
+    </body>
+  </worldbody>
+</mujoco>
