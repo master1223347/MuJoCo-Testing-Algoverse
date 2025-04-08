@@ -1,0 +1,25 @@
+{
+  "metadata": {
+    "scene_name": "Moment of Inertia - Rods",
+    "task": "Determine which rod has the greatest moment of inertia about one end.",
+    "problem_type": "comparison"
+  },
+  "answer": "2",
+  "expected_behavior": "The LLM applies the same torque to each rod and measures angular acceleration or rotation delay.",
+  "reasoning": "The rod with the largest mass and/or length has the greatest moment of inertia (I = (1/3)ML²).",
+  "number_of_objects": "5",
+  "objects": {
+    "object_1": { "name": "rod_1", "object_id": "1" },
+    "object_2": { "name": "rod_2", "object_id": "2" },
+    "object_3": { "name": "rod_3", "object_id": "3" },
+    "object_4": { "name": "pivot_base", "object_id": "4" },
+    "object_5": { "name": "ground", "object_id": "5" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_5_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}
