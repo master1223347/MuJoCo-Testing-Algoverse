@@ -1,0 +1,35 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <body name="ground" pos="0 0 -1">
+      <geom type="plane" size="30 30 0.1" rgba="0.9 0.9 0.9 1"/>
+    </body>
+    <body name="anchor" pos="0 0 2"/>
+    <body name="spring_mass_1" pos="-1 0 1.5">
+      <geom type="sphere" size="0.1" mass="1" rgba="1 0 0 1"/>
+      <joint type="slide" axis="0 0 1"/>
+    </body>
+    <body name="spring_mass_2" pos="0 0 1.5">
+      <geom type="sphere" size="0.1" mass="1" rgba="0 1 0 1"/>
+      <joint type="slide" axis="0 0 1"/>
+    </body>
+    <body name="spring_mass_3" pos="1 0 1.5">
+      <geom type="sphere" size="0.1" mass="1.5" rgba="0 0 1 1"/>
+      <joint type="slide" axis="0 0 1"/>
+    </body>
+  </worldbody>
+  <tendon>
+    <spatial name="spring1" width="0.01" stiffness="20" damping="0.5">
+      <site site="anchor"/>
+      <site site="spring_mass_1"/>
+    </spatial>
+    <spatial name="spring2" width="0.01" stiffness="20" damping="1.0">
+      <site site="anchor"/>
+      <site site="spring_mass_2"/>
+    </spatial>
+    <spatial name="spring3" width="0.01" stiffness="20" damping="2.0">
+      <site site="anchor"/>
+      <site site="spring_mass_3"/>
+    </spatial>
+  </tendon>
+</mujoco>
