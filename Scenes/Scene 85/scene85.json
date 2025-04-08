@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "scene_name": "Sliding Block on a Surface",
+    "task": "Determine the velocity of the block after it slides a certain distance.",
+    "problem_type": "calculation"
+  },
+  "answer": "Final velocity = sqrt(2 * acceleration * distance)",
+  "expected_behavior": "The LLM should calculate the final velocity using kinematic equations.",
+  "reasoning": "The block accelerates due to gravity. The LLM should apply the basic equation of motion v^2 = u^2 + 2as.",
+  "number_of_objects": "3",
+  "objects": {
+    "object_1": { "name": "block", "object_id": "1" },
+    "object_2": { "name": "surface", "object_id": "2" },
+    "object_3": { "name": "gravity", "object_id": "3" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}
