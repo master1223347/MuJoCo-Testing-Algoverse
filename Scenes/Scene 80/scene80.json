@@ -1,0 +1,25 @@
+{
+  "metadata": {
+    "scene_name": "Damped Oscillations",
+    "task": "Identify which spring-mass system has the lowest amplitude over time.",
+    "problem_type": "comparison"
+  },
+  "answer": "3",
+  "expected_behavior": "The LLM displaces all masses equally and measures how amplitude decreases.",
+  "reasoning": "The system with the highest damping or mass will lose energy fastest and have the lowest amplitude.",
+  "number_of_objects": "5",
+  "objects": {
+    "object_1": { "name": "spring_mass_1", "object_id": "1" },
+    "object_2": { "name": "spring_mass_2", "object_id": "2" },
+    "object_3": { "name": "spring_mass_3", "object_id": "3" },
+    "object_4": { "name": "ground", "object_id": "4" },
+    "object_5": { "name": "anchor", "object_id": "5" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_5_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}
