@@ -1,0 +1,17 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <body name="ground" pos="0 0 0">
+      <geom type="plane" size="20 20 0.1" rgba="0.6 0.6 0.6 1"/>
+    </body>
+    <body name="long_rod" pos="-2 0 0.5">
+      <geom type="box" size="1 0.1 0.1" mass="1" rgba="0.8 0.2 0.2 1"/>
+      <joint type="hinge" axis="0 0 1"/>
+    </body>
+    <body name="short_rod" pos="2 0 0.5">
+      <geom type="box" size="0.5 0.1 0.1" mass="1" rgba="0.2 0.2 0.8 1"/>
+      <joint type="hinge" axis="0 0 1"/>
+    </body>
+    <body name="torque_device" pos="0 0 2"/>
+  </worldbody>
+</mujoco>
