@@ -1,0 +1,21 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <!-- Ground Plane -->
+    <body name="ground" pos="0 0 0">
+      <geom type="plane" size="30 30 0.1" rgba="0.6 0.6 0.6 1"/>
+    </body>
+    <!-- Heavy Cart -->
+    <body name="heavy_cart" pos="-2 0 0.5">
+      <geom type="box" size="0.5 0.3 0.3" mass="10" rgba="1 0 0 1"/>
+      <joint type="slide" axis="1 0 0"/>
+    </body>
+    <!-- Light Cart -->
+    <body name="light_cart" pos="2 0 0.5">
+      <geom type="box" size="0.5 0.3 0.3" mass="2" rgba="0 0 1 1"/>
+      <joint type="slide" axis="1 0 0"/>
+    </body>
+    <!-- Force Applier Placeholder -->
+    <body name="force_applier" pos="0 0 2"/>
+  </worldbody>
+</mujoco>
