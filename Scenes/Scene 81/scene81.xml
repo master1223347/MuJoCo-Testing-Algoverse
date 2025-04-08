@@ -1,0 +1,21 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <body name="ground" pos="0 0 -1">
+      <geom type="plane" size="30 30 0.1" rgba="0.8 0.8 0.8 1"/>
+    </body>
+    <body name="pivot_base" pos="0 0 0"/>
+    <body name="rod_1" pos="-2 0 1">
+      <geom type="capsule" fromto="0 0 0 0 0 2" size="0.05" density="500" rgba="1 0 0 1"/>
+      <joint type="hinge" axis="0 1 0" pos="0 0 0"/>
+    </body>
+    <body name="rod_2" pos="0 0 1">
+      <geom type="capsule" fromto="0 0 0 0 0 3" size="0.05" density="500" rgba="0 1 0 1"/>
+      <joint type="hinge" axis="0 1 0" pos="0 0 0"/>
+    </body>
+    <body name="rod_3" pos="2 0 1">
+      <geom type="capsule" fromto="0 0 0 0 0 1.5" size="0.05" density="500" rgba="0 0 1 1"/>
+      <joint type="hinge" axis="0 1 0" pos="0 0 0"/>
+    </body>
+  </worldbody>
+</mujoco>
