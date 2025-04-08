@@ -1,0 +1,19 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <body name="ground" pos="0 0 -1">
+      <geom type="plane" size="30 30 0.1" rgba="0.9 0.9 0.9 1"/>
+    </body>
+    <body name="inclined_plane" pos="0 0 0">
+      <geom type="plane" size="10 10 0.1" rgba="0.8 0.8 0.8 1" quat="0.5 0.86 0 0"/>
+    </body>
+    <body name="rolling_sphere" pos="-2 -0.6 1">
+      <geom type="sphere" size="0.3" density="1" friction="1 1 1" rgba="0 1 0 1"/>
+      <joint type="free"/>
+    </body>
+    <body name="sliding_block" pos="2 -0.6 1">
+      <geom type="box" size="0.3 0.3 0.3" density="1" friction="0.1 0.1 0.1" rgba="1 0 0 1"/>
+      <joint type="free"/>
+    </body>
+  </worldbody>
+</mujoco>
