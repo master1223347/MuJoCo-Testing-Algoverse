@@ -1,3 +1,0 @@
-The acceleration of the system is given by a = (m1 - m2) * g / (m1 + m2), where m1 and m2 are the masses on either side of the pulley.
-    "testing_method": "Run the simulation with different mass values and measure the acceleration of the system.",
-    "expected_behavior": "The acceleration should follow the theoretical formula: a = (m1 - m2) * g / (m1 + m2).",
