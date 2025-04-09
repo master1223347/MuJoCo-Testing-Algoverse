@@ -14,7 +14,7 @@ load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY')
 
 class Experimental:
-    def __init__(self, scene_id: str, max_iterations: int = 5):
+    def __init__(self, scene_id: str, max_iterations: int = 100):
         """
         Initialize the Experimental class with a Scene ID and set up the necessary components.
         
@@ -38,8 +38,10 @@ class Experimental:
             "get_position": self.simulator.get_position,
             "reset_sim": self.simulator.reset_sim,
             "step": self.simulator.step,
+            "load_scene": self.simulator.load_scene,
             "get_displacement": self.simulator.get_displacement,  # Added tool for displacement
-            "compute_force": self.simulator.compute_force  # Added tool for computing force
+            "compute_force": self.simulator.compute_force,  # Added tool for computing force
+            "answer": lambda answer: {"result": answer}
             
 
         }
@@ -127,7 +129,7 @@ class Experimental:
             return json.dumps([json_obj])  # Wrap single object in array
         except Exception as e:
             logging.warning(f"JSON parsing error: {e}, response: {llm_output}")
-            return json.dumps([{"tool": "reset_sim", "parameters": {}}])
+            return json.dumps([{"tool": "error", "parameters": {"message": f"Invalid JSON: {e}. Please try again with valid syntax."}}])
 
 
     def run_experiment(self) -> Dict[str, Any]:
@@ -144,28 +146,52 @@ class Experimental:
         self.simulator.reset_sim()  # Reset the simulator to its initial state
         correct_answer_found = False  # Flag to track if the correct answer was found
         timeout_occurred = False  # Flag to track if the maximum number of iterations was reached
+        llm_final_answer = None  # Add this line to store the LLM's answer
+        correct_answer_value = None  # Add this line to store the correct answer    
         
         # Get the scene prompt and tool descriptions from the Scene object
         scene_prompt = self.scene.generate_prompt()
         results = []  # List to store the results of tool calls during each iteration
         num_tool_calls = 0  # Counter to track the number of tool calls made during the experiment
+        tool_history = []  # Track tool calls to detect loops
+        tool_usage = {}
         
         for itr in range(self.max_iterations):
-            # Construct the prompt for the LLM, either including previous results or starting fresh
-            if itr == 0:
-                llm_response = self.agent.interact(f"{scene_prompt}\nWhat should I do next?")
+            # Construct the prompt for the LLM, including iteration pressure
+            if itr > 0:
+                remaining = self.max_iterations - itr
+                # Check if in a loop
+                repeated_call = False
+                if len(tool_history) > 0 and tool_history[-1] in tool_history[:-1]:
+                    repeated_call = True
+                    
+                loop_warning = "\nWARNING: You're repeating similar tool calls. Try a different approach or use the 'answer' tool." if repeated_call else ""
+                
+                llm_response = self.agent.interact(
+                    f"{scene_prompt}\nPrevious Results: {json.dumps(results, indent=2)}\n"
+                    f"IMPORTANT: You have {remaining} iterations remaining to use the 'answer' tool.{loop_warning}\n"
+                    f"What should I do next?"
+                )
             else:
-                llm_response = self.agent.interact(f"{scene_prompt}\nPrevious Results: {json.dumps(results, indent=2)}\nWhat should I do next?")
+                remaining = self.max_iterations - itr
+                llm_response = self.agent.interact(
+                    f"{scene_prompt}\nPrevious Results: {json.dumps(results, indent=2)}\n"
+                    f"IMPORTANT: You have {remaining} iterations remaining to use the 'answer' tool.\n"
+                    f"What should I do next?"
+                )
             
             try:
                 # Extract JSON tool calls from the LLM response
                 tool_calls_json_str = self.extract_json_response(llm_response)
                 tool_calls_json_obj = json.loads(tool_calls_json_str)  # Parse the JSON string
+                tool_history.append(tool_calls_json_str)  # Add to history for loop detection
             except ValueError as e:
                 logging.error(f"Error extracting JSON: {e}")
+                results.append({"error": f"Failed to extract valid JSON: {e}. Please provide a valid JSON response."})
                 continue  # Skip this iteration and request new instructions from the LLM
             except json.JSONDecodeError as e:
                 logging.error(f"Error parsing JSON: {e}")
+                results.append({"error": f"Invalid JSON format: {e}. Please provide a valid JSON response."})
                 continue
             
             logging.info(f"\n=== Executing Tool Calls (Iteration {itr + 1}) ===")
@@ -180,8 +206,40 @@ class Experimental:
                     correct_answer = self.scene.get_correct_answer()  # Retrieve correct answer from scene
                     
                     # Mark the answer as found
-                    answer_found = True
-                    correct_answer_found = final_answer.strip().lower() in correct_answer.strip().lower() if final_answer and correct_answer else False
+                    if final_answer is not None:
+                        answer_found = True
+
+                        # Store answers for reporting
+                        llm_final_answer = final_answer
+                        correct_answer_value = correct_answer
+
+                        tool_usage['answer'] = tool_usage.get('answer', 0) + 1
+                        num_tool_calls += 1
+                    else:
+                    # Log warning and provide feedback when null answer is given
+                        logging.warning("LLM provided a null answer value")
+                        results.append({
+                            "tool": "answer",
+                            "error": "Null answer provided. Please call the answer tool with a valid value."
+                        })
+                        # Do not mark as found when answer is null
+                        answer_found = False
+                    # Improved answer validation for numerical answers
+                    try:
+                        # Check if dealing with numbers
+                        if (isinstance(final_answer, (int, float)) or 
+                            (isinstance(final_answer, str) and final_answer.replace('.', '', 1).replace('-', '', 1).isdigit())):
+                            final_float = float(final_answer)
+                            correct_float = float(correct_answer)
+                            # Use tolerance of 0.001 for float comparison
+                            correct_answer_found = abs(final_float - correct_float) < 0.001
+                        else:
+                            # Fall back to string comparison for non-numerical answers
+                            correct_answer_found = str(final_answer).strip().lower() in str(correct_answer).strip().lower()
+                    except (ValueError, TypeError):
+                        # If conversion fails, fall back to string comparison
+                        correct_answer_found = str(final_answer).strip().lower() in str(correct_answer).strip().lower() if final_answer and correct_answer else False
+                    
                     break  # Stop the experiment as soon as we get an answer (whether correct or not)
             
             # If an answer is found (correct or not), exit the loop early
@@ -191,19 +249,38 @@ class Experimental:
             # If no answer is found, execute the tool calls as planned
             if not answer_found:
                 results = self.execute_tool_calls(tool_calls_json_str)  # Execute tool calls and get results
+                for result in results:
+                    tool_name = result['tool']
+                    tool_usage[tool_name] = tool_usage.get(tool_name, 0) + 1
                 num_tool_calls += len(results)  # Increment the tool call count after execution
+                
         
         # If the loop completes without finding the answer, set the timeout flag
         if itr == self.max_iterations - 1 and not answer_found:
             timeout_occurred = True
+
+        print("\n=== Tool Usage Statistics ===")
+        print(f"Total number of tool calls: {num_tool_calls}")
+        print("Tools used:")
+        for tool, count in sorted(tool_usage.items()):
+            print(f"  - {tool}: {count} times")
         
         # Return the results of the experiment, including whether the correct answer was found and other statistics
         experiment_results = {
             'correct': correct_answer_found,  # Whether the correct answer was found
             'timeout': timeout_occurred,  # Whether the experiment timed out after max iterations
             'num_tool_calls': num_tool_calls,  # Total number of tool calls made
-            'iterations': itr + 1 if not timeout_occurred else self.max_iterations  # Total iterations performed
+            'iterations': itr + 1 if not timeout_occurred else self.max_iterations,  # Total iterations performed
+            'answer_found': answer_found,  # Whether any answer was provided (regardless of correctness)
+            'tool_usage': tool_usage, 
+            'llm_answer': llm_final_answer,  
+            'correct_answer': correct_answer_value  
+
+
         }
+
+        
         
         return experiment_results
+
 
