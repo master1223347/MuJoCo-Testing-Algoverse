@@ -115,6 +115,13 @@ class Simulator:
             raise ValueError(f"Object '{obj_name}' not found.")
         self.data.xfrc_applied[obj_id, :3] = force_vector
 
+    def apply_torque(self, obj_name: str, torque_vector):
+        """Apply a torque to an object."""
+        obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
+        if obj_id == -1:
+            raise ValueError(f"Object '{obj_name}' not found.")
+        self.data.xfrc_applied[obj_id, 3:6] = torque_vector
+
     def get_velocity(self, obj_name: str):
         """Retrieve the velocity of an object."""
         obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
