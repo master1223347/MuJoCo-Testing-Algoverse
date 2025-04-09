@@ -1,0 +1,27 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <!-- Hanging Block -->
+    <body name="hanging_block" pos="0 0 5">
+      <geom type="box" size="0.5 0.5 0.5" density="5" rgba="1 0 0 1"/>
+      <joint name="hanging_block_joint" type="free"/>
+    </body>
+
+    <!-- Surface Block -->
+    <body name="surface_block" pos="0 0 0">
+      <geom type="box" size="0.5 0.5 0.5" density="3" rgba="0 1 0 1"/>
+      <joint name="surface_block_joint" type="free"/>
+    </body>
+
+    <!-- Pulley -->
+    <body name="pulley" pos="0 0 4">
+      <geom type="sphere" size="0.2" density="2" rgba="0 0 1 1"/>
+      <joint name="pulley_joint" type="hinge" axis="0 0 1"/>
+    </body>
+
+    <!-- Surface -->
+    <body name="surface" pos="0 0 -10">
+      <geom type="plane" size="30 30 0.1" rgba="0.7 0.7 0.7 1" friction="1 1 1"/>
+    </body>
+  </worldbody>
+</mujoco>
