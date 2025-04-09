@@ -1,18 +1,27 @@
-  {
+{
+  "metadata": {
     "scene_name": "Double Pendulum Motion",
     "task": "Analyze chaotic motion in a double pendulum system.",
-    "objects": [
-      {
-        "name": "Double Pendulum",
-        "object_id": "1",
-        "permissions": { "length": true, "mass": true, "initial_conditions": false }
-      },
-      {
-        "name": "Pivot",
-        "object_id": "2",
-        "permissions": { "length": true, "mass": true, "initial_conditions": false }
-      }
-    ]
+    "problem_type": "boolean"
+  },
+
+  "answer": 0,
+
+  "expected_behavior": "Due to chaotic dynamics, small variations in the initial angles result in significantly different motion patterns over time.",
+
+  "reasoning": "The double pendulum system is highly sensitive to initial conditions. When the LLM runs two simulations with slightly different starting angles, the pendulums will quickly diverge in their trajectories, confirming chaotic behavior. This sensitive dependence is a hallmark of deterministic chaos.",
+
+  "number_of_objects": "3",
+
+  "objects": {
+    "object_1": { "name": "pivot", "object_id": "1" },
+    "object_2": { "name": "pendulum1", "object_id": "2" },
+    "object_3": { "name": "pendulum2", "object_id": "3" }
+  },
+
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
   }
-  
-  
+}
