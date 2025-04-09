@@ -1,0 +1,24 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <light diffuse="0.5 0.5 0.5" pos="0 0 3" dir="0 0 -1"/>
+    <!-- Ramp -->
+    <body name="ramp" pos="0 0 0">
+      <geom type="plane" size="5 10 0.1" rgba="0.7 0 0 1" friction="0.2 0.2 0.2" quat="0.5 0.86 0 0"/>
+    </body>
+    <!-- Big Plane (Ground) -->
+    <body name="ground" pos="-10 0 -10">
+      <geom type="plane" size="30 30 0.1" rgba="0.7 0.7 0.7 1" friction="1 1 1"/>
+    </body>
+    <!-- Disk -->
+    <body name="disk" pos="-3 0 0">
+      <geom type="sphere" size="0.5" density="1" rgba="1 0 0 1"/>
+      <joint name="disk_joint" type="free"/>
+    </body>
+    <!-- Box -->
+    <body name="box" pos="3 0 0">
+      <geom type="box" size="0.5 0.5 0.5" density="1" rgba="0 0 1 1"/>
+      <joint name="box_joint" type="free"/>
+    </body>
+  </worldbody>
+</mujoco>
