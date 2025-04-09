@@ -1,5 +1,0 @@
-If kinetic energy is conserved, the collision is elastic. If energy is lost and objects stick together, the collision is inelastic.
-"testing_method": "Measure post-collision velocities to compare total kinetic energy before and after impact.",
-"expected_behavior": 
-      "elastic_collision": "Objects rebound with conserved kinetic energy.",
-      "inelastic_collision": "Objects stick together or lose kinetic energy."
