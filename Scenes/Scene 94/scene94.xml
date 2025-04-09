@@ -1,0 +1,15 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <!-- Wheel -->
+    <body name="wheel" pos="0 0 0">
+      <geom type="cylinder" size="0.5 0.5" density="3" rgba="1 0 0 1"/>
+      <joint name="wheel_joint" type="free"/>
+    </body>
+
+    <!-- Surface -->
+    <body name="surface" pos="0 0 -10">
+      <geom type="plane" size="30 30 0.1" rgba="0.7 0.7 0.7 1" friction="1 1 1"/>
+    </body>
+  </worldbody>
+</mujoco>
