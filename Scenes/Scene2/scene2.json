@@ -1,15 +1,29 @@
 {
-  "scene_name": "Unknown Mass on Spring Scale",
-  "task": "Determine which sphere is hollow based on their rolling behavior.",
-  "objects": [
-    {
-      "name": "Spring Scale",
-      "object_id": "1",
-      "permissions": { "spring_constant": false, "mass": false, "displacement": false }
-    }
-  ]
-  ".txt stuff": "The unknown mass is determined using Hooke’s Law: F = kx. Given the spring constant and displacement, the object’s weight (mg) is derived. testing_method: Use Hooke’s Law to calculate mass from displacement., expected_behavior: The object's mass is calculated using F = kx, where k is the spring constant and x is displacement.",
+  "metadata": {
+    "scene_name": "Unknown Mass on Spring Scale",
+    "task": "Determine the mass of the object hanging from the spring scale using Hooke’s Law.",
+    "problem_type": "computation"
+  },
+
+  "answer": "Derived from Hooke's Law: mass = (k * x) / g",
+
+  "expected_behavior": "The LLM measures the displacement of the spring, reads the spring constant, and calculates the mass using Hooke’s Law.",
+  
+  "reasoning": "The object's weight stretches the spring. From the spring constant (k) and displacement (x), the force (F = kx) is obtained. Then using F = mg, the mass is calculated.",
+  
+  "number_of_objects": "4",
+  
+  "objects": {
+    "object_1": { "name": "ground", "object_id": "1" },
+    "object_2": { "name": "anchor", "object_id": "2" },
+    "object_3": { "name": "slider", "object_id": "3" },
+    "object_4": { "name": "mass", "object_id": "4" }
+  },
+
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_4_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
 }
-
-
-
