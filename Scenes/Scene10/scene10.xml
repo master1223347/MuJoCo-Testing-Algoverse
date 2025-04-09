@@ -1,29 +1,42 @@
-<mujoco model="atwood_machine">
+<mujoco model="atwood_machine_inclined">
     <compiler angle="radian"/>
-    <option timestep="0.01"/>
+    <option timestep="0.01" gravity="0 0 -9.81"/>
 
     <default>
         <joint armature="0" damping="0.1" stiffness="0"/>
-        <geom condim="3" friction="0.5 0.1 0.1"/>
+        <geom condim="3" friction="1.5 1.5 0.1"/> <!-- High enough to prevent sliding -->
     </default>
 
     <worldbody>
-        <!-- Pulley -->
+        <!-- Ground plane -->
+        <geom name="ground" type="plane" pos="0 0 0" size="10 10 0.1" rgba="0.7 0.7 0.7 1"/>
+
+        <!-- Pulley centered between inclined planes -->
         <body name="pulley" pos="0 0 1.5">
             <geom type="cylinder" size="0.05 0.1" rgba="0.5 0.5 0.5 1"/>
         </body>
 
-        <!-- Left Mass -->
-        <body name="mass1" pos="-0.2 0 1">
-            <joint name="j1" type="slide" axis="0 0 1"/>
-            <geom type="sphere" size="0.05" mass="0.5" rgba="0 0 1 1"/>
+        <!-- Left Inclined Plane (shallower) -->
+        <body name="incline_left" pos="-1.5 0 0">
+            <geom type="plane" size="3 1 0.1" rgba="0.2 0.6 0.8 1" quat="0.173 0 0 0.985"/> <!-- ~20° incline -->
+        </body>
+
+        <!-- Right Inclined Plane (steeper) -->
+        <body name="incline_right" pos="1.5 0 0">
+            <geom type="plane" size="3 1 0.1" rgba="0.2 0.8 0.2 1" quat="0.342 0 0 0.940"/> <!-- ~40° incline -->
+        </body>
+
+        <!-- Left Block (on shallower incline) -->
+        <body name="mass1" pos="-2.8 0 1.1">
+            <joint name="j1" type="free"/>
+            <geom type="box" size="0.1 0.1 0.1" mass="0.5" rgba="0 0 1 1"/>
             <site name="mass1_site" pos="0 0 0"/>
         </body>
 
-        <!-- Right Mass -->
-        <body name="mass2" pos="0.2 0 1.2">
-            <joint name="j2" type="slide" axis="0 0 1"/>
-            <geom type="sphere" size="0.05" mass="1.0" rgba="1 0 0 1"/>
+        <!-- Right Block (on steeper incline) -->
+        <body name="mass2" pos="2.8 0 1.2">
+            <joint name="j2" type="free"/>
+            <geom type="box" size="0.1 0.1 0.1" mass="1.0" rgba="1 0 0 1"/>
             <site name="mass2_site" pos="0 0 0"/>
         </body>
 
@@ -31,9 +44,9 @@
         <site name="pulley_site" pos="0 0 1.5"/>
     </worldbody>
 
-    <!-- Tendon to model the rope -->
+    <!-- Tendon simulating a rope passing through the pulley -->
     <tendon>
-        <spatial>
+        <spatial name="pulley_rope">
             <site site="mass1_site"/>
             <site site="pulley_site"/>
             <site site="mass2_site"/>
