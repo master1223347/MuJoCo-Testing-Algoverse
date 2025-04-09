@@ -1,32 +1,125 @@
 {
-  "scene": {
-    "name": "PendulumManipulation",
-    "components": [
-      {
-        "type": "robot",
-        "name": "robotic_arm",
-        "degrees_of_freedom": 3,
-        "tasks": ["manipulate_pendulum"],
-        "control_type": "position"
-      },
-      {
-        "type": "pendulum",
-        "name": "swinging_pendulum",
-        "properties": {
-          "length": 1.0,
-          "mass": 0.5,
-          "damping": 0.05
-        }
-      },
-      {
-        "type": "target",
-        "name": "pendulum_target_position",
-        "position": [0, 1, 0]
-      }
-    ],
-    "research_challenges": [
-      "inverse_kinematics_for_robotic_arm",
-      "stabilization_of_underactuated_systems"
-    ]
+  "metadata": {
+    "scene_name": "Disk vs Box on Ramp",
+    "task": "Determine which object reaches the bottom of the ramp first.",
+    "problem_type": "comparison"
+  },
+  "answer": "1",
+  "expected_behavior": "The LLM should interact with the scene, noting that the disk reaches the bottom first due to rolling motion (lower effective friction).",
+  "reasoning": "The solid disk rolls without slipping, causing it to accelerate faster than the box, which only slides with kinetic friction.",
+  "number_of_objects": "5",
+  "objects": {
+    "object_1": {
+      "name": "disk",
+      "object_id": "1"
+    },
+    "object_2": {
+      "name": "box",
+      "object_id": "2"
+    },
+    "object_3": {
+      "name": "surface",
+      "object_id": "3"
+    },
+    "object_4": {
+      "name": "ramp",
+      "object_id": "4"
+    },
+    "object_5": {
+      "name": "ground",
+      "object_id": "5"
+    }
+  },
+  "object_permissions": {
+    "object_1_permissions": {
+      "type": true,
+      "density": false,
+      "mass": false,
+      "radius": false,
+      "name": true,
+      "pos": true,
+      "quat": true,
+      "friction": true,
+      "solref": true,
+      "inertia": true,
+      "axis": true,
+      "range": true,
+      "joint": true,
+      "gear": true,
+      "site": true,
+      "texture": true
+    },
+    "object_2_permissions": {
+      "type": true,
+      "density": false,
+      "mass": false,
+      "radius": false,
+      "name": true,
+      "pos": true,
+      "quat": true,
+      "friction": true,
+      "solref": true,
+      "inertia": true,
+      "axis": true,
+      "range": true,
+      "joint": true,
+      "gear": true,
+      "site": true,
+      "texture": true
+    },
+    "object_3_permissions": {
+      "type": true,
+      "density": true,
+      "mass": true,
+      "size": true,
+      "name": true,
+      "pos": true,
+      "quat": true,
+      "friction": true,
+      "solref": true,
+      "inertia": true,
+      "axis": true,
+      "range": true,
+      "joint": true,
+      "gear": true,
+      "site": true,
+      "texture": true
+    },
+    "object_4_permissions": {
+      "type": true,
+      "density": true,
+      "mass": true,
+      "size": true,
+      "name": true,
+      "pos": true,
+      "quat": true,
+      "friction": true,
+      "solref": true,
+      "inertia": true,
+      "axis": true,
+      "range": true,
+      "joint": true,
+      "gear": true,
+      "site": true,
+      "texture": true
+    },
+    "object_5_permissions": {
+      "type": true,
+      "density": true,
+      "mass": true,
+      "size": true,
+      "name": true,
+      "pos": true,
+      "quat": true,
+      "friction": true,
+      "solref": true,
+      "inertia": true,
+      "axis": true,
+      "range": true,
+      "joint": true,
+      "gear": true,
+      "site": true,
+      "texture": true
+    }
   }
 }
