@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "scene_name": "Spring Compression and Force",
+    "task": "Determine the force needed to compress a spring by 0.3 meters given a spring constant of 500 N/m.",
+    "problem_type": "calculation"
+  },
+  "answer": "F = k * x",
+  "expected_behavior": "The LLM should calculate the force required using the spring constant and the displacement: F = k * x, where k is the spring constant and x is the displacement.",
+  "reasoning": "The LLM applies Hooke's law to calculate the force needed to compress the spring.",
+  "number_of_objects": "2",
+  "objects": {
+    "object_1": { "name": "spring", "object_id": "1" },
+    "object_2": { "name": "surface", "object_id": "2" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}
