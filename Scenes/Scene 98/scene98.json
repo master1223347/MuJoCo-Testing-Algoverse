@@ -1,0 +1,9 @@
+{
+  "metadata": {
+    "scene_name": "Rotational Inertia of a Disk",
+    "task": "Determine the moment of inertia for a solid disk with mass 4 kg and radius 0.6 meters.",
+    "problem_type": "calculation"
+  },
+  "answer": "I = 0.5 * m * r^2",
+  "expected_behavior": "The LLM should calculate the moment of inertia of a solid disk using the formula I = 0.5 * m * r^2.",
+  "reasoning": "The LLM uses the standard formula for the moment of inertia of a solid disk: I = 0.5 * m * r^2.",
