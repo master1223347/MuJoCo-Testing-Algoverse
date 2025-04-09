@@ -1,3 +1,0 @@
-The double pendulum exhibits chaotic motion. Even tiny changes in initial conditions lead to significantly different trajectories over time.
-    "testing_method": "Simulate the double pendulum with slight variations in initial conditions and observe the divergence in trajectories.",
-    "expected_behavior": "Due to chaotic dynamics, small variations in the initial angles result in significantly different motion patterns over time.",
