@@ -99,20 +99,33 @@ class Scene:
             dict: A dictionary mapping tool names to their respective simulator functions.
         """
         return {
+            "get_model_path": self.simulator.get_model_path,
+            "render": self.simulator.render,
+            "get_displacement": self.simulator.get_displacement,
+            "compute_force": self.simulator.compute_force,
+            "get_acceleration": self.simulator.get_acceleration,
+            "set_velocity": self.simulator.set_velocity,
             "apply_force": self.simulator.apply_force,
+            "apply_torque": self.simulator.apply_torque,
             "get_velocity": self.simulator.get_velocity,
             "detect_collision": self.simulator.detect_collision,
+            "set_permissions": self.simulator.set_permissions,
             "get_parameters": self.simulator.get_parameters,
             "move_object": self.simulator.move_object,
             "get_position": self.simulator.get_position,
             "reset_sim": self.simulator.reset_sim,
             "step": self.simulator.step,
-            "load_scene": self.simulator.load_scene,
-            "get_displacement": self.simulator.get_displacement,
-            "compute_force": self.simulator.compute_force,
-            "set_permissions": self.simulator.set_permissions,
+            "get_kinetic_energy": self.simulator.get_kinetic_energy,
+            "get_potential_energy": self.simulator.get_potential_energy,
+            "get_momentum": self.simulator.get_momentum,
+            "get_torque": self.simulator.get_torque,
+            "get_center_of_mass": self.simulator.get_center_of_mass,
+            "get_angular_momentum": self.simulator.get_angular_momentum,
+            "change_position": self.simulator.change_position,
+            "quat_to_rot_matrix": self.simulator.quat_to_rot_matrix,
+            "load_scene": self.simulator.load_scene
         }
-
+        
     def extract_objects_id_names_and_permissions(self):
         """
         Extracts object IDs, names, and permissions from the scene data and stores them in class attributes.
@@ -206,22 +219,35 @@ class Scene:
                 self.permissions_str += f"\n- {obj_name} (ID: {obj_id}):\n    {permissions_details}"
 
         self.tool_mapping_str = (
-        '{\n'
-        '    "apply_force": "Applies a force to a specified object in the scene.",\n'
-        '    "get_velocity": "Retrieves the velocity of a specified object.",\n'
-        '    "detect_collision": "Detects whether two or more objects have collided.",\n'
-        '    "get_parameters": "Retrieves physical parameters of an object (e.g., mass, inertia).",\n'
-        '    "move_object": "Moves an object to a specified position within the simulation.",\n'
-        '    "get_position": "Retrieves the current position of an object.",\n'
-        '    "reset_sim": "Resets the simulation environment to its initial state.",\n'
-        '    "step": "Advances the simulation by a single time step.",\n'
-        '    "load_scene": "Loads a predefined scene setup into the simulation.",\n'
-        '    "get_displacement": "Computes the displacement of an object from its initial position.",\n'
-        '    "compute_force": "Computes the force applied to an object based on its motion parameters.",\n'
-        '    "set_permissions": "Defines or updates access and modification permissions for scene objects."\n'
-        '}'
-    )
-
+            '{\n'
+            '    "get_model_path": "Retrieves the file path of the current MuJoCo model.",\n'
+            '    "render": "Renders the current simulation frame visually.",\n'
+            '    "get_displacement": "Computes the displacement of an object from its initial position.",\n'
+            '    "compute_force": "Computes the net force applied to an object using physical parameters.",\n'
+            '    "get_acceleration": "Retrieves the linear acceleration of a specified object.",\n'
+            '    "set_velocity": "Sets a new velocity for a specified object.",\n'
+            '    "apply_force": "Applies a force to a specified object in the scene.",\n'
+            '    "apply_torque": "Applies a torque (rotational force) to a specified object.",\n'
+            '    "get_velocity": "Retrieves the velocity of a specified object.",\n'
+            '    "detect_collision": "Detects whether two or more objects have collided.",\n'
+            '    "set_permissions": "Defines or updates access and modification permissions for scene objects.",\n'
+            '    "get_parameters": "Retrieves physical parameters of an object (e.g., mass, inertia).",\n'
+            '    "move_object": "Moves an object to a specified position within the simulation.",\n'
+            '    "get_position": "Retrieves the current position of an object.",\n'
+            '    "reset_sim": "Resets the simulation environment to its initial state.",\n'
+            '    "step": "Advances the simulation by a single time step.",\n'
+            '    "get_kinetic_energy": "Calculates the kinetic energy of an object.",\n'
+            '    "get_potential_energy": "Calculates the potential energy of an object in the simulation.",\n'
+            '    "get_momentum": "Calculates the linear momentum of an object.",\n'
+            '    "get_torque": "Retrieves the net torque acting on an object.",\n'
+            '    "get_center_of_mass": "Returns the center of mass position of the object.",\n'
+            '    "get_angular_momentum": "Computes the angular momentum of an object.",\n'
+            '    "change_position": "Applies a positional offset to an object along x, y, z directions.",\n'
+            '    "quat_to_rot_matrix": "Converts a quaternion rotation into a 3x3 rotation matrix.",\n'
+            '    "load_scene": "Loads a predefined scene setup into the simulation."\n'
+            '}'
+        )
+        
         self.exp_results_format = (
         f"\n\n### Expected Experiment Results Format"
         f"\nThe results of each experiment should be structured as follows:"
