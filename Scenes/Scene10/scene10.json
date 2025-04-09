@@ -1,28 +1,29 @@
-  {
-    "scene_name": "Atwood Machine",
+{
+  "metadata": {
+    "scene_name": "Atwood Machine on Inclined Planes",
     "task": "Determine the acceleration of the system given two masses on a pulley.",
-    "objects": [
-      {
-        "name": "Pulley ",
-        "object_id": "1",
-        "permissions": { "gravity": false, "mass": false, "tension": false }
-      },
-      {
-        "name": "String",
-        "object_id": "2",
-        "permissions": { "gravity": false, "mass": false, "tension": false }
-      },
-      {
-        "name": "Mass 1",
-        "object_id": "3",
-        "permissions": { "gravity": false, "mass": false, "tension": false }      
-      },
-      {
-        "name": "Mass 2",
-        "object_id": "4",
-        "permissions": { "gravity": false, "mass": false, "tension": false }      
-      }
-    ]
+    "problem_type": "computation"
+  },
+
+  "answer": 3.27,
+
+  "expected_behavior": "The LLM simulates the system using the given masses and calculates the resulting acceleration. It then compares the outcome to the formula a = (m2 - m1) * g / (m1 + m2), accounting for inclined plane dynamics.",
+
+  "reasoning": "The two blocks are connected via a pulley system on inclined planes. Using Newton's second law for each block and balancing tension and gravitational components along the slopes, the LLM determines the net acceleration based on the known masses and gravity.",
+
+  "number_of_objects": "4",
+
+  "objects": {
+    "object_1": { "name": "pulley", "object_id": "1" },
+    "object_2": { "name": "pulley_rope", "object_id": "2" },
+    "object_3": { "name": "mass1", "object_id": "3" },
+    "object_4": { "name": "mass2", "object_id": "4" }
+  },
+
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": false, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": false, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": false, "radius": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_4_permissions": { "type": true, "density": true, "mass": false, "radius": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
   }
-  
-  
+}
