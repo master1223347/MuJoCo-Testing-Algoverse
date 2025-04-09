@@ -1,3 +1,0 @@
-Using Newton’s laws, the coefficient of friction is μ = (g sinθ - a) / g cosθ, where a is the measured acceleration.
-    "testing_method": "Measure acceleration and use Newton's second law (μ = (g sinθ - a) / g cosθ).",
-    "expected_behavior": "A higher friction coefficient results in slower acceleration.",
