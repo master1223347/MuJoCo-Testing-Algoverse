@@ -221,8 +221,6 @@ class Scene:
 
         self.tool_mapping_str = (
             '{\n'
-            '    "get_model_path": "Retrieves the file path of the current MuJoCo model.",\n'
-            '    "render": "Renders the current simulation frame visually.",\n'
             '    "get_displacement": "Computes the displacement of an object from its initial position.",\n'
             '    "compute_force": "Computes the net force applied to an object using physical parameters.",\n'
             '    "get_acceleration": "Retrieves the linear acceleration of a specified object.",\n'
@@ -235,8 +233,6 @@ class Scene:
             '    "get_parameters": "Retrieves physical parameters of an object (e.g., mass, inertia).",\n'
             '    "move_object": "Moves an object to a specified position within the simulation.",\n'
             '    "get_position": "Retrieves the current position of an object.",\n'
-            '    "reset_sim": "Resets the simulation environment to its initial state.",\n'
-            '    "step": "Advances the simulation by a single time step.",\n'
             '    "get_kinetic_energy": "Calculates the kinetic energy of an object.",\n'
             '    "get_potential_energy": "Calculates the potential energy of an object in the simulation.",\n'
             '    "get_momentum": "Calculates the linear momentum of an object.",\n'
@@ -245,8 +241,6 @@ class Scene:
             '    "get_angular_momentum": "Computes the angular momentum of an object.",\n'
             '    "change_position": "Applies a positional offset to an object along x, y, z directions.",\n'
             '    "quat_to_rot_matrix": "Converts a quaternion rotation into a 3x3 rotation matrix.",\n'
-            '    "load_scene": "Loads a predefined scene setup into the simulation.",\n'
-            '    "answer": "Provides a way for the LLM to give an answer"
             '}'
         )
         
