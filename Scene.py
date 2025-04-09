@@ -123,7 +123,8 @@ class Scene:
             "get_angular_momentum": self.simulator.get_angular_momentum,
             "change_position": self.simulator.change_position,
             "quat_to_rot_matrix": self.simulator.quat_to_rot_matrix,
-            "load_scene": self.simulator.load_scene
+            "load_scene": self.simulator.load_scene,
+            "answer": lambda answer: {"result": answer}
         }
         
     def extract_objects_id_names_and_permissions(self):
@@ -244,7 +245,8 @@ class Scene:
             '    "get_angular_momentum": "Computes the angular momentum of an object.",\n'
             '    "change_position": "Applies a positional offset to an object along x, y, z directions.",\n'
             '    "quat_to_rot_matrix": "Converts a quaternion rotation into a 3x3 rotation matrix.",\n'
-            '    "load_scene": "Loads a predefined scene setup into the simulation."\n'
+            '    "load_scene": "Loads a predefined scene setup into the simulation.",\n'
+            '    "answer": "Provides a way for the LLM to give an answer"
             '}'
         )
         
