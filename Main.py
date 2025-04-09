@@ -53,6 +53,15 @@ def main():
         
         # Run the experiment
         results = experiment.run_experiment()
+
+
+        if results['answer_found']:
+            print("\n=== Answer Summary ===")
+            print(f"LLM's Answer: {results['llm_answer']}")
+            print(f"Correct Answer: {results['correct_answer']}")
+            print(f"Answer Correct: {results['correct']}")
+        else:
+            print("\nNo answer was provided by the LLM.")
         
         # Store the results in the aggregated_results dictionary
         aggregated_results[scene_id] = results
