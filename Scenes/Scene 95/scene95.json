@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "scene_name": "Tension in a Pulley System",
+    "task": "Calculate the tension in the rope for a pulley system with a 5 kg block hanging vertically and a 3 kg block on a horizontal surface with friction.",
+    "problem_type": "calculation"
+  },
+  "answer": "T = m1 * g / (1 + m2/m1)",
+  "expected_behavior": "The LLM should calculate the tension using the formula T = m1 * g / (1 + m2/m1), where m1 is the mass of the hanging block and m2 is the mass of the block on the surface.",
+  "reasoning": "The LLM applies the standard tension formula for a pulley system with friction, accounting for the forces on both blocks.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": { "name": "hanging_block", "object_id": "1" },
+    "object_2": { "name": "surface_block", "object_id": "2" },
+    "object_3": { "name": "pulley", "object_id": "3" },
+    "object_4": { "name": "surface", "object_id": "4" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}
