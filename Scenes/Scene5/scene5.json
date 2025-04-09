@@ -1,12 +1,27 @@
 {
-  "scene_name": "Mass-Spring System Damping",
-  "task": "Determine the damping coefficient of the system.",
-  "objects": [
-    {
-      "name": "Spring System",
-      "object_id": "1",
-      "permissions": { "spring_constant": true, "mass": true, "damping": false }
-    }
-  ]
-}
+  "metadata": {
+    "scene_name": "Mass-Spring System Damping",
+    "task": "Determine the damping coefficient of the system.",
+    "problem_type": "computation"
+  },
 
+  "answer": 3.5,
+
+  "expected_behavior": "The LLM observes the motion of the box, records its decaying amplitude over time, and calculates the damping coefficient based on how quickly oscillations decay.",
+
+  "reasoning": "In damped harmonic motion, displacement decreases exponentially over time. By measuring how the amplitude of the oscillation decays and knowing the mass, the LLM can fit the equation x(t) = A·e^(-bt/2m)·cos(ωt) to solve for the damping coefficient b.",
+
+  "number_of_objects": "3",
+
+  "objects": {
+    "object_1": { "name": "incline", "object_id": "1" },
+    "object_2": { "name": "surface", "object_id": "2" },
+    "object_3": { "name": "box", "object_id": "3" }
+  },
+
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "radius": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}
