@@ -1,15 +1,27 @@
 {
+  "metadata": {
     "scene_name": "Pendulum Gravity Test",
     "task": "Determine the local acceleration due to gravity.",
-    "objects": [
-      {
-        "name": "Pendulum",
-        "object_id": "1",
-        "permissions": { "length": false, "time": false, "gravity": false }
-      }
-    ]
-  }
-  
-  
+    "problem_type": "computation"
+  },
 
-  
+  "answer": "17.9",
+
+  "expected_behavior": "The LLM measures the time period of the pendulum and its length, then calculates gravitational acceleration using T = 2π√(L/g).",
+
+  "reasoning": "By rearranging the pendulum formula T = 2π√(L/g), we solve for g: g = (4π²L) / T². Observing the oscillation period and using the known length of the pendulum allows calculation of local gravity.",
+
+  "number_of_objects": "3",
+
+  "objects": {
+    "object_1": { "name": "surface", "object_id": "1" },
+    "object_2": { "name": "pendulum", "object_id": "2" },
+    "object_3": { "name": "hollow_sphere", "object_id": "3" }
+  },
+
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}
