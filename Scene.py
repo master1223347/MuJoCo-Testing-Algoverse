@@ -282,5 +282,5 @@ class Scene:
 
     def get_correct_answer(self):
         """Returns the correct answer for the scene."""
-        return self.answer() if self.data else ""
+        return self.answer if self.data else ""
 
