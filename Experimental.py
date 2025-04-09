@@ -29,21 +29,32 @@ class Experimental:
 
         # Tool mapping to bind methods from the simulator to be called dynamically
         self.tool_mapping = {
+            "get_model_path": self.simulator.get_model_path,
             "render": self.simulator.render,
+            "get_displacement": self.simulator.get_displacement,
+            "compute_force": self.simulator.compute_force,
+            "get_acceleration": self.simulator.get_acceleration,
+            "set_velocity": self.simulator.set_velocity,
             "apply_force": self.simulator.apply_force,
+            "apply_torque": self.simulator.apply_torque,
             "get_velocity": self.simulator.get_velocity,
             "detect_collision": self.simulator.detect_collision,
+            "set_permissions": self.simulator.set_permissions,
             "get_parameters": self.simulator.get_parameters,
             "move_object": self.simulator.move_object,
             "get_position": self.simulator.get_position,
             "reset_sim": self.simulator.reset_sim,
             "step": self.simulator.step,
+            "get_kinetic_energy": self.simulator.get_kinetic_energy,
+            "get_potential_energy": self.simulator.get_potential_energy,
+            "get_momentum": self.simulator.get_momentum,
+            "get_torque": self.simulator.get_torque,
+            "get_center_of_mass": self.simulator.get_center_of_mass,
+            "get_angular_momentum": self.simulator.get_angular_momentum,
+            "change_position": self.simulator.change_position,
+            "quat_to_rot_matrix": self.simulator.quat_to_rot_matrix,
             "load_scene": self.simulator.load_scene,
-            "get_displacement": self.simulator.get_displacement,  # Added tool for displacement
-            "compute_force": self.simulator.compute_force,  # Added tool for computing force
             "answer": lambda answer: {"result": answer}
-            
-
         }
 
     def execute_tool_calls(self, tool_calls_json: str) -> List[Dict[str, Any]]:
@@ -279,8 +290,4 @@ class Experimental:
 
         }
 
-        
-        
         return experiment_results
-
-
