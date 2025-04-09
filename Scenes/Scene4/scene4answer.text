@@ -1,3 +1,0 @@
-Using the pendulum equation T = 2π√(L/g), we can derive g by measuring the length and time period of the pendulum.
-    "testing_method": "Use the pendulum's time period (T) to calculate gravity with T = 2π√(L/g).",
-    "expected_behavior": "Gravity is calculated based on the observed oscillation period.",
