@@ -185,7 +185,7 @@ class Simulator:
         mujoco.mj_forward(self.model, self.data)
         self.time = 0
 
-    def step(self, duration: float):
+    def step(self, duration: float = 1.0):
         """Step the simulation forward by a specified duration."""
         num_steps = int(duration / self.model.opt.timestep)
         remaining_time = duration - (num_steps * self.model.opt.timestep)
