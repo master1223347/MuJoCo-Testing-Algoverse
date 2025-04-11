@@ -20,56 +20,37 @@ class Scene:
         self.scene_id = scene_id
         self.simulator = simulator  # Store the simulator object
         self.scene_number = int(scene_id.split("_")[-1])
-        self.terminal = "robin" #For setting it up, switch this to the following - robin, abhinav, or sid.
-
-        # Get the absolute path of the current working directory through a bunch of if else statements.
-        if (self.terminal == "utkarsh"):
-            drive = os.path.splitdrive(os.getcwd())[0].lower().rstrip(":") + ":/"  # Ensure single ':'
+        self.terminal = "robin"  # For setting it up, switch this to: "robin", "abhinav", or "sid".
         
-            # Construct the correct base directory
+        # Construct file path based on the terminal setting
+        if self.terminal == "utkarsh":
+            drive = os.path.splitdrive(os.getcwd())[0].lower().rstrip(":") + ":/"
             base_dir = os.path.join(drive, "Users", "inbox", "Algoverse")
-        
-            # Construct the full file path
-            self.file_path = os.path.join(
-                base_dir, "MuJoCo-Testing-Algoverse", "Scenes", 
-                f"Scene{self.scene_number}", f"scene{self.scene_number}.json"
-            )
-        
-            # Normalize the path: replace backslashes with forward slashes
+            self.file_path = os.path.join(base_dir, "MuJoCo-Testing-Algoverse", "Scenes", 
+                                          f"Scene{self.scene_number}", f"scene{self.scene_number}.json")
             self.file_path = self.file_path.replace("\\", "/")
-
-        elif(self.terminal == "robin"):
-            
+        elif self.terminal == "robin":
             base_dir = r"C:\Users\robin\OneDrive\Documents\Algoverse\MuJoCo-Testing-Algoverse-main\Scenes"
-
             self.file_path = os.path.join(base_dir, f"Scene{self.scene_number}", f"scene{self.scene_number}.json")
-
-        elif(self.terminal == "abhinav"):
-
+        elif self.terminal == "abhinav":
             base_dir = r"C:\Users\epicg\Algoverse\MuJoCo-Testing-Algoverse\Scenes"
-
             self.file_path = os.path.join(base_dir, f"Scene{self.scene_number}", f"scene{self.scene_number}.json")
-
-        elif(self.terminal == "sid"):
-
+        elif self.terminal == "sid":
             base_dir = r"C:\Users\siddh\OneDrive\Desktop\Algoverse\MuJoCo-Testing-Algoverse\Scenes"
-
             self.file_path = os.path.join(base_dir, f"Scene{self.scene_number}", f"scene{self.scene_number}.json")
-        
-        # Debugging: Print the file path to verify correctness
+
         print("Looking for file at:", self.file_path)
         
-        # Check if file exists
+        # Load the JSON data if it exists
         if os.path.exists(self.file_path):
             print("File successfully found")
-            
-            # Load JSON data
             with open(self.file_path, "r") as file:
                 self.data = json.load(file)
         else:
-            print("Not successful")
+            print("File not found")
             self.data = None
 
+        # Initialize attributes with default values
         self.scene_desc = ""
         self.scene_task = ""
         self.problem_type = ""
@@ -79,17 +60,53 @@ class Scene:
         self.answer = ""
         self.expected_behavior = ""
         self.reasoning = ""
-        self.object_list = []  # Reset object list before populating
-        self.permissions = {}
+        self.object_list = []  # Will be populated from JSON
+        self.object_permissions = {}
+
+        # Parse the metadata and objects from the JSON
+        self.metadata()
+        self.extract_objects_id_names_and_permissions()
 
     def metadata(self):
         """
         Extracts metadata from the scene JSON file and assigns it to class attributes.
         """
-        metadata = self.data.get("metadata", {})  # Default to empty dict
-        self.scene_desc = str(metadata.get("scene_desc", ""))
-        self.scene_task = str(metadata.get("scene_task", ""))
-        self.problem_type = str(metadata.get("problem_type", ""))
+        metadata = self.data.get("metadata", {})  # Use an empty dict as fallback
+        # Use JSON keys as in your example: "scene_name", "task", "problem_type"
+        self.scene_desc = str(metadata.get("scene_name", "No description available"))
+        self.scene_task = str(metadata.get("task", "No task description available"))
+        self.problem_type = str(metadata.get("problem_type", "general"))
+
+    def extract_objects_id_names_and_permissions(self):
+        """
+        Extracts object IDs, names, and permissions from the scene data and stores them in class attributes.
+        """
+        self.object_list = []
+        self.object_permissions = {}
+
+        try:
+            num_objects = int(self.data.get("number_of_objects", "0"))
+        except ValueError:
+            num_objects = 0  
+
+        objects_data = self.data.get("objects", {})
+        permissions_data = self.data.get("object_permissions", {})
+
+        if not isinstance(objects_data, dict) or not isinstance(permissions_data, dict):
+            return  
+
+        for i in range(1, num_objects + 1):
+            object_key = f"object_{i}"
+            permission_key = f"object_{i}_permissions"
+            if object_key in objects_data:
+                obj = objects_data[object_key]
+                self.object_list.append({
+                    "object_id": obj.get("object_id", f"Unknown_{i}"),
+                    "name": obj.get("name", f"Unnamed Object {i}")
+                })
+            if permission_key in permissions_data:
+                # We key the permissions by the object_id we just extracted
+                self.object_permissions[obj.get("object_id", f"Unknown_{i}")] = permissions_data[permission_key]
 
     def tool_mapping(self):
         """
@@ -119,72 +136,6 @@ class Scene:
             "change_position": self.simulator.change_position,
             "quat_to_rot_matrix": self.simulator.quat_to_rot_matrix,
         }
-        
-    def extract_objects_id_names_and_permissions(self):
-        """
-        Extracts object IDs, names, and permissions from the scene data and stores them in class attributes.
-        """
-        self.object_list = []  # Reset object list
-        self.object_permissions = {}  # Reset permissions
-
-        try:
-            num_objects = int(self.data.get("number_of_objects", "0"))
-        except ValueError:
-            num_objects = 0  
-
-        objects_data = self.data.get("objects", {})
-        permissions_data = self.data.get("object_permissions", {})
-
-        if not isinstance(objects_data, dict) or not isinstance(permissions_data, dict):
-            return  
-
-        for i in range(1, num_objects + 1):
-            object_key = f"object_{i}"
-            permission_key = f"object_{i}_permissions"
-
-            if object_key in objects_data:
-                obj = objects_data[object_key]
-                self.object_list.append({
-                    "object_id": obj.get("object_id", "Unknown"),
-                    "name": obj.get("name", "Unnamed Object")
-                })
-
-            if permission_key in permissions_data:
-                self.object_permissions[obj.get("object_id", "Unknown")] = permissions_data[permission_key]
-
-    def object_permissions_for_sim(self):
-        """
-        Sets object permissions in the simulator.
-        """
-        self.permissions = self.data.get("permissions")
-        self.simulator.set_permissions(self.permissions)
-
-    def answer(self):
-        """
-        Retrieves the answer dataset of the scene.
-        
-        Returns:
-            any: The answer dataset, or None if not available.
-        """
-        return self.data.get("answer") if self.data else None
-
-    def expected_behavior(self):
-        """
-        Retrieves the expected behavior dataset of the scene.
-        
-        Returns:
-            any: The expected behavior dataset, or None if not available.
-        """
-        return self.data.get("expected_behavior") if self.data else None
-
-    def reasoning(self):
-        """
-        Retrieves the reasoning dataset of the scene.
-        
-        Returns:
-            any: The reasoning dataset, or None if not available.
-        """
-        return self.data.get("reasoning") if self.data else None
 
     def generate_prompt(self):
         """
@@ -193,13 +144,12 @@ class Scene:
         Returns:
             str: The structured prompt guiding interaction with the simulation environment.
         """
-    
-        # Format object list as a string
+        # Format the objects list as a string
         self.objects_str = ", ".join(
             [f"{obj['object_id']} ({obj['name']})" for obj in self.object_list]
         ) if self.object_list else "No objects found."
 
-        # Format permissions (Ensure every permission is fully listed)
+        # Format the permissions string
         self.permissions_str = ""
         for obj in self.object_list:
             obj_id = obj["object_id"]
@@ -207,11 +157,12 @@ class Scene:
             if obj_id in self.object_permissions:
                 perms = self.object_permissions[obj_id]
                 permissions_details = "\n    ".join(
-                    [f"{key}: {'can be accessed and modified' if value else 'cannot be accessed or modified'}"
+                    [f"{key}: {'can be accessed and modified' if value else 'cannot be accessed or modified'}" 
                      for key, value in perms.items()]
                 )
                 self.permissions_str += f"\n- {obj_name} (ID: {obj_id}):\n    {permissions_details}"
 
+        # Define the tool mapping string (as a literal string)
         self.tool_mapping_str = (
             '{\n'
             '    "get_displacement": "Computes the displacement of an object from its initial position.",\n'
@@ -237,28 +188,29 @@ class Scene:
             '}'
         )
         
+        # Create a string for the expected experiment results format
         self.exp_results_format = (
-        f"\n\n### Expected Experiment Results Format"
-        f"\nThe results of each experiment should be structured as follows:"
-        f"\n```json"
-        f"\n{{"
-        f'\n  "correct": <boolean>,  # Whether the correct answer was found'
-        f'\n  "timeout": <boolean>,  # Whether the experiment timed out after max iterations'
-        f'\n  "num_tool_calls": <integer>,  # Total number of tool calls made'
-        f'\n  "iterations": <integer>  # Total iterations performed'
-        f"\n}}"
-        f"\n```"
-        f"\n\nTo process and evaluate the experiment results, you should call back to the `run_experiments` function in the `Experimental` class."
-        f"\nThis function utilizes a dictionary to track and analyze the experiment's progress."
-    )
+            f"\n\n### Expected Experiment Results Format"
+            f"\nThe results of each experiment should be structured as follows:"
+            f"\n```json"
+            f"\n{{"
+            f'\n  "correct": <boolean>,  # Whether the correct answer was found'
+            f'\n  "timeout": <boolean>,  # Whether the experiment timed out after max iterations'
+            f'\n  "num_tool_calls": <integer>,  # Total number of tool calls made'
+            f'\n  "iterations": <integer>  # Total iterations performed'
+            f"\n}}"
+            f"\n```"
+            f"\n\nTo process and evaluate the experiment results, you should call back to the `run_experiments` function in the `Experimental` class."
+            f"\nThis function utilizes a dictionary to track and analyze the experiment's progress."
+        )
 
+        # Construct the final prompt using all information
         self.prompt = (
             f"You are trying to analyze a physics problem that is given when a scene_number is entered. Your goal is to interact with the environment and figure out the correct answer. The answers are either integers or float values."
-            f"\n\nThe scene's description is:\n{self.scene_desc}"
-            f"\nYour task is defined as:\n{self.scene_task}"
-            f"\nThese are the object IDs and object names found in the scene:\n{self.objects_str}"
-            f"\n\nEach object has specific permissions defining whether its properties can be accessed or modified. "
-            f"Here are the permissions for each object:\n{self.permissions_str}"
+            f"\n\nThe scene's description is: {self.scene_desc}."
+            f"\nYour task is defined as: {self.scene_task}."
+            f"\nThese are the object IDs and object names found in the scene: {self.objects_str}"
+            f"\n\nEach object has specific permissions defining whether its properties can be accessed or modified. Here are the permissions for each object:{self.permissions_str}"
             f"\n\nThese are the different tools and functions you can use to interact with the environment/scene rendered in MuJoCo:\n{self.tool_mapping_str}"
             f"\n\nThe names of the tools above correspond to functions in the simulator class that you can call when interacting with the environment."
             f"\n\nHowever, you might encounter an error if you call a function requiring permissions to modify objects that you are not allowed to access."
@@ -276,7 +228,8 @@ class Scene:
             f"\n- Use Python libraries such as `matplotlib` and `scikit-learn` to generate plots or diagrams."
             f"\n{self.exp_results_format}"
         )
-    
+
+        # Append additional instructions based on problem type
         if self.problem_type == "comparison":
             self.prompt += (
                 f"\n\nSince this problem is a comparison problem, your answer should be the object id number of the object that satisfies the task."
@@ -297,5 +250,4 @@ class Scene:
 
     def get_correct_answer(self):
         """Returns the correct answer for the scene."""
-        return self.answer if self.data else ""
-
+        return self.data.get("answer", "") if self.data else ""
