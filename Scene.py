@@ -206,7 +206,7 @@ class Scene:
 
         # Construct the final prompt using all information
         self.prompt = (
-            f"You are trying to analyze a physics problem that is given when a scene_number is entered. Your goal is to interact with the environment and figure out the correct answer. The answers are either integers or float values."
+            f"You are trying to analyze a physics problem given by the scene_id. Your goal is to interact with the environment and figure out the correct answer. The answers are either integers or float values."
             f"\n\nThe scene's description is: {self.scene_desc}."
             f"\nYour task is defined as: {self.scene_task}."
             f"\nThese are the object IDs and object names found in the scene: {self.objects_str}"
@@ -222,8 +222,8 @@ class Scene:
             f"\n- `scene.expected_behavior`"
             f"\n- `scene.reasoning`"
             f"\n\n**Logging & Analysis:**"
-            f"\n- Log all interactions with the environment, including time-step results and the functions used."
-            f"\n- Provide reasoning for every interaction you apply to the environment."
+            f"\n- Log all interactions with the environment, including time-step results and the functions used. NOTE: when calling functions, be sure to use the OBJECT ID as your parameter and NOT the OBJECT NAME!"
+            f"\n- Provide reasoning for every interaction you apply to the environment AS YOU ARE RUNNING THROUGH YOUR ITERATIONS!!!"
             f"\n- Format all experimental data into a table or matrix for visualization."
             f"\n- Use Python libraries such as `matplotlib` and `scikit-learn` to generate plots or diagrams."
             f"\n{self.exp_results_format}"
