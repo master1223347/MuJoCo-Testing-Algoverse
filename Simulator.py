@@ -85,65 +85,44 @@ class Simulator:
             "z": mass * acceleration["z"]
         }
 
-    def get_acceleration(self, obj_name: str) -> Dict[str, float]:
+    def get_acceleration(self, object_id: str) -> Dict[str, float]:
         """Retrieve the acceleration of an object using finite differences."""
-        obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
-        if obj_id == -1:
-            raise ValueError(f"Object '{obj_name}' not found.")
-
-        vel_prev = np.copy(self.get_velocity(obj_name))  # Previous velocity
+        # Get velocity data for acceleration calculation
+        vel_prev = np.copy(self.get_velocity(object_id))  # Previous velocity
         mujoco.mj_step(self.model, self.data)  # Step simulation
-        vel_curr = np.copy(self.get_velocity(obj_name))  # Current velocity
+        vel_curr = np.copy(self.get_velocity(object_id))  # Current velocity
 
         dt = self.model.opt.timestep
         acceleration = (vel_curr - vel_prev) / dt
 
         return {"x": acceleration[0], "y": acceleration[1], "z": acceleration[2]}
 
-    def set_velocity(self, obj_name: str, velocity_vector):
+    def set_velocity(self, object_id: str, velocity_vector):
         """Set the velocity of an object."""
-        obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
-        if obj_id == -1:
-            raise ValueError(f"Object '{obj_name}' not found.")
-        self.data.qvel[obj_id * 6: obj_id * 6 + 3] = velocity_vector
+        self.data.qvel[object_id * 6: object_id * 6 + 3] = velocity_vector
         mujoco.mj_forward(self.model, self.data)
 
-    def apply_force(self, obj_name: str, force_vector):
+    def apply_force(self, object_id: str, force_vector):
         """Apply a force to an object."""
-        obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
-        if obj_id == -1:
-            raise ValueError(f"Object '{obj_name}' not found.")
-        self.data.xfrc_applied[obj_id, :3] = force_vector
+        self.data.xfrc_applied[object_id, :3] = force_vector
 
-    def apply_torque(self, obj_name: str, torque_vector):
+    def apply_torque(self, object_id: str, torque_vector):
         """Apply a torque to an object."""
-        obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
-        if obj_id == -1:
-            raise ValueError(f"Object '{obj_name}' not found.")
-        self.data.xfrc_applied[obj_id, 3:6] = torque_vector
+        self.data.xfrc_applied[object_id, 3:6] = torque_vector
 
-    def get_velocity(self, obj_name: str):
+    def get_velocity(self, object_id: str):
         """Retrieve the velocity of an object."""
-        obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
-        if obj_id == -1:
-            raise ValueError(f"Object '{obj_name}' not found.")
-        return self.data.qvel[obj_id * 6: obj_id * 6 + 3]
+        return self.data.qvel[object_id * 6: object_id * 6 + 3]
 
-    def detect_collision(self, obj1_name: str, obj2_name: str):
+    def detect_collision(self, obj1_id: str, obj2_id: str):
         """Detect collision between two objects and apply simple elastic forces."""
-        obj1_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj1_name)
-        obj2_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj2_name)
-
-        if obj1_id == -1 or obj2_id == -1:
-            raise ValueError("One or both objects not found.")
-
         for contact in self.data.contact:
             if (contact.geom1 == obj1_id and contact.geom2 == obj2_id) or \
                (contact.geom1 == obj2_id and contact.geom2 == obj1_id):
                 # Apply simple elastic response
                 normal_force = contact.frame[:3] * contact.dist
-                self.apply_force(obj1_name, -normal_force)
-                self.apply_force(obj2_name, normal_force)
+                self.apply_force(obj1_id, -normal_force)
+                self.apply_force(obj2_id, normal_force)
                 return True
         return False
 
@@ -151,39 +130,31 @@ class Simulator:
         """Set permissions for object parameter access."""
         self.permissions = permissions
 
-    def get_parameters(self, obj_name: str):
+    def get_parameters(self, object_id: str):
         """Retrieve parameters of an object, respecting scene-defined permissions."""
-        obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
-        if obj_id == -1:
-            raise ValueError(f"Object '{obj_name}' not found.")
-
         # Check permissions for parameter access
-        permissions = getattr(self, 'permissions', {}).get(obj_name, {})
+        permissions = getattr(self, 'permissions', {}).get(object_id, {})
         if not permissions.get("get_parameters", True):  # Default to allowed
-            raise PermissionError(f"Access to parameters of '{obj_name}' is not allowed.")
+            raise PermissionError(f"Access to parameters of object with ID {object_id} is not allowed.")
 
         return {
-            "mass": float(self.model.body_mass[obj_id]),
-            "bounding_box": self.model.body_inertia[obj_id].tolist(),
-            "type": int(self.model.body_parentid[obj_id])
+            "mass": float(self.model.body_mass[object_id]),
+            "bounding_box": self.model.body_inertia[object_id].tolist(),
+            "type": int(self.model.body_parentid[object_id])
         }
 
-    def move_object(self, name: str, x: float, y: float, z: float):
+    def move_object(self, object_id: str, x: float, y: float, z: float):
         """Move an object to a new position."""
-        obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, name)
-        if obj_id == -1:
-            raise ValueError(f"Object '{name}' not found.")
-        self.data.qpos[obj_id * 7] = x
-        self.data.qpos[obj_id * 7 + 1] = y
-        self.data.qpos[obj_id * 7 + 2] = z
+        self.data.qpos[object_id * 7] = x
+        self.data.qpos[object_id * 7 + 1] = y
+        self.data.qpos[object_id * 7 + 2] = z
         mujoco.mj_forward(self.model, self.data)
 
-    def get_position(self, name: str):
+    def get_position(self, object_id: str):
         """Get the position of an object."""
-        obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, name)
-        if obj_id == -1:
-            raise ValueError(f"Object '{name}' not found.")
-        return (self.data.qpos[obj_id * 7], self.data.qpos[obj_id * 7 + 1], self.data.qpos[obj_id * 7 + 2]), self.data.time
+        return (self.data.qpos[object_id * 7], 
+                self.data.qpos[object_id * 7 + 1], 
+                self.data.qpos[object_id * 7 + 2]), self.data.time
 
     def reset_sim(self):
         """Reset the simulation to its initial state."""
@@ -209,28 +180,24 @@ class Simulator:
 
         self.time += duration
 
-    def get_kinetic_energy(self, obj_name: str, mass: float):
+    def get_kinetic_energy(self, object_id: str, mass: float):
         """Calculate the kinetic energy of an object."""
-        velocity = self.get_velocity(obj_name)
+        velocity = self.get_velocity(object_id)
         return 0.5 * mass * np.sum(velocity**2)
 
-    def get_potential_energy(self, obj_name: str, mass: float, gravity: float = 9.81):
+    def get_potential_energy(self, object_id: str, mass: float, gravity: float = 9.81):
         """Calculate the potential energy of an object."""
-        position, _ = self.get_position(obj_name)
+        position, _ = self.get_position(object_id)
         return mass * gravity * position[2]  # Using z as height
 
-    def get_momentum(self, obj_name: str, mass: float):
+    def get_momentum(self, object_id: str, mass: float):
         """Calculate the linear momentum of an object."""
-        velocity = self.get_velocity(obj_name)
+        velocity = self.get_velocity(object_id)
         return {"x": mass * velocity[0], "y": mass * velocity[1], "z": mass * velocity[2]}
 
-    def get_torque(self, obj_name: str):
+    def get_torque(self, object_id: str):
         """Calculate the torque acting on an object."""
-        obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
-        if obj_id == -1:
-            raise ValueError(f"Object '{obj_name}' not found.")
-    
-        torque = self.data.qfrc_applied[obj_id * 6 + 3: obj_id * 6 + 6]
+        torque = self.data.qfrc_applied[object_id * 6 + 3: object_id * 6 + 6]
         return {"x": torque[0], "y": torque[1], "z": torque[2]}
 
     def get_center_of_mass(self):
@@ -241,63 +208,49 @@ class Simulator:
         center_of_mass = weighted_positions / total_mass
         return {"x": center_of_mass[0], "y": center_of_mass[1], "z": center_of_mass[2]}
 
-    def get_angular_momentum(self, obj_name: str, mass: float):
+    def get_angular_momentum(self, object_id: str, mass: float):
         """Calculate the angular momentum of an object."""
-        position, _ = self.get_position(obj_name)
-        velocity = self.get_velocity(obj_name)
+        position, _ = self.get_position(object_id)
+        velocity = self.get_velocity(object_id)
     
         # Convert position to numpy array for cross product
         pos_array = np.array(position)
         angular_momentum = np.cross(pos_array, mass * velocity)
         return {"x": angular_momentum[0], "y": angular_momentum[1], "z": angular_momentum[2]}
 
-    def change_position(self, obj_name: str, dx: float, dy: float, dz: float, in_world_frame: bool = True):
+    def change_position(self, object_id: str, dx: float, dy: float, dz: float, in_world_frame: bool = True):
         """Change the position of an object by a given displacement."""
-        obj_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obj_name)
-        if obj_id == -1:
-            raise ValueError(f"Object '{obj_name}' not found.")
-        
-        # Get current position
-        pos_x = self.data.qpos[obj_id * 7]
-        pos_y = self.data.qpos[obj_id * 7 + 1]
-        pos_z = self.data.qpos[obj_id * 7 + 2]
+        pos_x = self.data.qpos[object_id * 7]
+        pos_y = self.data.qpos[object_id * 7 + 1]
+        pos_z = self.data.qpos[object_id * 7 + 2]
         
         if in_world_frame:
             # Apply displacement directly in world frame
-            self.data.qpos[obj_id * 7] = pos_x + dx
-            self.data.qpos[obj_id * 7 + 1] = pos_y + dy
-            self.data.qpos[obj_id * 7 + 2] = pos_z + dz
+            self.data.qpos[object_id * 7] = pos_x + dx
+            self.data.qpos[object_id * 7 + 1] = pos_y + dy
+            self.data.qpos[object_id * 7 + 2] = pos_z + dz
         else:
             # Apply displacement in local frame
-            # Get quaternion (w, x, y, z format)
-            quat = self.data.qpos[obj_id * 7 + 3:obj_id * 7 + 7]
-            
-            # Create rotation matrix from quaternion
-            def quat_to_rot_matrix(q):
-                # Normalize quaternion to ensure it represents a valid rotation
-                q = q / np.linalg.norm(q)
-                w, x, y, z = q
-                
-                # Construct rotation matrix
-                return np.array([
-                    [1 - 2*y*y - 2*z*z, 2*x*y - 2*w*z, 2*x*z + 2*w*y],
-                    [2*x*y + 2*w*z, 1 - 2*x*x - 2*z*z, 2*y*z - 2*w*x],
-                    [2*x*z - 2*w*y, 2*y*z + 2*w*x, 1 - 2*x*x - 2*y*y]
-                ])
-            
-            rot_matrix = quat_to_rot_matrix(quat)
-            
-            # Rotate displacement vector
+            quat = self.data.qpos[object_id * 7 + 3: object_id * 7 + 7]
+            rot_matrix = self.quat_to_rot_matrix(quat)
             local_disp = np.array([dx, dy, dz])
             world_disp = rot_matrix @ local_disp
-            
-            # Apply rotated displacement
-            self.data.qpos[obj_id * 7] = pos_x + world_disp[0]
-            self.data.qpos[obj_id * 7 + 1] = pos_y + world_disp[1]
-            self.data.qpos[obj_id * 7 + 2] = pos_z + world_disp[2]
+            self.data.qpos[object_id * 7] = pos_x + world_disp[0]
+            self.data.qpos[object_id * 7 + 1] = pos_y + world_disp[1]
+            self.data.qpos[object_id * 7 + 2] = pos_z + world_disp[2]
         
         # Update simulation
         mujoco.mj_forward(self.model, self.data)
+
+    def quat_to_rot_matrix(self, q):
+        """Convert a quaternion to a rotation matrix."""
+        q = q / np.linalg.norm(q)  # Normalize quaternion
+        w, x, y, z = q
+        return np.array([
+            [1 - 2 * y * y - 2 * z * z, 2 * x * y - 2 * w * z, 2 * x * z + 2 * w * y],
+            [2 * x * y + 2 * w * z, 1 - 2 * x * x - 2 * z * z, 2 * y * z - 2 * w * x],
+            [2 * x * z - 2 * w * y, 2 * y * z + 2 * w * x, 1 - 2 * x * x - 2 * y * y]
+        ])
 
     def load_scene(self, scene_id: str):
         try:
