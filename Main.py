@@ -48,6 +48,14 @@ def main():
     aggregated_results = {}
     
     for scene_id in scene_ids:
+      
+        simulator = Simulator(scene_id)  # Initialize the simulator
+        scene = Scene(scene_id, simulator)  # Initialize the scene with the simulator
+    
+        # Print the generated prompt to the terminal
+        prompt = scene.generate_prompt()  # Generate the prompt from the Scene class
+        print(prompt)  # This will print the prompt to the terminal
+      
         # Initialize an Experimental object for the current scene
         experiment = Experimental(scene_id)
         
