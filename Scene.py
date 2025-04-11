@@ -87,9 +87,9 @@ class Scene:
         Extracts metadata from the scene JSON file and assigns it to class attributes.
         """
         metadata = self.data.get("metadata", {})  # Default to empty dict
-        self.scene_desc = metadata.get("scene_desc", "")
-        self.scene_task = metadata.get("scene_task", "")
-        self.problem_type = metadata.get("problem_type", "")
+        self.scene_desc = str(metadata.get("scene_desc", ""))
+        self.scene_task = str(metadata.get("scene_task", ""))
+        self.problem_type = str(metadata.get("problem_type", ""))
 
     def tool_mapping(self):
         """
@@ -254,11 +254,11 @@ class Scene:
 
         self.prompt = (
             f"You are trying to analyze a physics problem that is given when a scene_number is entered. Your goal is to interact with the environment and figure out the correct answer. The answers are either integers or float values."
-            f"\n\nThe scene's description is: {self.scene_desc}."
-            f"\nYour task is defined as: {self.scene_task}."
-            f"\nThese are the object IDs and object names found in the scene: {self.objects_str}"
+            f"\n\nThe scene's description is:\n{self.scene_desc}"
+            f"\nYour task is defined as:\n{self.scene_task}"
+            f"\nThese are the object IDs and object names found in the scene:\n{self.objects_str}"
             f"\n\nEach object has specific permissions defining whether its properties can be accessed or modified. "
-            f"Here are the permissions for each object:{self.permissions_str}"
+            f"Here are the permissions for each object:\n{self.permissions_str}"
             f"\n\nThese are the different tools and functions you can use to interact with the environment/scene rendered in MuJoCo:\n{self.tool_mapping_str}"
             f"\n\nThe names of the tools above correspond to functions in the simulator class that you can call when interacting with the environment."
             f"\n\nHowever, you might encounter an error if you call a function requiring permissions to modify objects that you are not allowed to access."
