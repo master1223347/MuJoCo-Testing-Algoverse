@@ -165,225 +165,233 @@ class Scene:
 
         # Define the tool mapping string (as a literal string)
         self.tool_mapping_str = (
-           
-    {
-        "name": "get_displacement",
-        "description": "Calculate the displacement of a given object in the simulation.",
-        "parameters": {
-            "object_id": "str"
-        }
-    },
-    {
-        "name": "compute_force",
-        "description": "Compute the force on an object using F = ma.",
-        "parameters": {
-            "object_id": "str",
-            "mass": "float"
-        }
-    },
-    {
-        "name": "get_acceleration",
-        "description": "Retrieve the acceleration of an object using finite differences.",
-        "parameters": {
-            "object_id": "str"
-        }
-    },
-    {
-        "name": "set_velocity",
-        "description": "Set the velocity of an object.",
-        "parameters": {
-            "object_id": "str",
-            "velocity_vector": "list[float]"
-        }
-    },
-    {
-        "name": "apply_force",
-        "description": "Apply a force to an object.",
-        "parameters": {
-            "object_id": "str",
-            "force_vector": "list[float]"
-        }
-    },
-    {
-        "name": "apply_torque",
-        "description": "Apply a torque to an object.",
-        "parameters": {
-            "object_id": "str",
-            "torque_vector": "list[float]"
-        }
-    },
-    {
-        "name": "get_velocity",
-        "description": "Retrieve the velocity of an object.",
-        "parameters": {
-            "object_id": "str"
-        }
-    },
-    {
-        "name": "detect_collision",
-        "description": "Detect collision between two objects and apply elastic forces.",
-        "parameters": {
-            "obj1_id": "str",
-            "obj2_id": "str"
-        }
-    },
-    {
-        "name": "get_parameters",
-        "description": "Retrieve mass, bounding box, and type of an object.",
-        "parameters": {
-            "object_id": "str"
-        }
-    },
-    {
-        "name": "move_object",
-        "description": "Move an object to a new position.",
-        "parameters": {
-            "object_id": "str",
-            "x": "float",
-            "y": "float",
-            "z": "float"
-        }
-    },
-    {
-        "name": "get_position",
-        "description": "Get the position of an object.",
-        "parameters": {
-            "object_id": "str"
-        }
-    },
-    {
-        "name": "reset_sim",
-        "description": "Reset the simulation to its initial state.",
-        "parameters": {}
-    },
-    {
-        "name": "step",
-        "description": "Step the simulation forward by a specified duration.",
-        "parameters": {
-            "duration": "float (default: 1.0)"
-        }
-    },
-    {
-        "name": "get_kinetic_energy",
-        "description": "Calculate the kinetic energy of an object.",
-        "parameters": {
-            "object_id": "str",
-            "mass": "float"
-        }
-    },
-    {
-        "name": "get_potential_energy",
-        "description": "Calculate the potential energy of an object.",
-        "parameters": {
-            "object_id": "str",
-            "mass": "float",
-            "gravity": "float (default: 9.81)"
-        }
-    },
-    {
-        "name": "get_momentum",
-        "description": "Calculate the linear momentum of an object.",
-        "parameters": {
-            "object_id": "str",
-            "mass": "float"
-        }
-    },
-    {
-        "name": "get_torque",
-        "description": "Calculate the torque acting on an object.",
-        "parameters": {
-            "object_id": "str"
-        }
-    },
-    {
-        "name": "get_center_of_mass",
-        "description": "Calculate the center of mass of the entire scene.",
-        "parameters": {}
-    },
-    {
-        "name": "get_angular_momentum",
-        "description": "Calculate the angular momentum of an object.",
-        "parameters": {
-            "object_id": "str",
-            "mass": "float"
-        }
-    },
-    {
-        "name": "change_position",
-        "description": "Change the position of an object by a given displacement.",
-        "parameters": {
-            "object_id": "str",
-            "dx": "float",
-            "dy": "float",
-            "dz": "float",
-            "in_world_frame": "bool (default: True)"
-        }
-    },
-    {
-        "name": "quat_to_rot_matrix",
-        "description": "Convert a quaternion to a rotation matrix.",
-        "parameters": {
-            "q": "list[float]"
-        }
-    },
-    {
-        "name": "load_scene",
-        "description": "Load a new scene by scene ID.",
-        "parameters": {
-            "scene_id": "str"
-        }
-        {
-    "name": "step_scene",
-    "description": "Step the entire scene forward by one or more simulation steps.",
-    "parameters": {
-        "steps": "int (default: 1)"
-    }
-},
-
-    }
-
-
+        {       
+            {
+                "name": "get_displacement",
+                "description": "Calculate the displacement of a given object in the simulation.",
+                "parameters": {
+                    "object_id": "str"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "compute_force",
+                "description": "Compute the force on an object using F = ma.",
+                "parameters": {
+                    "object_id": "str",
+                    "mass": "float"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "get_acceleration",
+                "description": "Retrieve the acceleration of an object using finite differences.",
+                "parameters": {
+                    "object_id": "str"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "set_velocity",
+                "description": "Set the velocity of an object.",
+                "parameters": {
+                    "object_id": "str",
+                    "velocity_vector": "list[float]"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "apply_force",
+                "description": "Apply a force to an object.",
+                "parameters": {
+                    "object_id": "str",
+                    "force_vector": "list[float]"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "apply_torque",
+                "description": "Apply a torque to an object.",
+                "parameters": {
+                    "object_id": "str",
+                    "torque_vector": "list[float]"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "get_velocity",
+                "description": "Retrieve the velocity of an object.",
+                "parameters": {
+                    "object_id": "str"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "detect_collision",
+                "description": "Detect collision between two objects and apply elastic forces.",
+                "parameters": {
+                    "obj1_id": "str",
+                    "obj2_id": "str"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "get_parameters",
+                "description": "Retrieve mass, bounding box, and type of an object.",
+                "parameters": {
+                    "object_id": "str"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "move_object",
+                "description": "Move an object to a new position.",
+                "parameters": {
+                    "object_id": "str",
+                    "x": "float",
+                    "y": "float",
+                    "z": "float"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "get_position",
+                "description": "Get the position of an object.",
+                "parameters": {
+                    "object_id": "str"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "step",
+                "description": "Step the simulation forward by a specified duration.",
+                "parameters": {
+                    "duration": "float (default: 1.0)"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "get_kinetic_energy",
+                "description": "Calculate the kinetic energy of an object.",
+                "parameters": {
+                    "object_id": "str",
+                    "mass": "float"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "get_potential_energy",
+                "description": "Calculate the potential energy of an object.",
+                "parameters": {
+                    "object_id": "str",
+                    "mass": "float",
+                    "gravity": "float (default: 9.81)"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "get_momentum",
+                "description": "Calculate the linear momentum of an object.",
+                "parameters": {
+                    "object_id": "str",
+                    "mass": "float"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "get_torque",
+                "description": "Calculate the torque acting on an object.",
+                "parameters": {
+                    "object_id": "str"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "get_center_of_mass",
+                "description": "Calculate the center of mass of the entire scene.",
+                "parameters": {},
+                "return type": "dictionary"
+            },
+            {
+                "name": "get_angular_momentum",
+                "description": "Calculate the angular momentum of an object.",
+                "parameters": {
+                    "object_id": "str",
+                    "mass": "float"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "change_position",
+                "description": "Change the position of an object by a given displacement.",
+                "parameters": {
+                    "object_id": "str",
+                    "dx": "float",
+                    "dy": "float",
+                    "dz": "float",
+                    "in_world_frame": "bool (default: True)"
+                },
+                "return type": "dictionary"
+            },
+            {
+                "name": "quat_to_rot_matrix",
+                "description": "Convert a quaternion to a rotation matrix.",
+                "parameters": {
+                    "q": "list[float]"
+                },
+                "return type": "dictionary"
+            },
+            {
+            "name": "scene_step",
+            "description": "Step the entire scene forward by one or more simulation steps.",
+            "parameters": {
+                "steps": "int (default: 1)"
+                }
+            }
+        )
+        self.attributes_str = (
+            '{\n'
+            '  "qpos": "np.ndarray - Generalized positions of the system, includes joint positions and object locations.",\n'
+            '  "qvel": "np.ndarray - Generalized velocities corresponding to qpos, includes joint and body velocities.",\n'
+            '  "xfrc_applied": "np.ndarray - External forces and torques applied to bodies in the world frame.",\n'
+            '  "contact": "List[mujoco.MjContact] - List of contact points generated during simulation (read-only).",\n'
+            '  "time": "float - Current simulation time in seconds.",\n'
+            '  "body_mass": "np.ndarray - Mass values of all bodies defined in the model.",\n'
+            '  "body_inertia": "np.ndarray - Rotational inertia tensor of each body (not a bounding box).",\n'
+            '  "body_parentid": "np.ndarray - Index of the parent body for each body (used in the kinematic tree).",\n'
+            '  "opt.timestep": "float - Simulation timestep defined in the model options.",\n'
+            '  "geom1 / geom2 (in contact)": "int - Indices of the two geoms involved in a contact.",\n'
+            '  "frame (in contact)": "np.ndarray - Contact frame (3x3 rotation matrix stored as 9 values).",\n'
+            '  "dist (in contact)": "float - Distance between two geoms at the contact point (negative if penetration)." \n'
+            '}'
         )
         
-        # Create a string for the expected experiment results format
-        self.exp_results_format = (
-            f"\n\n### Expected Experiment Results Format"
-            f"\nThe results of each experiment should be structured as follows:"
-            f"\n```json"
-            f"\n{{"
-            f'\n  "correct": <boolean>,  # Whether the correct answer was found'
-            f'\n  "timeout": <boolean>,  # Whether the experiment timed out after max iterations'
-            f'\n  "num_tool_calls": <integer>,  # Total number of tool calls made'
-            f'\n  "iterations": <integer>  # Total iterations performed'
-            f"\n}}"
-            f"\n```"
-            f"\n\nTo process and evaluate the experiment results, you should call back to the `run_experiments` function in the `Experimental` class."
-            f"\nThis function utilizes a dictionary to track and analyze the experiment's progress."
-        )
-
         # Construct the final prompt using all information
         self.prompt = (
-            f"You are trying to analyze a physics problem given by the scene_id. Your goal is to interact with the environment and figure out the correct answer. The answers are either integers or float values."
-            f"\n\nThe scene's description is: {self.scene_desc}."
-            f"\nYour task is defined as: {self.scene_task}."
-            f"\nThese are the object IDs and object names found in the scene: {self.objects_str}"
-            f"\n\nEach object has specific permissions defining whether its properties can be accessed or modified. Here are the permissions for each object:{self.permissions_str}"
-            f"\n\nThese are the different tools and functions you can use to interact with the environment/scene rendered in MuJoCo:\n{self.tool_mapping_str}"
-            f"\n\nThe names of the tools above correspond to functions in the simulator class that you can call when interacting with the environment."
-            f"\n\nHowever, you might encounter an error if you call a function requiring permissions to modify objects that you are not allowed to access."
-            f"\n\nThe environment will be set up by rendering an XML file within MuJoCo - your goal is to change different attributes of certain objects to figure out how to answer the problem."
-            f"\n\nFor example, if you want to determine the final velocity of a sphere impacting the surface from a height of 10 units/meters, the scene will start with the sphere on the ground."
-            f"\nYou will then move the sphere up 10 units using the `move_object` function from the simulator class and render it in MuJoCo, which will simulate the sphere falling from a height of 10 units."
-            f"\n\nYou have **one attempt** to solve the problem. Once you input your answer, you will call the following functions from the Scene class:"
-            f"\n- `scene.answer`"
-            f"\n- `scene.expected_behavior`"
-            f"\n- `scene.reasoning`"
-            f"\n\n**Logging & Analysis:**"
-            f"\n- Log all interactions with the environment, including time-step results and the functions used. NOTE: when calling functions, be sure to use the OBJECT ID as your parameter and NOT the OBJECT NAME!"
-            f"\n- Provide reasoning for every interaction you apply to the environment AS YOU ARE RUNNING THROUGH YOUR ITERATIONS!!!"
-            f"\n- Format all experimental data into a table or matrix for visualization."
-            f"\n- Use Python libraries such as `matplotlib` and `scikit-learn` to generate plots or diagrams."
-            f"\n{self.exp_results_format}"
+            f"You are trying to analyze a physics problem given by the scene_id. The goal is to interact with the environment to determine a correct numeric answer.\n"
+            f"\nScene Description: {self.scene_desc}."
+            f"\nTask: {self.scene_task}."
+            f"\nAvailable Objects: {self.objects_str}"
+            f"\n\nPermissions per Object:{self.permissions_str}"
+            f"\n\nThis is also a list of all attributes of an object and what each of them means:{self.attributes_str}"
+            f"\n\nYou may use the following tools to interact with the scene. These functions accept parameters given below. and return data or perform simulation updates:\n{self.tool_mapping_str}"
+            f"\n\nEvery time you call a tool, you will receive a dictionary containing the outputs. For example, if you call `get_velocity` on `object_1`, the return might be:"
+            f'\n{{"vx": 0.0, "vy": -3.2, "vz": 0.0}}'
+            f"\n\nYou must call `step` to simulate time progression.\n"
+            f"\n<THIS IS AN EXAMPLE OF THE INPUT(ASSISTANT) AND OUTPUTS(ENVIRONMENT) THAT WILL BE DISPLAYED IN THE TERMINAL>"
+            f"\n<assistant>\nI think the object needs to fall from a height of 10m, so I will move it up.\n```json\n"
+            f'[{{"tool": "move_object", "parameters": {{"object_id": "object_1", "position": [0, 10, 0]}}}}]\n```\n'
+            f"\n<environment>\nResults: [{{\"tool\": \"move_object\", \"parameters\": {{...}}, \"result\": null, \"sim_time\": 0}}] What will you do next\n"
+            f"\n<assistant>\nNow I will step forward to let it fall.\n```json\n"
+            f'[{{"tool": "step", "parameters": {{"steps": 100}}}}]\n```\n'
+            f"\n<environment>\nResults: [{{\"tool\": \"step\", \"parameters\": {{...}}, \"result\": {{...}}, \"sim_time\": 0.1}}] What will you do next\n"
+            f"\n<assistant>\nI see the velocity has increased. I will now get its final velocity.\n```json\n"
+            f'[{{"tool": "get_velocity", "parameters": {{"object_id": "object_1"}}}}]\n```\n'
+            f"\n<environment>\nResults: [{{\"tool\": \"get_velocity\", \"parameters\": {{...}}, \"result\": {{\"vx\": 0, \"vy\": -7.3, \"vz\": 0}}, \"sim_time\": 0.1}}] What will you do next\n"
+            f"\n<assistant>\nI see the downward velocity is 7.3 m/s. I will answer now.\n```json\n"
+            f'[{{"tool": "answer", "parameters": {{"answer": "7.3"}}}}]\n```\n<END EXAMPLE>\n"
+            f"\n\nYou only have **one chance** to answer the question. When you're confident, submit your final answer using:"
+            f'\n`{{"tool": "answer", "parameters": {{"answer": "<your_answer>"}}}}`'
         )
 
         # Append additional instructions based on problem type
