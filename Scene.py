@@ -164,28 +164,176 @@ class Scene:
 
         # Define the tool mapping string (as a literal string)
         self.tool_mapping_str = (
-            '{\n'
-            '    "get_displacement": "Computes the displacement of an object from its initial position.",\n'
-            '    "compute_force": "Computes the net force applied to an object using physical parameters.",\n'
-            '    "get_acceleration": "Retrieves the linear acceleration of a specified object.",\n'
-            '    "set_velocity": "Sets a new velocity for a specified object.",\n'
-            '    "apply_force": "Applies a force to a specified object in the scene.",\n'
-            '    "apply_torque": "Applies a torque (rotational force) to a specified object.",\n'
-            '    "get_velocity": "Retrieves the velocity of a specified object.",\n'
-            '    "detect_collision": "Detects whether two or more objects have collided.",\n'
-            '    "set_permissions": "Defines or updates access and modification permissions for scene objects.",\n'
-            '    "get_parameters": "Retrieves physical parameters of an object (e.g., mass, inertia).",\n'
-            '    "move_object": "Moves an object to a specified position within the simulation.",\n'
-            '    "get_position": "Retrieves the current position of an object.",\n'
-            '    "get_kinetic_energy": "Calculates the kinetic energy of an object.",\n'
-            '    "get_potential_energy": "Calculates the potential energy of an object in the simulation.",\n'
-            '    "get_momentum": "Calculates the linear momentum of an object.",\n'
-            '    "get_torque": "Retrieves the net torque acting on an object.",\n'
-            '    "get_center_of_mass": "Returns the center of mass position of the object.",\n'
-            '    "get_angular_momentum": "Computes the angular momentum of an object.",\n'
-            '    "change_position": "Applies a positional offset to an object along x, y, z directions.",\n'
-            '    "quat_to_rot_matrix": "Converts a quaternion rotation into a 3x3 rotation matrix.",\n'
-            '}'
+            simulator_tool_descriptions = [
+    {
+        "name": "get_displacement",
+        "description": "Calculate the displacement of a given object in the simulation.",
+        "parameters": {
+            "object_id": "str"
+        }
+    },
+    {
+        "name": "compute_force",
+        "description": "Compute the force on an object using F = ma.",
+        "parameters": {
+            "object_id": "str",
+            "mass": "float"
+        }
+    },
+    {
+        "name": "get_acceleration",
+        "description": "Retrieve the acceleration of an object using finite differences.",
+        "parameters": {
+            "object_id": "str"
+        }
+    },
+    {
+        "name": "set_velocity",
+        "description": "Set the velocity of an object.",
+        "parameters": {
+            "object_id": "str",
+            "velocity_vector": "list[float]"
+        }
+    },
+    {
+        "name": "apply_force",
+        "description": "Apply a force to an object.",
+        "parameters": {
+            "object_id": "str",
+            "force_vector": "list[float]"
+        }
+    },
+    {
+        "name": "apply_torque",
+        "description": "Apply a torque to an object.",
+        "parameters": {
+            "object_id": "str",
+            "torque_vector": "list[float]"
+        }
+    },
+    {
+        "name": "get_velocity",
+        "description": "Retrieve the velocity of an object.",
+        "parameters": {
+            "object_id": "str"
+        }
+    },
+    {
+        "name": "detect_collision",
+        "description": "Detect collision between two objects and apply elastic forces.",
+        "parameters": {
+            "obj1_id": "str",
+            "obj2_id": "str"
+        }
+    },
+    {
+        "name": "get_parameters",
+        "description": "Retrieve mass, bounding box, and type of an object.",
+        "parameters": {
+            "object_id": "str"
+        }
+    },
+    {
+        "name": "move_object",
+        "description": "Move an object to a new position.",
+        "parameters": {
+            "object_id": "str",
+            "x": "float",
+            "y": "float",
+            "z": "float"
+        }
+    },
+    {
+        "name": "get_position",
+        "description": "Get the position of an object.",
+        "parameters": {
+            "object_id": "str"
+        }
+    },
+    {
+        "name": "reset_sim",
+        "description": "Reset the simulation to its initial state.",
+        "parameters": {}
+    },
+    {
+        "name": "step",
+        "description": "Step the simulation forward by a specified duration.",
+        "parameters": {
+            "duration": "float (default: 1.0)"
+        }
+    },
+    {
+        "name": "get_kinetic_energy",
+        "description": "Calculate the kinetic energy of an object.",
+        "parameters": {
+            "object_id": "str",
+            "mass": "float"
+        }
+    },
+    {
+        "name": "get_potential_energy",
+        "description": "Calculate the potential energy of an object.",
+        "parameters": {
+            "object_id": "str",
+            "mass": "float",
+            "gravity": "float (default: 9.81)"
+        }
+    },
+    {
+        "name": "get_momentum",
+        "description": "Calculate the linear momentum of an object.",
+        "parameters": {
+            "object_id": "str",
+            "mass": "float"
+        }
+    },
+    {
+        "name": "get_torque",
+        "description": "Calculate the torque acting on an object.",
+        "parameters": {
+            "object_id": "str"
+        }
+    },
+    {
+        "name": "get_center_of_mass",
+        "description": "Calculate the center of mass of the entire scene.",
+        "parameters": {}
+    },
+    {
+        "name": "get_angular_momentum",
+        "description": "Calculate the angular momentum of an object.",
+        "parameters": {
+            "object_id": "str",
+            "mass": "float"
+        }
+    },
+    {
+        "name": "change_position",
+        "description": "Change the position of an object by a given displacement.",
+        "parameters": {
+            "object_id": "str",
+            "dx": "float",
+            "dy": "float",
+            "dz": "float",
+            "in_world_frame": "bool (default: True)"
+        }
+    },
+    {
+        "name": "quat_to_rot_matrix",
+        "description": "Convert a quaternion to a rotation matrix.",
+        "parameters": {
+            "q": "list[float]"
+        }
+    },
+    {
+        "name": "load_scene",
+        "description": "Load a new scene by scene ID.",
+        "parameters": {
+            "scene_id": "str"
+        }
+    }
+]
+
         )
         
         # Create a string for the expected experiment results format
