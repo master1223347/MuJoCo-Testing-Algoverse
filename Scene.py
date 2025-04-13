@@ -135,6 +135,7 @@ class Scene:
             "get_angular_momentum": self.simulator.get_angular_momentum,
             "change_position": self.simulator.change_position,
             "quat_to_rot_matrix": self.simulator.quat_to_rot_matrix,
+            "step_scene": self.simulator.step_scene,
         }
 
     def generate_prompt(self):
@@ -331,6 +332,14 @@ class Scene:
         "parameters": {
             "scene_id": "str"
         }
+        {
+    "name": "step_scene",
+    "description": "Step the entire scene forward by one or more simulation steps.",
+    "parameters": {
+        "steps": "int (default: 1)"
+    }
+},
+
     }
 
 
