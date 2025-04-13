@@ -64,6 +64,23 @@ class Simulator:
         self.viewer.sync()
         return self.viewer.capture_frame()
 
+    def step(self, duration: float = 1.0):
+        """Step the simulation forward by a specified duration."""
+        num_steps = int(duration / self.model.opt.timestep)
+        remaining_time = duration - (num_steps * self.model.opt.timestep)
+
+        for _ in range(num_steps):
+            mujoco.mj_step(self.model, self.data)
+            if self.viewer is not None:
+                self.viewer.sync()
+
+        if remaining_time > 0:
+            mujoco.mj_step(self.model, self.data)
+            if self.viewer is not None:
+                self.viewer.sync()
+
+        self.time += duration
+
     def get_displacement(self, object_id: str) -> dict:
         """Calculate the displacement of a given object in the simulation."""
         # Get initial and current positions
@@ -201,6 +218,8 @@ class Simulator:
         """Load the scene (returns nothing specific)"""
         super().load_scene(scene_id)
         return {"status": "scene_loaded", "scene_id": scene_id}
+
+    
 
     def __del__(self):
         """Clean up resources when the Simulator object is destroyed (returns nothing specific)"""
