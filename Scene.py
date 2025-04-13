@@ -164,7 +164,7 @@ class Scene:
 
         # Define the tool mapping string (as a literal string)
         self.tool_mapping_str = (
-            simulator_tool_descriptions = [
+           
     {
         "name": "get_displacement",
         "description": "Calculate the displacement of a given object in the simulation.",
@@ -332,7 +332,7 @@ class Scene:
             "scene_id": "str"
         }
     }
-]
+
 
         )
         
