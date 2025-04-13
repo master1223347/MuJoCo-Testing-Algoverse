@@ -20,9 +20,9 @@
     "object_4": { "name": "incline", "object_id": "4" }
   }
   "object_permissions": {
-    "object_1_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
-    "object_2_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
-    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
-    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+    "object_1_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true },
+    "object_2_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true },
+    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true }
   }
 }
