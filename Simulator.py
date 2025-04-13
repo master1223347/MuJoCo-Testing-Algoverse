@@ -154,53 +154,101 @@ class Simulator:
 
     def get_parameters(self, object_id: str) -> dict:
         """Retrieve parameters of an object, respecting scene-defined permissions."""
-        parameters = super().get_parameters(object_id)
-        return parameters
+        # Check permissions for parameter access
+        permissions = getattr(self, 'permissions', {}).get(object_id, {})
+        if not permissions.get("get_parameters", True):  # Default to allowed
+            raise PermissionError(f"Access to parameters of object with ID {object_id} is not allowed.")
+
+        return {
+            "mass": float(self.model.body_mass[object_id]),
+            "bounding_box": self.model.body_inertia[object_id].tolist(),
+            "type": int(self.model.body_parentid[object_id])
+        }
 
     def move_object(self, object_id: str, x: float, y: float, z: float) -> dict:
         """Move an object to a new position."""
-        super().move_object(object_id, x, y, z)
+        self.data.qpos[object_id * 7] = x
+        self.data.qpos[object_id * 7 + 1] = y
+        self.data.qpos[object_id * 7 + 2] = z
+        mujoco.mj_forward(self.model, self.data)
         return {"position": (x, y, z)}
 
     def get_position(self, object_id: str) -> dict:
         """Get the position of an object."""
-        position, _ = super().get_position(object_id)
-        return {"position": position}
+        return (self.data.qpos[object_id * 7], 
+                self.data.qpos[object_id * 7 + 1], 
+                self.data.qpos[object_id * 7 + 2]), self.data.time
 
     def get_kinetic_energy(self, object_id: str, mass: float) -> dict:
         """Calculate the kinetic energy of an object."""
-        kinetic_energy = super().get_kinetic_energy(object_id, mass)
+        velocity = self.get_velocity(object_id)
+        kinetic_energy = 0.5 * mass * np.sum(velocity**2)
         return {"kinetic_energy": kinetic_energy}
 
     def get_potential_energy(self, object_id: str, mass: float, gravity: float = 9.81) -> dict:
-        """Calculate the potential energy of an object."""
-        potential_energy = super().get_potential_energy(object_id, mass, gravity)
+       """Calculate the potential energy of an object."""
+        position = self.get_position(object_id)
+        potential_energy = mass * gravity * position[2]  # Using z as height
         return {"potential_energy": potential_energy}
 
-    def get_momentum(self, object_id: str, mass: float) -> dict:
+    def get_momentum(self, object_id: str, mass: float):
         """Calculate the linear momentum of an object."""
-        momentum = super().get_momentum(object_id, mass)
+        velocity = self.get_velocity(object_id)
+        momentum = {"x": mass * velocity[0], "y": mass * velocity[1], "z": mass * velocity[2]}
         return {"momentum": momentum}
 
-    def get_torque(self, object_id: str) -> dict:
+    def get_torque(self, object_id: str):
         """Calculate the torque acting on an object."""
-        torque = super().get_torque(object_id)
-        return {"torque": torque}
-
-    def get_center_of_mass(self) -> dict:
+        torque = self.data.qfrc_applied[object_id * 6 + 3: object_id * 6 + 6]
+        torque_dict = {"x": torque[0], "y": torque[1], "z": torque[2]}
+        return {"torque": torque_dict}
+    
+    def get_center_of_mass(self):
         """Calculate the center of mass of the entire scene."""
-        center_of_mass = super().get_center_of_mass()
-        return {"center_of_mass": center_of_mass}
-
-    def get_angular_momentum(self, object_id: str, mass: float) -> dict:
+        total_mass = np.sum(self.model.body_mass)
+        weighted_positions = np.sum(self.model.body_mass[:, None] * self.data.xpos, axis=0)
+        
+        center_of_mass = weighted_positions / total_mass
+        center_of_mass_dict = {"x": center_of_mass[0], "y": center_of_mass[1], "z": center_of_mass[2]}
+        return {"center_of_mass": center_of_mass_dict}
+    
+    def get_angular_momentum(self, object_id: str, mass: float):
         """Calculate the angular momentum of an object."""
-        angular_momentum = super().get_angular_momentum(object_id, mass)
-        return {"angular_momentum": angular_momentum}
-
-    def change_position(self, object_id: str, dx: float, dy: float, dz: float, in_world_frame: bool = True) -> dict:
+        position, _ = self.get_position(object_id)
+        velocity = self.get_velocity(object_id)
+        
+        # Convert position to numpy array for cross product
+        pos_array = np.array(position)
+        angular_momentum = np.cross(pos_array, mass * velocity)
+        
+        angular_momentum_dict = {"x": angular_momentum[0], "y": angular_momentum[1], "z": angular_momentum[2]}
+        return {"angular_momentum": angular_momentum_dict}
+    
+    def change_position(self, object_id: str, dx: float, dy: float, dz: float, in_world_frame: bool = True):
         """Change the position of an object by a given displacement."""
-        super().change_position(object_id, dx, dy, dz, in_world_frame)
-        return {"new_position": (dx, dy, dz)}
+        pos_x = self.data.qpos[object_id * 7]
+        pos_y = self.data.qpos[object_id * 7 + 1]
+        pos_z = self.data.qpos[object_id * 7 + 2]
+    
+    if in_world_frame:
+        # Apply displacement directly in world frame
+        self.data.qpos[object_id * 7] = pos_x + dx
+        self.data.qpos[object_id * 7 + 1] = pos_y + dy
+        self.data.qpos[object_id * 7 + 2] = pos_z + dz
+    else:
+        # Apply displacement in local frame
+        quat = self.data.qpos[object_id * 7 + 3: object_id * 7 + 7]
+        rot_matrix = self.quat_to_rot_matrix(quat)
+        local_disp = np.array([dx, dy, dz])
+        world_disp = rot_matrix @ local_disp
+        self.data.qpos[object_id * 7] = pos_x + world_disp[0]
+        self.data.qpos[object_id * 7 + 1] = pos_y + world_disp[1]
+        self.data.qpos[object_id * 7 + 2] = pos_z + world_disp[2]
+    
+        # Update simulation
+        mujoco.mj_forward(self.model, self.data)
+        new_position = {"x": self.data.qpos[object_id * 7], "y": self.data.qpos[object_id * 7 + 1], "z": self.data.qpos[object_id * 7 + 2]}
+        return {"new_position": new_position}
 
     def quat_to_rot_matrix(self, q) -> dict:
         """Convert a quaternion to a rotation matrix."""
@@ -213,11 +261,6 @@ class Simulator:
                 [2 * x * z - 2 * w * y, 2 * y * z + 2 * w * x, 1 - 2 * x * x - 2 * y * y]
             ])
         }
-
-    def load_scene(self, scene_id: str) -> dict:
-        """Load the scene (returns nothing specific)"""
-        super().load_scene(scene_id)
-        return {"status": "scene_loaded", "scene_id": scene_id}
 
     def reset_sim(self):
         """Reset the simulation to its initial state."""
@@ -238,6 +281,6 @@ class Simulator:
         return f"Scene stepped by {self.model.opt.timestep:.4f} seconds."
 
     def __del__(self):
-        """Clean up resources when the Simulator object is destroyed (returns nothing specific)"""
-        super().__del__()
-        return {"status": "simulator_destroyed"}
+        """Clean up resources when the Simulator object is destroyed."""
+        if hasattr(self, 'viewer') and self.viewer is not None:
+            self.viewer.close()
