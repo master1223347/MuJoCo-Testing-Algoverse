@@ -252,6 +252,18 @@ class Simulator:
             [2 * x * z - 2 * w * y, 2 * y * z + 2 * w * x, 1 - 2 * x * x - 2 * y * y]
         ])
 
+    def scene_step(self) -> str:
+    """
+    Advance the simulation by one timestep.
+    Useful for progressing the scene in fine increments.
+    """
+    mujoco.mj_step(self.model, self.data)
+    if self.viewer is not None:
+        self.viewer.sync()
+    self.time += self.model.opt.timestep
+    return f"Scene stepped by {self.model.opt.timestep:.4f} seconds."
+
+
     def load_scene(self, scene_id: str):
         try:
             if hasattr(self, 'viewer') and self.viewer is not None:
