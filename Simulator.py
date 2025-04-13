@@ -219,7 +219,23 @@ class Simulator:
         super().load_scene(scene_id)
         return {"status": "scene_loaded", "scene_id": scene_id}
 
-    
+    def reset_sim(self):
+        """Reset the simulation to its initial state."""
+        self.data.qpos[:] = self.start_pos
+        self.data.qvel[:] = 0
+        mujoco.mj_forward(self.model, self.data)
+        self.time = 0
+
+    def scene_step(self) -> str:
+        """
+        Advance the simulation by one timestep.
+        Useful for progressing the scene in fine increments.
+        """
+        mujoco.mj_step(self.model, self.data)
+        if self.viewer is not None:
+        self.viewer.sync()
+        self.time += self.model.opt.timestep
+        return f"Scene stepped by {self.model.opt.timestep:.4f} seconds."
 
     def __del__(self):
         """Clean up resources when the Simulator object is destroyed (returns nothing specific)"""
