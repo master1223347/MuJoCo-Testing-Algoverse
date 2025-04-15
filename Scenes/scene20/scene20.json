@@ -1,0 +1,24 @@
+{
+    "metadata": {
+      "scene_name": "Pulley System Acceleration",
+      "task": "Calculate the acceleration of the two-mass pulley system.",
+      "problem_type": "calculation"
+    },
+    "answer": "1.96",
+    "expected_behavior": "The LLM computes acceleration using a = (m1 - m2)*g/(m1 + m2) with m1 > m2.",
+    "reasoning": "For m1=6kg, m2=4kg and g=9.81 m/s², the acceleration is (6-4)*9.81/(6+4) ≈ 1.96 m/s².",
+    "number_of_objects": "4",
+    "objects": {
+      "object_1": { "name": "mass1", "object_id": "1" },
+      "object_2": { "name": "mass2", "object_id": "2" },
+      "object_3": { "name": "pulley", "object_id": "3" },
+      "object_4": { "name": "surface", "object_id": "4" }
+    },
+    "object_permissions": {
+      "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+      "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+      "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+      "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+    }
+  }
+  

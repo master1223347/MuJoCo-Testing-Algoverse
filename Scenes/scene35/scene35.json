@@ -1,0 +1,22 @@
+{
+    "metadata": {
+      "scene_name": "Projectile Motion with Obstacles",
+      "task": "Determine the launch angle required for a projectile to clear the obstacle.",
+      "problem_type": "calculation"
+    },
+    "answer": "solve using kinematics",
+    "expected_behavior": "The LLM uses projectile motion equations to determine the minimum angle required to clear the obstacle.",
+    "reasoning": "Using the kinematic equations for projectile motion with given initial speed and obstacle position.",
+    "number_of_objects": "3",
+    "objects": {
+      "object_1": { "name": "projectile", "object_id": "1" },
+      "object_2": { "name": "obstacle", "object_id": "2" },
+      "object_3": { "name": "ground", "object_id": "3" }
+    },
+    "object_permissions": {
+      "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+      "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+      "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+    }
+  }
+  

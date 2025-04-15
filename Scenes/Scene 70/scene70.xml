@@ -1,0 +1,13 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <body name="disk_1" pos="-1 0 0.1">
+      <geom type="cylinder" size="0.2 0.05" rgba="0.2 0.6 1 1"/>
+      <joint type="hinge" axis="0 0 1" velocity="1.5"/>
+    </body>
+    <body name="disk_2" pos="1 0 0.1">
+      <geom type="cylinder" size="0.2 0.05" rgba="1 0.4 0.2 1"/>
+      <joint type="hinge" axis="0 0 1" velocity="3.0"/>
+    </body>
+  </worldbody>
+</mujoco>

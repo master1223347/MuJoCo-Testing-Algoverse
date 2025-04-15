@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "scene_name": "Pendulum Periods",
+    "task": "Compare the swing periods of two pendulums with different lengths.",
+    "problem_type": "comparison"
+  },
+  "answer": "2",
+  "expected_behavior": "LLM observes pendulum motions and concludes longer pendulum swings slower.",
+  "reasoning": "The period of a pendulum increases with the square root of its length.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": { "name": "pendulum_short", "object_id": "1" },
+    "object_2": { "name": "pendulum_long", "object_id": "2" },
+    "object_3": { "name": "pivot_short", "object_id": "3" },
+    "object_4": { "name": "pivot_long", "object_id": "4" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}

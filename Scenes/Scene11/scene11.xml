@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mujoco model="rolling_cylinder">
+    <compiler angle="radian"/>
+    <option gravity="0 0 -9.81"/>
+
+    <worldbody>
+        <!-- Inclined Plane (Static) -->
+        <geom name="ramp" type="plane" size="10 10 0.1" rgba="0.8 0.8 0.8 1" 
+              pos="0 0 0" euler="-20 0 0" friction="1 0.005 0.0001" condim="4"/>
+
+        <!-- Cylinder (Dynamic) -->
+        <body name="cylinder" pos="0 0 2">  <!-- Raised higher to avoid intersection -->
+            <joint name="cylinder_joint" type="free"/>
+            <geom name="cylinder_geom" type="cylinder" size="0.1 0.3" mass="1"
+                    rgba="1 0 0 1" friction="0.8 0.005 0.0001" condim="4"/>
+         </body>
+    </worldbody>
+
+    <actuator>
+        <!-- No actuators needed; gravity and friction handle rolling -->
+    </actuator>

@@ -1,0 +1,25 @@
+{
+  "metadata": {
+    "scene_name": "Center of Mass Balance",
+    "task": "Determine the correct position to place the third mass to balance the plank.",
+    "problem_type": "balance"
+  },
+  "answer": "3",
+  "expected_behavior": "LLM places the third mass and observes if the plank remains horizontal or tips.",
+  "reasoning": "The plank will be balanced if the torques from all masses about the center cancel out.",
+  "number_of_objects": "5",
+  "objects": {
+    "object_1": { "name": "mass_left", "object_id": "1" },
+    "object_2": { "name": "mass_right", "object_id": "2" },
+    "object_3": { "name": "mass_to_place", "object_id": "3" },
+    "object_4": { "name": "plank", "object_id": "4" },
+    "object_5": { "name": "ground", "object_id": "5" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "radius": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "radius": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "radius": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_5_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}

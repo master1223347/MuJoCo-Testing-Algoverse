@@ -1,0 +1,17 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <body name="pivot_short" pos="-1 0 2"/>
+    <body name="pivot_long" pos="1 0 2"/>
+
+    <body name="pendulum_short" pos="-1 0 2">
+      <joint name="swing_short" type="hinge" axis="0 1 0"/>
+      <geom type="capsule" fromto="0 0 0 0 0 -1" size="0.05" density="0.5" rgba="0.2 0.5 1 1"/>
+    </body>
+
+    <body name="pendulum_long" pos="1 0 2">
+      <joint name="swing_long" type="hinge" axis="0 1 0"/>
+      <geom type="capsule" fromto="0 0 0 0 0 -2" size="0.05" density="0.5" rgba="1 0.5 0.2 1"/>
+    </body>
+  </worldbody>
+</mujoco>

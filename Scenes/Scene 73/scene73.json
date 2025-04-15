@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "scene_name": "Heavy vs Light Cart",
+    "task": "Determine which cart travels further when pushed with the same force.",
+    "problem_type": "comparison"
+  },
+  "answer": "2",
+  "expected_behavior": "The LLM applies equal force to both carts and observes their displacement.",
+  "reasoning": "Lighter carts will accelerate more with the same force and travel farther.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": { "name": "heavy_cart", "object_id": "1" },
+    "object_2": { "name": "light_cart", "object_id": "2" },
+    "object_3": { "name": "ground", "object_id": "3" },
+    "object_4": { "name": "force_applier", "object_id": "4" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}

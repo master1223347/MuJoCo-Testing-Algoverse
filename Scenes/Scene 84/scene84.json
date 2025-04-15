@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "scene_name": "Rolling Without Slipping",
+    "task": "Determine which of the objects roll down the incline without slipping.",
+    "problem_type": "observation"
+  },
+  "answer": "1",
+  "expected_behavior": "The LLM changes positions and observes if rolling occurs with or without slipping.",
+  "reasoning": "Only the object with sufficient friction and proper contact will roll without slipping.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": { "name": "rolling_sphere", "object_id": "1" },
+    "object_2": { "name": "sliding_block", "object_id": "2" },
+    "object_3": { "name": "inclined_plane", "object_id": "3" },
+    "object_4": { "name": "ground", "object_id": "4" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "radius": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}

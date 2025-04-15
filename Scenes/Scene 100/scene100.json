@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "scene_name": "Mass-Spring System with Damping",
+    "task": "Determine the damping coefficient for critical damping.",
+    "problem_type": "calculation"
+  },
+  "answer": "3",
+  "expected_behavior": "The LLM adjusts the damping coefficient and observes the response of the system, calculating the critical damping point.",
+  "reasoning": "Critical damping occurs when the damping coefficient is adjusted to the point where the system returns to equilibrium without oscillating. The critical damping coefficient can be calculated using the formula.",
+  "number_of_objects": "3",
+  "objects": {
+    "object_1": {
+      "name": "mass",
+      "object_id": "1"
+    },
+    "object_2": {
+      "name": "spring",
+      "object_id": "2"
+    },
+    "object_3": {
+      "name": "damping",
+      "object_id": "3"
+    }
+  },
+  "object_permissions": {
+    "object_1_permissions": {
+      "type": true,
+      "density": true,
+      "mass": true,
+      "size": true,
+      "name": true,
+      "pos": true,
+      "quat": true,
+      "friction": true,
+      "solref": true,
+      "inertia": true,
+      "axis": true,
+      "range": true,
+      "joint": true,
+      "gear": true,
+      "site": true,
+      "texture": true
+    },
+    "object_2_permissions": {
+      "type": true,
+      "density": true,
+      "mass": true,
+      "size": true,
+      "name": true,
+      "pos": true,
+      "quat": true,
+      "friction": true,
+      "solref": true,
+      "inertia": true,
+      "axis": true,
+      "range": true,
+      "joint": true,
+      "gear": true,
+      "site": true,
+      "texture": true
+    },
+    "object_3_permissions": {
+      "type": true,
+      "density": true,
+      "mass": true,
+      "size": true,
+      "name": true,
+      "pos": true,
+      "quat": true,
+      "friction": true,
+      "solref": true,
+      "inertia": true,
+      "axis": true,
+      "range": true,
+      "joint": true,
+      "gear": true,
+      "site": true,
+      "texture": true
+    }
+  }
+}

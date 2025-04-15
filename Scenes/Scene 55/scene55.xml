@@ -1,0 +1,27 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <!-- Slope -->
+    <body name="slope" pos="0 0 0">
+      <geom type="plane" size="5 0.1 10" rgba="0.7 0 0 1" friction="0.2 0.2 0.2"/>
+    </body>
+    <!-- Ground -->
+    <body name="ground" pos="0 0 -10">
+      <geom type="plane" size="30 30 0.1" rgba="0.7 0.7 0.7 1" friction="1 1 1"/>
+    </body>
+    <!-- Rolling Sphere -->
+    <body name="rolling_sphere" pos="-5 -0.6 1">
+      <geom type="sphere" size="0.5" density="1" rgba="1 0 0 1"/>
+      <joint name="rolling_sphere_joint" type="free"/>
+    </body>
+    <!-- Sliding Sphere -->
+    <body name="sliding_sphere" pos="5 -0.6 1">
+      <geom type="sphere" size="0.5" density="1" rgba="0 0 1 1"/>
+      <joint name="sliding_sphere_joint" type="free"/>
+    </body>
+    <!-- Goal Line -->
+    <body name="goal_line" pos="0 0 -5">
+      <geom type="box" size="1 1 0.1" rgba="0 1 0 1"/>
+    </body>
+  </worldbody>
+</mujoco>

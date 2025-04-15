@@ -1,0 +1,15 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <!-- Falling Object -->
+    <body name="falling_object" pos="0 0 50">
+      <geom type="sphere" size="0.5" density="2" rgba="0 1 0 1"/>
+      <joint name="falling_object_joint" type="free"/>
+    </body>
+    
+    <!-- Surface -->
+    <body name="surface" pos="0 0 -10">
+      <geom type="plane" size="30 30 0.1" rgba="0.7 0.7 0.7 1" friction="0.5 0.5 0.5"/>
+    </body>
+  </worldbody>
+</mujoco>

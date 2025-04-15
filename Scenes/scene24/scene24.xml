@@ -1,0 +1,19 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <!-- Frictional Ground -->
+    <body name="surface" pos="0 0 -0.1">
+      <geom type="plane" size="25 25 0.1" rgba="0.7 0.7 0.7 1" friction="0.8 0.8 0.8"/>
+    </body>
+    <!-- Block 1 -->
+    <body name="block1" pos="-2 0 0.5">
+      <geom type="box" size="0.5 0.5 0.5" density="1" rgba="0.2 0.8 0.2 1" friction="0.8 0.8 0.8"/>
+      <joint name="block1_joint" type="free"/>
+    </body>
+    <!-- Block 2 -->
+    <body name="block2" pos="2 0 0.5">
+      <geom type="box" size="0.5 0.5 0.5" density="1" rgba="0.8 0.2 0.2 1" friction="0.8 0.8 0.8"/>
+      <joint name="block2_joint" type="free"/>
+    </body>
+  </worldbody>
+</mujoco>

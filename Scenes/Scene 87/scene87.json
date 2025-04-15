@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "scene_name": "Spring Compression",
+    "task": "Determine the force required to compress a spring by 0.1 meters.",
+    "problem_type": "calculation"
+  },
+  "answer": "Force = spring_constant * compression_distance",
+  "expected_behavior": "The LLM should calculate the force using Hooke's law: F = k * x.",
+  "reasoning": "Using Hooke's Law, the LLM calculates the force required to compress the spring by 0.1 meters.",
+  "number_of_objects": "3",
+  "objects": {
+    "object_1": { "name": "spring", "object_id": "1" },
+    "object_2": { "name": "block", "object_id": "2" },
+    "object_3": { "name": "surface", "object_id": "3" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}

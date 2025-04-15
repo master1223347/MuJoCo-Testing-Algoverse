@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "scene_name": "Conservation of Linear Momentum",
+    "task": "Determine the final velocities of the gliders after the collision using conservation of momentum.",
+    "problem_type": "linear momentum"
+  },
+  "answer": "m1*v1_initial + m2*v2_initial = m1*v1_final + m2*v2_final",
+  "expected_behavior": "LLM simulates the collision and records the velocities before and after.",
+  "reasoning": "Momentum is conserved in an isolated system, even if the collision is inelastic.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": {"name": "glider_1", "object_id": "1"},
+    "object_2": {"name": "glider_2", "object_id": "2"},
+    "object_3": {"name": "track", "object_id": "3"},
+    "object_4": {"name": "ground", "object_id": "4"}
+  },
+  "object_permissions": {
+    "object_1_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_2_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_3_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_4_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    }
+  }
+}

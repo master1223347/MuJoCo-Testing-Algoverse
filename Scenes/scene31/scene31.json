@@ -1,0 +1,20 @@
+{
+    "metadata": {
+      "scene_name": "Angular Momentum Conservation",
+      "task": "Determine the change in angular velocity as the skater pulls in her arms.",
+      "problem_type": "conceptual"
+    },
+    "answer": "Angular velocity increases as moment of inertia decreases.",
+    "expected_behavior": "The LLM notes that conservation of angular momentum requires an increase in angular velocity when the moment of inertia decreases.",
+    "reasoning": "L = Iω is constant. A decrease in I leads to an increase in ω.",
+    "number_of_objects": "2",
+    "objects": {
+      "object_1": { "name": "skater", "object_id": "1" },
+      "object_2": { "name": "support", "object_id": "2" }
+    },
+    "object_permissions": {
+      "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+      "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+    }
+  }
+  

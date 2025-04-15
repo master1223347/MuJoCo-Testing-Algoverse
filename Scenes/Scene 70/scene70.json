@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "scene_name": "Rotating Disk Angular Velocity",
+    "task": "Determine which disk rotates faster (higher angular velocity).",
+    "problem_type": "observation"
+  },
+  "answer": "2",
+  "expected_behavior": "The LLM observes rotation rate or angular position change over time.",
+  "reasoning": "Disk with greater change in orientation per second has higher angular velocity.",
+  "number_of_objects": "2",
+  "objects": {
+    "object_1": { "name": "disk_1", "object_id": "1" },
+    "object_2": { "name": "disk_2", "object_id": "2" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "pos": true, "quat": true, "joint": true, "name": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "pos": true, "quat": true, "joint": true, "name": true }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "scene_name": "Bounce Height Comparison",
+    "task": "Determine which ball has a higher coefficient of restitution.",
+    "problem_type": "comparison"
+  },
+  "answer": "2",
+  "expected_behavior": "The LLM drops both balls and compares their bounce heights.",
+  "reasoning": "The ball with higher restitution retains more kinetic energy and bounces higher.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": { "name": "low_bounce_ball", "object_id": "1" },
+    "object_2": { "name": "high_bounce_ball", "object_id": "2" },
+    "object_3": { "name": "ground", "object_id": "3" },
+    "object_4": { "name": "drop_site", "object_id": "4" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "radius": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "radius": true, "name": true, "pos": true, "quat":

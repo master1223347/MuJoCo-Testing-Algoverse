@@ -1,0 +1,18 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <!-- Obstacle -->
+    <body name="obstacle" pos="5 0 0">
+      <geom type="box" size="0.5 2 2" rgba="0.7 0.2 0.2 1" friction="0.8 0.8 0.8"/>
+    </body>
+    <!-- Ground -->
+    <body name="ground" pos="0 0 -0.1">
+      <geom type="plane" size="30 30 0.1" rgba="0.8 0.8 0.8 1" friction="1 1 1"/>
+    </body>
+    <!-- Projectile -->
+    <body name="projectile" pos="-5 0 1">
+      <geom type="sphere" size="0.2" density="1" rgba="0.2 0.8 0.2 1"/>
+      <joint name="projectile_joint" type="free"/>
+    </body>
+  </worldbody>
+</mujoco>

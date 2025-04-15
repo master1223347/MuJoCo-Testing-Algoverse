@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "scene_name": "Elevator Apparent Weight",
+    "task": "Determine the direction of elevator acceleration from the reading of the scale.",
+    "problem_type": "noninertial_frames"
+  },
+  "answer": "Scale reads higher → elevator accelerating upward. Lower → downward.",
+  "expected_behavior": "LLM observes force on scale compared to normal weight.",
+  "reasoning": "Apparent weight = m(g ± a).",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": {"name": "elevator", "object_id": "1"},
+    "object_2": {"name": "block", "object_id": "2"},
+    "object_3": {"name": "scale", "object_id": "3"},
+    "object_4": {"name": "shaft", "object_id": "4"}
+  },
+  "object_permissions": {
+    "object_1_permissions": {"type": true, "pos": true, "velocity": true},
+    "object_2_permissions": {"mass": true},
+    "object_3_permissions": {"force_sensor": true},
+    "object_4_permissions": {"type": true}
+  }
+}

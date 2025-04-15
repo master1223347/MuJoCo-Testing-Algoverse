@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "scene_name": "Elastic vs Inelastic Collision",
+    "task": "Determine which collision was elastic.",
+    "problem_type": "energy and momentum"
+  },
+  "answer": "1",
+  "expected_behavior": "LLM simulates both collisions and observes whether kinetic energy is conserved.",
+  "reasoning": "Elastic collisions conserve both momentum and kinetic energy. Object 1 bounces, so it is elastic.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": {"name": "cart_elastic", "object_id": "1"},
+    "object_2": {"name": "cart_inelastic", "object_id": "2"},
+    "object_3": {"name": "wall", "object_id": "3"},
+    "object_4": {"name": "ground", "object_id": "4"}
+  },
+  "object_permissions": {
+    "object_1_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_2_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_3_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    },
+    "object_4_permissions": {
+      "type": true, "density": true, "mass": true, "size": true, "name": true,
+      "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true,
+      "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true
+    }
+  }
+}

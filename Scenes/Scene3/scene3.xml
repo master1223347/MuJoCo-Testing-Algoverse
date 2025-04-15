@@ -1,0 +1,25 @@
+<mujoco model="horizontal_frictionless_slide">
+    <compiler angle="radian"/>
+    <option gravity="0 0 -9.81"/>  <!-- Standard gravity -->
+
+    <worldbody>
+        <!-- Big Plane -->
+            <body name="surface" pos="-10 0 -0.5">
+                <geom type="plane" size="30 30 0.1" rgba="0.7 0.7 0.7 1" friction="0.4 0.4 0.4"/>
+            </body>
+        <!-- Frictionless Horizontal Surface -->
+        <geom name="frictionless_plane" type="plane" pos="0 0 0" size="5 5 0.1"
+              rgba="0.6 0.5 0.7 1" friction="0 0 0"/>  <!-- No friction -->
+
+        <!-- The Ball (Starts above the surface) -->
+        <body name="ball" pos="-3 0 0.1">
+            <joint type="free"/>
+            <geom name="test_ball" type="sphere" size="0.05" density="10" rgba="1 0 0 1"/>
+        </body>
+        <!--The second ball-->
+        <body name="sphere" pos="3 0 0.1">
+            <joint type="free"/>
+            <geom name="test_sphere" type="sphere" size="0.05" density="10" rgba="0 0 1 1"/>
+        </body>
+    </worldbody>
+</mujoco>

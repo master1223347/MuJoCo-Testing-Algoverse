@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "scene_name": "Rotational Motion of a Disk",
+    "task": "Determine the rotational kinetic energy of a disk with a radius of 0.5 meters, mass 2 kg, and angular velocity of 10 rad/s.",
+    "problem_type": "calculation"
+  },
+  "answer": "Kinetic Energy = 0.5 * I * omega^2",
+  "expected_behavior": "The LLM should calculate the rotational kinetic energy using the formula K = 0.5 * I * omega^2.",
+  "reasoning": "The LLM applies the formula for rotational kinetic energy: K = 0.5 * I * omega^2, where I is the moment of inertia and omega is the angular velocity.",
+  "number_of_objects": "2",
+  "objects": {
+    "object_1": { "name": "disk", "object_id": "1" },
+    "object_2": { "name": "surface", "object_id": "2" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}

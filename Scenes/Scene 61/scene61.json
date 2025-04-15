@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "scene_name": "Rotational Inertia of Rod with Masses",
+    "task": "Rotate the rod and determine which configuration has greater rotational inertia.",
+    "problem_type": "comparison"
+  },
+  "answer": "2",
+  "expected_behavior": "LLM applies torque and observes angular acceleration to infer moment of inertia.",
+  "reasoning": "Masses further from the axis increase rotational inertia, leading to slower acceleration.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": { "name": "rod_with_close_masses", "object_id": "1" },
+    "object_2": { "name": "rod_with_far_masses", "object_id": "2" },
+    "object_3": { "name": "pivot", "object_id": "3" },
+    "object_4": { "name": "ground", "object_id": "4" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+  }
+}

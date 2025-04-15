@@ -1,0 +1,15 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <!-- Pendulum -->
+    <body name="pendulum" pos="0 0 2">
+      <geom type="cylinder" size="0.1 2" density="3" rgba="1 0 0 1"/>
+      <joint name="pendulum_joint" type="hinge" axis="0 0 1"/>
+    </body>
+    
+    <!-- Surface -->
+    <body name="surface" pos="0 0 -10">
+      <geom type="plane" size="30 30 0.1" rgba="0.7 0.7 0.7 1" friction="1 1 1"/>
+    </body>
+  </worldbody>
+</mujoco>

@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "scene_name": "Rod Length Inertia Test",
+    "task": "Determine which rod is longer by observing their rotational behavior.",
+    "problem_type": "comparison"
+  },
+  "answer": "1",
+  "expected_behavior": "The LLM applies equal torque and observes angular acceleration.",
+  "reasoning": "The longer rod has a higher moment of inertia and rotates more slowly.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": { "name": "long_rod", "object_id": "1" },
+    "object_2": { "name": "short_rod", "object_id": "2" },
+    "object_3": { "name": "ground", "object_id": "3" },
+    "object_4": { "name": "torque_device", "object_id": "4" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+    "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref":

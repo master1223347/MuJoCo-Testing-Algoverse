@@ -1,0 +1,22 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <!-- Support (fixed wall for spring attachment) -->
+    <body name="support" pos="0 0 1">
+      <geom type="box" size="0.2 0.2 0.2" rgba="0.6 0.6 0.6 1"/>
+    </body>
+    <!-- Ground Surface -->
+    <body name="surface" pos="-10 0 -0.1">
+      <geom type="plane" size="25 25 0.1" rgba="0.8 0.8 0.8 1" friction="0.1 0.1 0.1"/>
+    </body>
+    <!-- Mass -->
+    <body name="mass" pos="-3 0 1">
+      <geom type="box" size="0.3 0.3 0.3" density="1" rgba="0.2 0.8 0.2 1"/>
+      <joint name="mass_joint" type="free"/>
+    </body>
+    <!-- Spring (visualized as a thin capsule) -->
+    <body name="spring" pos="0 0 1">
+      <geom type="capsule" fromto="0 0 0 -3 0 0" radius="0.05" rgba="0.8 0.8 0.2 1"/>
+    </body>
+  </worldbody>
+</mujoco>

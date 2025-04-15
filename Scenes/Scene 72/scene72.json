@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "scene_name": "Pendulum Period Comparison",
+    "task": "Determine which pendulum has a longer period (slower swing).",
+    "problem_type": "oscillation"
+  },
+  "answer": "1",
+  "expected_behavior": "LLM observes swing frequency of each pendulum.",
+  "reasoning": "Longer pendulum = longer period due to T = 2π√(L/g).",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": { "name": "pendulum_1", "object_id": "1" },
+    "object_2": { "name": "bob_1", "object_id": "2" },
+    "object_3": { "name": "pendulum_2", "object_id": "3" },
+    "object_4": { "name": "bob_2", "object_id": "4" }
+  },
+  "object_permissions": {
+    "object_1_permissions": { "type": true, "pos": true, "joint": true, "size": true, "name": true },
+    "object_2_permissions": { "type": true, "mass": true, "pos": true, "size": true, "name": true },
+    "object_3_permissions": { "type": true, "pos": true, "joint": true, "size": true, "name": true },
+    "object_4_permissions": { "type": true, "mass": true, "pos": true, "size": true, "name": true }
+  }
+}

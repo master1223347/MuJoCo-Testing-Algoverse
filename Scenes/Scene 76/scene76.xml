@@ -1,0 +1,17 @@
+<mujoco>
+  <option gravity="0 0 -9.81"/>
+  <worldbody>
+    <body name="ground" pos="0 0 0">
+      <geom type="plane" size="20 20 0.1" rgba="0.6 0.6 0.6 1"/>
+    </body>
+    <body name="low_bounce_ball" pos="-1 0 2">
+      <geom type="sphere" size="0.2" mass="1" rgba="0.2 0.6 0.2 1" friction="0.3" solref="0.01 1"/>
+      <joint type="free"/>
+    </body>
+    <body name="high_bounce_ball" pos="1 0 2">
+      <geom type="sphere" size="0.2" mass="1" rgba="0.2 0.2 0.8 1" friction="0.3" solref="0.001 1"/>
+      <joint type="free"/>
+    </body>
+    <body name="drop_site" pos="0 0 2"/>
+  </worldbody>
+</mujoco>

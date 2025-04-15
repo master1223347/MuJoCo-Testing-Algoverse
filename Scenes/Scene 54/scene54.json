@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "scene_name": "Projectile Launch Angle",
+    "task": "Compare maximum height and horizontal range of two projectiles launched at different angles.",
+    "problem_type": "projectile_motion"
+  },
+  "answer": "Higher angle → greater height, lower angle → farther range.",
+  "expected_behavior": "LLM observes trajectories and identifies key values.",
+  "reasoning": "Vertical and horizontal components of velocity vary with angle.",
+  "number_of_objects": "4",
+  "objects": {
+    "object_1": {"name": "projectile_1", "object_id": "1"},
+    "object_2": {"name": "projectile_2", "object_id": "2"},
+    "object_3": {"name": "launch_platform", "object_id": "3"},
+    "object_4": {"name": "ground", "object_id": "4"}
+  },
+  "object_permissions": {
+    "object_1_permissions": {"type": true, "mass": true, "pos": true, "velocity": true},
+    "object_2_permissions": {"type": true, "mass": true, "pos": true, "velocity": true},
+    "object_3_permissions": {"type": true},
+    "object_4_permissions": {"type": true}
+  }
+}

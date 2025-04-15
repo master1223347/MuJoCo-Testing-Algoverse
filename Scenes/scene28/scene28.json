@@ -1,0 +1,24 @@
+{
+    "metadata": {
+      "scene_name": "Spring-Mass Oscillator",
+      "task": "Determine the period of oscillation of a mass attached to a spring.",
+      "problem_type": "calculation"
+    },
+    "answer": "T = 2π√(m/k)",
+    "expected_behavior": "The LLM uses the formula T = 2π√(m/k) to compute the oscillation period given the mass and spring constant.",
+    "reasoning": "The period of a simple harmonic oscillator is determined by its mass and spring constant.",
+    "number_of_objects": "4",
+    "objects": {
+      "object_1": { "name": "mass", "object_id": "1" },
+      "object_2": { "name": "spring", "object_id": "2" },
+      "object_3": { "name": "support", "object_id": "3" },
+      "object_4": { "name": "surface", "object_id": "4" }
+    },
+    "object_permissions": {
+      "object_1_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+      "object_2_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+      "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
+      "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+    }
+  }
+  
