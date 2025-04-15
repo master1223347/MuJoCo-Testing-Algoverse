@@ -1,28 +1,17 @@
 {
-  "metadata": {
-      "scene_name": "Solid vs Hollow Sphere",
-      "task": "Determine which sphere is hollow based on their rolling behavior.",
-      "problem_type": "comparison"
-  },
-
-  "answer": "2",
-
-  "expected_behavior": "The LLM changes the positions of the centers of the spheres to roll down the ramp and records which object went down the fastest",
-
-  "reasoning": "The hollow sphere rolls down slower due to its greater moment of inertia, which would be object 2",
-
-  "number_of_objects": "4",
-  
-  "objects": {
-    "object_1": { "name": "solid_sphere", "object_id": "1" },
-    "object_2": { "name": "hollow_sphere", "object_id": "2" },
-    "object_3": { "name": "surface", "object_id": "3" },
-    "object_4": { "name": "incline", "object_id": "4" }
-  },
-  "object_permissions": {
-    "object_1_permissions": { "type": true, "density": false, "mass": false, "radius": false },
-    "object_2_permissions": { "type": true, "density": false, "mass": false, "radius": false },
-    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true },
-    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true }
-  }
+  "scene_name": "Solid vs Hollow Sphere",
+  "task": "Determine which sphere is hollow based on their rolling behavior.",
+  "objects": [
+    {
+      "name": "Solid Sphere",
+      "object_id": "1",
+      "permissions": { "density": false, "mass": false, "radius": false }
+    },
+    {
+      "name": "Hollow Sphere",
+      "object_id": "2",
+      "permissions": { "density": false, "mass": false, "radius": false }
+    }
+  ]
 }
+
