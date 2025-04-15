@@ -49,18 +49,12 @@ class Experimental:
             "get_parameters": self.simulator.get_parameters,
             "move_object": self.simulator.move_object,
             "get_position": self.simulator.get_position,
-            "get_kinetic_energy": self.simulator.get_kinetic_energy,
-            "get_potential_energy": self.simulator.get_potential_energy,
-            "get_momentum": self.simulator.get_momentum,
             "get_torque": self.simulator.get_torque,
             "get_center_of_mass": self.simulator.get_center_of_mass,
             "get_angular_momentum": self.simulator.get_angular_momentum,
             "change_position": self.simulator.change_position,
             "quat_to_rot_matrix": self.simulator.quat_to_rot_matrix,
-            "reset_sim": self.simulator.reset_sim,
-            "load_scene": self.simulator.load_scene,
             "step": self.simulator.step,
-            "render": self.simulator.render,
             "answer": lambda answer: {"result": answer}
         }
 
@@ -147,7 +141,7 @@ class Experimental:
             return json.dumps([json_obj])  # Wrap single object in array
         except Exception as e:
             logging.warning(f"JSON parsing error: {e}, response: {llm_output}")
-            return json.dumps([{"tool": "error", "parameters": {"message": f"Invalid JSON: {e}. Please try again with valid syntax."}}])
+            raise ValueError(f"Invalid JSON syntax. Error: {e}")
 
 
     def run_experiment(self) -> Dict[str, Any]:
@@ -174,9 +168,10 @@ class Experimental:
         tool_history = []  # Track tool calls to detect loops
         tool_usage = {}
         llm_input_prompt = scene_prompt
+        itr = 0  # Initialize iteration counter
         
-        for itr in range(self.max_iterations):
-            remaining = self.max_iterations - itr
+        while itr < self.max_iterations:
+            remaining = self.max_iterations - (itr + 1)  # Calculate remaining iterations
 
             # Construct prompt based on previous results
 
@@ -197,13 +192,11 @@ class Experimental:
                 tool_calls_json_obj = json.loads(tool_calls_json_str)
                 tool_history.append(tool_calls_json_str)
             except ValueError as e:
-                logging.error(f"Error extracting JSON: {e}")
-                results.append({"error": f"Failed to extract valid JSON: {e}. Please provide a valid JSON response."})
-                continue
-            except json.JSONDecodeError as e:
-                logging.error(f"Error parsing JSON: {e}")
-                results.append({"error": f"Invalid JSON format: {e}. Please provide a valid JSON response."})
-                continue
+                error_msg = f"Error: Invalid JSON syntax for tool(s) - {', '.join([call['tool'] for call in tool_calls_json_obj if 'parameters' not in call or not isinstance(call['parameters'], dict)])}. Please try again with proper syntax - you are given another chance at the iteration you were last on."
+                llm_input_prompt = (f"Previous results: {error_msg}\n"
+                                    f"IMPORTANT: You have {remaining} iterations remaining to use the 'answer' tool.\n"
+                                    f"What should I do next?")
+                continue #retry same iteration
             
 
             logging.info(f"\n=== Executing Tool Calls (Iteration {itr + 1}) ===")
@@ -269,6 +262,8 @@ class Experimental:
                 llm_input_prompt = (f"Previous Results: {results}\n"
                     f"IMPORTANT: You have {remaining} iterations remaining to use the 'answer' tool.\n"
                     f"What should I do next?")
+                
+            itr += 1  # Increment the iteration counter    
                 
         # If the loop completes without finding the answer, set the timeout flag
         if itr == self.max_iterations - 1 and not answer_found:

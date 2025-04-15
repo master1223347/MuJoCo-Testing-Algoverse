@@ -240,7 +240,8 @@ class Scene:
             f"\n\nYou may use the following tools along with their descriptionto interact with the scene. These functions accept parameters given below, and return data or perform simulation updates:\n{tools_str}"
             f"\n\nEvery time you call a tool, you will receive a dictionary containing the outputs. For example, if you call `get_velocity` on `object_1`, the return might be:"
             f'\n{{"vx": 0.0, "vy": -3.2, "vz": 0.0}}'
-            f"\n\nYou must call `step` to simulate time progression.\n"
+            f"\n\nYou only have **one chance** to answer the question. When you're confident, submit your final answer using:"
+            f'\n`{{"tool": "answer", "parameters": {{"answer": "<your_answer>"}}}}`'
             f"\n<THIS IS AN EXAMPLE OF THE INPUT(ASSISTANT) AND OUTPUTS(ENVIRONMENT)>"
             f"\nProblem: You are given a ball and a ground surface for reference. Drop the ball from a height of 10 units and figure out the velocity of the object after 0.5 seconds."
             f"\n<assistant>\nI see that I have to move the ball up 10 units so I will do that.\n```json\n"
@@ -254,8 +255,7 @@ class Scene:
             f"\n<environment>\nResults: [{{\"tool\": \"get_velocity\", \"parameters\": {{...}}, \"result\": {{\"velocity\": [0, -4.9, 0]}}, \"sim_time\": 0.5}}] What will you do next\n"
             f"\n<assistant>\nNow I will call back the answer.\n```json\n"
             f'[{{"tool": "answer", "parameters": {{"answer": "-4.9"}}}}]\n```\n<END EXAMPLE>\n"'
-            f"\n\nYou only have **one chance** to answer the question. When you're confident, submit your final answer using:"
-            f'\n`{{"tool": "answer", "parameters": {{"answer": "<your_answer>"}}}}`'
+            
         )
 
         # Append additional instructions based on problem type
@@ -276,7 +276,11 @@ class Scene:
             )
 
         self.prompt += (
-            f'\n When you are trying to call functions, use a string that goes as object_{{object_id}} for the object id, and use the name of the function as the tool name.'
+            f'\n\n***FINAL GUIDELINES***\n'
+            f"\nYou must call `step` to simulate time progression.\n"
+            f'\n When you are trying to call functions, use a string that goes as object_{{object_id}} for the object id, and use the name of the function as the tool name.\n'
+            f'\nDo not make any assumptions about the positions or states of objects, if you are unsure you can use tools get this information.\n'
+            f'\nIf your json format is incorrect - the environment will tell you and the simulator will remain in the same state. If one of your tool calls has incorrect formatting, the previous tool calls will successfully execute but the incorrect tool and subsequent tools will not execute. You will see how your tool call was incorrect and get a chance to retry in the next iteration.\n'
             f'\nRemember that YOU MUST PROVIDE YOUR REASONING FOR EVERY ACTION you take, and then make sure to add a valid JSON format of an array of tool calls.')
 
         return self.prompt
