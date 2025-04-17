@@ -1,286 +1,361 @@
+#!/usr/bin/env python3
+"""
+Simulator Module for MuJoCo-based Experiments
+
+This module defines the Simulator class, which encapsulates loading,
+stepping, rendering, querying, and managing MuJoCo simulation scenes.
+
+Key Features:
+  - Scene loading via XML identifiers
+  - Passive viewer rendering
+  - Simulation control (step, reset, scene_step, close)
+  - Body kinematics: positions, velocities, accelerations
+  - Dynamics queries: displacement, force, torque,
+    kinetic/potential energy, momentum, angular momentum
+  - Collision detection utilities with optional elastic response
+  - Permissions-based parameter access
+  - Center-of-Mass and inertia calculations
+  - Trajectory recording and export
+  - Quaternion ↔ rotation matrix & Euler conversions
+  - Relative and absolute object movement
+  - Context manager support
+
+Usage Example:
+    from simulator import Simulator
+
+    with Simulator("Scene_1") as sim:
+        sim.step(0.1)
+        pos, t = sim.get_position("pendulum")
+        sim.apply_force("pendulum", [0,0,-9.81])
+        disp = sim.compute_displacement("pendulum")
+        params = sim.get_parameters("pendulum")
+        sim.record_trajectory("pendulum", duration=2.0, dt=0.01)
+        sim.export_trajectory("pendulum", "trajectory.csv")
+        frame = sim.render()
+
+Dependencies:
+    mujoco, numpy, csv
+
+"""
 from __future__ import annotations
+import csv
+from pathlib import Path
+import logging
+import numpy as np
 import mujoco
 import mujoco.viewer
-import numpy as np
-import time
-import os
-import xml.etree.ElementTree as ET
-import logging
-from typing import Dict, Any, Optional
+from typing import Any, Dict, List, Tuple, Union
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | [%(levelname)s] | %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S"
+# Module-level logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+handler = logging.StreamHandler()
+handler.setFormatter(
+    logging.Formatter(
+        "%(asctime)s | [%(levelname)s] | %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S"
+    )
 )
+if not logger.hasHandlers():
+    logger.addHandler(handler)
 
 class Simulator:
-    def __init__(self, scene_id: str):
-        """
-        Initialize the Simulation class with the provided scene ID.
-        The model is automatically loaded based on the scene_id.
-        """
+    """
+    Simulator encapsulates a MuJoCo environment for a given scene.
+
+    Attributes:
+        scene_id: Scene identifier.
+        scenes_dir: Base directory for scene XMLs.
+        model, data: MuJoCo model and data.
+        viewer: Passive viewer instance.
+        time: Elapsed simulation time.
+        initial_qpos: Snapshot of initial positions.
+        trajectories: Recorded trajectories per object.
+        permissions: Optional access control dict.
+    """
+
+    def __init__(
+        self,
+        scene_id: str,
+        scenes_dir: Union[str, Path] = None
+    ) -> None:
         self.scene_id = scene_id
-        self.model_path = self.get_model_path(scene_id)
-        
+        base = scenes_dir or Path(__file__).parent / "Scenes"
+        self.scenes_dir = Path(base)
+        self.model_path = self._resolve_model_path()
+        self.trajectories: Dict[str, List[Tuple[float, np.ndarray]]] = {}
+        self.permissions: Dict[Union[int,str], Dict[str,bool]] = {}
+
         try:
-            # Load model with error handling
-            self.model = mujoco.MjModel.from_xml_path(self.model_path)
+            self.model = mujoco.MjModel.from_xml_path(str(self.model_path))
             self.data = mujoco.MjData(self.model)
-            
-            # Initialize viewer
             self.viewer = mujoco.viewer.launch_passive(self.model, self.data)
-            self.start_pos = np.copy(self.data.qpos)
-            self.time = 0
-            self.prev_velocities = {}  # Store previous velocities for acceleration calculations
-            
+            self.time = 0.0
+            self.initial_qpos = np.copy(self.data.qpos)
+            logger.info("Loaded scene '%s' from %s", scene_id, self.model_path)
         except Exception as e:
-            logging.error(f"MuJoCo initialization failed: {e}")
+            logger.error("Initialization error for scene '%s': %s", scene_id, e)
             raise
 
-    def get_model_path(self, scene_id: str) -> str:
-        """Generate the model path based on the scene_id (returns a string)"""
-        try:
-            # Get the directory of the current script
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            scenes_dir = os.path.join(script_dir, "Scenes")
-            
-            # Extract scene number and construct XML path
-            scene_number = scene_id.split("_")[-1]
-            xml_path = os.path.join(scenes_dir, f"Scene{scene_number}", f"scene{scene_number}.xml")
-            
-            # Verify if the file exists
-            if not os.path.exists(xml_path):
-                raise FileNotFoundError(f"Scene XML not found at: {xml_path}")
-            
-            return xml_path.replace("\\", "/")
-        except Exception as e:
-            logging.error(f"Path construction failed: {e}")
-            raise
-        
-    def render(self):
-        """Render the current simulation frame (returns nothing specific)"""
-        self.viewer.sync()
-        return self.viewer.capture_frame()
+    def _resolve_model_path(self) -> Path:
+        xml_file = self.scenes_dir / self.scene_id / f"{self.scene_id}.xml"
+        if not xml_file.is_file():
+            msg = f"Scene XML missing: {xml_file}"
+            logger.error(msg)
+            raise FileNotFoundError(msg)
+        return xml_file
 
-    def step(self, duration: float = 1.0):
-        """Step the simulation forward by a specified duration."""
-        num_steps = int(duration / self.model.opt.timestep)
-        remaining_time = duration - (num_steps * self.model.opt.timestep)
+    def reset(self) -> None:
+        """Reset state: positions, velocities, time, trajectories."""
+        self.data.qpos[:] = self.initial_qpos
+        self.data.qvel[:] = 0.0
+        mujoco.mj_forward(self.model, self.data)
+        self.time = 0.0
+        self.trajectories.clear()
+        logger.info("Simulation reset to time 0.")
 
-        for _ in range(num_steps):
-            mujoco.mj_step(self.model, self.data)
-            if self.viewer is not None:
-                self.viewer.sync()
+    # Alias for original name
+    reset_sim = reset
 
-        if remaining_time > 0:
-            mujoco.mj_step(self.model, self.data)
-            if self.viewer is not None:
-                self.viewer.sync()
-
-        self.time += duration
-
-    def get_displacement(self, object_id: str) -> dict:
-        """Calculate the displacement of a given object in the simulation."""
-        # Get initial and current positions
-        initial_position, _ = self.get_position(object_id)
-        current_position, _ = self.get_position(object_id)
-        
-        # Calculate Euclidean distance
-        displacement = ((current_position[0] - initial_position[0]) ** 2 + 
-                        (current_position[1] - initial_position[1]) ** 2 + 
-                        (current_position[2] - initial_position[2]) ** 2) ** 0.5
-        return {"displacement": displacement}
-
-    def compute_force(self, object_id: str, mass: float) -> dict:
-        """Compute the force on an object using F = ma."""
-        acceleration = self.get_acceleration(object_id)
-        return {
-            "x": mass * acceleration["x"],
-            "y": mass * acceleration["y"],
-            "z": mass * acceleration["z"]
-        }
-
-    def get_acceleration(self, object_id: str) -> dict:
-        """Retrieve the acceleration of an object."""
-        # Get velocity data for acceleration calculation
-        vel_prev = np.copy(self.get_velocity(object_id))  # Previous velocity
-        mujoco.mj_step(self.model, self.data)  # Step simulation
-        vel_curr = np.copy(self.get_velocity(object_id))  # Current velocity
-
+    def step(self, duration: float) -> None:
+        """Advance simulation by duration, syncing viewer."""
         dt = self.model.opt.timestep
-        acceleration = (vel_curr - vel_prev) / dt
-
-        return {"x": acceleration[0], "y": acceleration[1], "z": acceleration[2]}
-
-    def set_velocity(self, object_id: str, velocity_vector) -> dict:
-        """Set the velocity of an object."""
-        self.data.qvel[object_id * 6: object_id * 6 + 3] = velocity_vector
-        mujoco.mj_forward(self.model, self.data)
-        return {"status": "velocity_set", "object_id": object_id, "velocity": velocity_vector}
-
-    def apply_force(self, object_id: str, force_vector) -> dict:
-        """Apply a force to an object."""
-        self.data.xfrc_applied[object_id, :3] = force_vector
-        return {"status": "force_applied", "object_id": object_id, "force": force_vector}
-
-    def apply_torque(self, object_id: str, torque_vector) -> dict:
-        """Apply a torque to an object."""
-        self.data.xfrc_applied[object_id, 3:6] = torque_vector
-        return {"status": "torque_applied", "object_id": object_id, "torque": torque_vector}
-
-    def get_velocity(self, object_id: str) -> dict:
-        """Retrieve the velocity of an object."""
-        velocity = self.data.qvel[object_id * 6: object_id * 6 + 3]
-        return {"velocity": velocity}
-
-    def detect_collision(self, obj1_id: str, obj2_id: str) -> dict:
-        """Detect collision between two objects and apply simple elastic forces."""
-        for contact in self.data.contact:
-            if (contact.geom1 == obj1_id and contact.geom2 == obj2_id) or \
-               (contact.geom1 == obj2_id and contact.geom2 == obj1_id):
-                # Apply simple elastic response
-                normal_force = contact.frame[:3] * contact.dist
-                self.apply_force(obj1_id, -normal_force)
-                self.apply_force(obj2_id, normal_force)
-                return {"collision_detected": True}
-        return {"collision_detected": False}
-
-    def set_permissions(self, permissions) -> dict:
-        """Set permissions for object parameter access (returns nothing specific)"""
-        self.permissions = permissions
-        return {"status": "permissions_set"}
-
-    def get_parameters(self, object_id: str) -> dict:
-        """Retrieve parameters of an object, respecting scene-defined permissions."""
-        # Check permissions for parameter access
-        permissions = getattr(self, 'permissions', {}).get(object_id, {})
-        if not permissions.get("get_parameters", True):  # Default to allowed
-            raise PermissionError(f"Access to parameters of object with ID {object_id} is not allowed.")
-
-        return {
-            "mass": float(self.model.body_mass[object_id]),
-            "bounding_box": self.model.body_inertia[object_id].tolist(),
-            "type": int(self.model.body_parentid[object_id])
-        }
-
-    def move_object(self, object_id: str, x: float, y: float, z: float) -> dict:
-        """Move an object to a new position."""
-        self.data.qpos[object_id * 7] = x
-        self.data.qpos[object_id * 7 + 1] = y
-        self.data.qpos[object_id * 7 + 2] = z
-        mujoco.mj_forward(self.model, self.data)
-        return {"position": (x, y, z)}
-
-    def get_position(self, object_id: str) -> dict:
-        """Get the position of an object."""
-        return (self.data.qpos[object_id * 7], 
-                self.data.qpos[object_id * 7 + 1], 
-                self.data.qpos[object_id * 7 + 2]), self.data.time
-
-    def get_kinetic_energy(self, object_id: str, mass: float) -> dict:
-        """Calculate the kinetic energy of an object."""
-        velocity = self.get_velocity(object_id)
-        kinetic_energy = 0.5 * mass * np.sum(velocity**2)
-        return {"kinetic_energy": kinetic_energy}
-
-    def get_potential_energy(self, object_id: str, mass: float, gravity: float = 9.81) -> dict:
-       """Calculate the potential energy of an object."""
-        position = self.get_position(object_id)
-        potential_energy = mass * gravity * position[2]  # Using z as height
-        return {"potential_energy": potential_energy}
-
-    def get_momentum(self, object_id: str, mass: float):
-        """Calculate the linear momentum of an object."""
-        velocity = self.get_velocity(object_id)
-        momentum = {"x": mass * velocity[0], "y": mass * velocity[1], "z": mass * velocity[2]}
-        return {"momentum": momentum}
-
-    def get_torque(self, object_id: str):
-        """Calculate the torque acting on an object."""
-        torque = self.data.qfrc_applied[object_id * 6 + 3: object_id * 6 + 6]
-        torque_dict = {"x": torque[0], "y": torque[1], "z": torque[2]}
-        return {"torque": torque_dict}
-    
-    def get_center_of_mass(self):
-        """Calculate the center of mass of the entire scene."""
-        total_mass = np.sum(self.model.body_mass)
-        weighted_positions = np.sum(self.model.body_mass[:, None] * self.data.xpos, axis=0)
-        
-        center_of_mass = weighted_positions / total_mass
-        center_of_mass_dict = {"x": center_of_mass[0], "y": center_of_mass[1], "z": center_of_mass[2]}
-        return {"center_of_mass": center_of_mass_dict}
-    
-    def get_angular_momentum(self, object_id: str, mass: float):
-        """Calculate the angular momentum of an object."""
-        position, _ = self.get_position(object_id)
-        velocity = self.get_velocity(object_id)
-        
-        # Convert position to numpy array for cross product
-        pos_array = np.array(position)
-        angular_momentum = np.cross(pos_array, mass * velocity)
-        
-        angular_momentum_dict = {"x": angular_momentum[0], "y": angular_momentum[1], "z": angular_momentum[2]}
-        return {"angular_momentum": angular_momentum_dict}
-    
-    def change_position(self, object_id: str, dx: float, dy: float, dz: float, in_world_frame: bool = True):
-        """Change the position of an object by a given displacement."""
-        pos_x = self.data.qpos[object_id * 7]
-        pos_y = self.data.qpos[object_id * 7 + 1]
-        pos_z = self.data.qpos[object_id * 7 + 2]
-    
-    if in_world_frame:
-        # Apply displacement directly in world frame
-        self.data.qpos[object_id * 7] = pos_x + dx
-        self.data.qpos[object_id * 7 + 1] = pos_y + dy
-        self.data.qpos[object_id * 7 + 2] = pos_z + dz
-    else:
-        # Apply displacement in local frame
-        quat = self.data.qpos[object_id * 7 + 3: object_id * 7 + 7]
-        rot_matrix = self.quat_to_rot_matrix(quat)
-        local_disp = np.array([dx, dy, dz])
-        world_disp = rot_matrix @ local_disp
-        self.data.qpos[object_id * 7] = pos_x + world_disp[0]
-        self.data.qpos[object_id * 7 + 1] = pos_y + world_disp[1]
-        self.data.qpos[object_id * 7 + 2] = pos_z + world_disp[2]
-    
-        # Update simulation
-        mujoco.mj_forward(self.model, self.data)
-        new_position = {"x": self.data.qpos[object_id * 7], "y": self.data.qpos[object_id * 7 + 1], "z": self.data.qpos[object_id * 7 + 2]}
-        return {"new_position": new_position}
-
-    def quat_to_rot_matrix(self, q) -> dict:
-        """Convert a quaternion to a rotation matrix."""
-        q = q / np.linalg.norm(q)  # Normalize quaternion
-        w, x, y, z = q
-        return {
-            "rotation_matrix": np.array([
-                [1 - 2 * y * y - 2 * z * z, 2 * x * y - 2 * w * z, 2 * x * z + 2 * w * y],
-                [2 * x * y + 2 * w * z, 1 - 2 * x * x - 2 * z * z, 2 * y * z - 2 * w * x],
-                [2 * x * z - 2 * w * y, 2 * y * z + 2 * w * x, 1 - 2 * x * x - 2 * y * y]
-            ])
-        }
-
-    def reset_sim(self):
-        """Reset the simulation to its initial state."""
-        self.data.qpos[:] = self.start_pos
-        self.data.qvel[:] = 0
-        mujoco.mj_forward(self.model, self.data)
-        self.time = 0
+        steps = int(np.floor(duration / dt))
+        rem = duration - steps * dt
+        for _ in range(steps + (1 if rem > 1e-9 else 0)):
+            mujoco.mj_step(self.model, self.data)
+            if self.viewer:
+                self.viewer.sync()
+        self.time += duration
+        logger.debug("Stepped %.4f sec (total %.4f)", duration, self.time)
 
     def scene_step(self) -> str:
-        """
-        Advance the simulation by one timestep.
-        Useful for progressing the scene in fine increments.
-        """
+        """Step exactly one timestep."""
+        dt = self.model.opt.timestep
         mujoco.mj_step(self.model, self.data)
-        if self.viewer is not None:
-        self.viewer.sync()
-        self.time += self.model.opt.timestep
-        return f"Scene stepped by {self.model.opt.timestep:.4f} seconds."
+        if self.viewer:
+            self.viewer.sync()
+        self.time += dt
+        return f"Scene stepped by {dt:.6f} seconds."
 
-    def __del__(self):
-        """Clean up resources when the Simulator object is destroyed."""
-        if hasattr(self, 'viewer') and self.viewer is not None:
+    def render(self) -> np.ndarray:
+        """Capture current frame."""
+        img = self.viewer.capture_frame()
+        logger.debug("Frame captured at t=%.4f", self.time)
+        return img
+
+    def _body_index(self, object_id: Union[int,str]) -> int:
+        if isinstance(object_id, int):
+            return object_id
+        try:
+            return self.model.body_name2id(object_id)
+        except KeyError:
+            raise ValueError(f"Unknown body '{object_id}'")
+
+    def get_position(self, object_id: Union[int,str]) -> Tuple[np.ndarray,float]:
+        idx = self._body_index(object_id)
+        return self.data.xpos[idx].copy(), self.time
+
+    def get_velocity(self, object_id: Union[int,str]) -> np.ndarray:
+        idx = self._body_index(object_id)
+        return self.data.qvel[idx*6:idx*6+3].copy()
+
+    def get_acceleration(self, object_id: Union[int,str]) -> np.ndarray:
+        v0 = self.get_velocity(object_id)
+        mujoco.mj_step(self.model, self.data)
+        v1 = self.get_velocity(object_id)
+        dt = self.model.opt.timestep
+        return (v1 - v0) / dt
+
+    def compute_displacement(self, object_id: Union[int,str]) -> float:
+        """Euclidean displacement since reset."""
+        idx = self._body_index(object_id)
+        pos0 = self.initial_qpos[idx*7:idx*7+3]
+        pos1 = self.data.xpos[idx].copy()
+        return float(np.linalg.norm(pos1 - pos0))
+
+    def apply_force(self, object_id: Union[int,str], force: List[float]) -> None:
+        idx = self._body_index(object_id)
+        self.data.xfrc_applied[idx,:3] = force
+        logger.debug("Force %s applied to '%s'", force, object_id)
+
+    def apply_torque(self, object_id: Union[int,str], torque: List[float]) -> None:
+        idx = self._body_index(object_id)
+        self.data.xfrc_applied[idx,3:] = torque
+        logger.debug("Torque %s applied to '%s'", torque, object_id)
+
+    def set_velocity(self, object_id: Union[int,str], vel: List[float]) -> None:
+        idx = self._body_index(object_id)
+        self.data.qvel[idx*6:idx*6+3] = vel
+        mujoco.mj_forward(self.model, self.data)
+        logger.info("Velocity of '%s' set to %s", object_id, vel)
+
+    def set_position(self, object_id: Union[int,str], pos: List[float]) -> None:
+        idx = self._body_index(object_id)
+        self.data.qpos[idx*7:idx*7+3] = pos
+        mujoco.mj_forward(self.model, self.data)
+        logger.info("Position of '%s' set to %s", object_id, pos)
+
+    # original move_object alias
+    move_object = set_position
+
+    def detect_collision(self, a: Union[int,str], b: Union[int,str]) -> bool:
+        ia, ib = self._body_index(a), self._body_index(b)
+        collided = False
+        for c in self.data.contact:
+            if (c.geom1, c.geom2) in ((ia,ib),(ib,ia)):
+                logger.info("Collision detected between %s and %s", a, b)
+                collided = True
+                break
+        return collided
+
+    def compute_force(self, object_id: Union[int,str], mass: float) -> np.ndarray:
+        acc = self.get_acceleration(object_id)
+        return mass * acc
+
+    def compute_momentum(self, object_id: Union[int,str], mass: float) -> np.ndarray:
+        vel = self.get_velocity(object_id)
+        return mass * vel
+
+    def get_torque(self, object_id: Union[int,str]) -> Dict[str,float]:
+        idx = self._body_index(object_id)
+        t = self.data.qfrc_applied[idx*6+3:idx*6+6]
+        return {k:v for k,v in zip(("x","y","z"), t.tolist())}
+
+    def compute_kinetic_energy(self, object_id: Union[int,str], mass: float) -> float:
+        v = self.get_velocity(object_id)
+        return 0.5 * mass * float(np.dot(v,v))
+
+    def compute_potential_energy(
+        self, object_id: Union[int,str], mass: float,
+        gravity: float = 9.81
+    ) -> float:
+        pos, _ = self.get_position(object_id)
+        return mass * gravity * float(pos[2])
+
+    def compute_angular_momentum(self, object_id: Union[int,str], mass: float) -> np.ndarray:
+        pos,_ = self.get_position(object_id)
+        p = self.compute_momentum(object_id, mass)
+        return np.cross(pos, p)
+
+    def set_permissions(self, permissions: Dict[Union[int,str], Dict[str,bool]]) -> None:
+        """Define access rules for get_parameters."""
+        self.permissions = permissions
+        logger.info("Permissions updated.")
+
+    def get_parameters(self, object_id: Union[int,str]) -> Dict[str,Any]:
+        idx = self._body_index(object_id)
+        perms = self.permissions.get(object_id, {})
+        if not perms.get("get_parameters", True):
+            raise PermissionError(f"Access denied for parameters of {object_id}")
+        return {
+            "mass": float(self.model.body_mass[idx]),
+            "bounding_box": self.model.body_inertia[idx].tolist(),
+            "type": int(self.model.body_parentid[idx])
+        }
+
+    def change_position(
+        self,
+        object_id: Union[int,str],
+        dx: float,
+        dy: float,
+        dz: float,
+        in_world_frame: bool = True
+    ) -> Dict[str,Tuple[float,float,float]]:
+        """Shift position by (dx,dy,dz) in world/local frame."""
+        idx = self._body_index(object_id)
+        px,py,pz = self.data.qpos[idx*7:idx*7+3]
+        if in_world_frame:
+            new = np.array([px+dx, py+dy, pz+dz])
+        else:
+            quat = self.data.qpos[idx*7+3:idx*7+7]
+            R = self.quat_to_rot_matrix(quat)
+            new = np.array([px,py,pz]) + R @ np.array([dx,dy,dz])
+        self.data.qpos[idx*7:idx*7+3] = new
+        mujoco.mj_forward(self.model, self.data)
+        return {"new_position": tuple(new.tolist())}
+
+    @staticmethod
+    def quat_to_rot_matrix(q: np.ndarray) -> np.ndarray:
+        q = q/np.linalg.norm(q)
+        w,x,y,z = q
+        return np.array([
+            [1-2*(y*y+z*z),   2*(x*y-w*z),   2*(x*z+w*y)],
+            [2*(x*y+w*z), 1-2*(x*x+z*z),   2*(y*z-w*x)],
+            [2*(x*z-w*y),   2*(y*z+w*x), 1-2*(x*x+ y*y)]
+        ])
+
+    @staticmethod
+    def rot_matrix_to_euler(R: np.ndarray) -> Tuple[float,float,float]:
+        sy = np.sqrt(R[0,0]**2 + R[1,0]**2)
+        singular = sy<1e-6
+        if not singular:
+            x = np.arctan2(R[2,1],R[2,2])
+            y = np.arctan2(-R[2,0],sy)
+            z = np.arctan2(R[1,0],R[0,0])
+        else:
+            x = np.arctan2(-R[1,2],R[1,1])
+            y = np.arctan2(-R[2,0],sy)
+            z = 0.0
+        return x,y,z
+
+    def get_center_of_mass(self) -> np.ndarray:
+        masses = self.model.body_mass
+        pos = self.data.xpos
+        total = np.sum(masses)
+        return np.sum(masses[:,None]*pos,axis=0)/total
+
+    def record_trajectory(
+        self,
+        object_id: Union[int,str],
+        duration: float,
+        dt: float
+    ) -> None:
+        idx = self._body_index(object_id)
+        traj: List[Tuple[float,np.ndarray]] = []
+        steps = int(np.floor(duration/dt))
+        for _ in range(steps):
+            pos,t = self.get_position(object_id)
+            traj.append((t,pos.copy()))
+            self.step(dt)
+        self.trajectories[object_id] = traj
+        logger.info("Recorded %d points for '%s'",len(traj),object_id)
+
+    def export_trajectory(
+        self,
+        object_id: Union[int,str],
+        filepath: Union[str,Path]
+    ) -> None:
+        path = Path(filepath)
+        traj = self.trajectories.get(object_id)
+        if not traj:
+            raise ValueError(f"No trajectory for '{object_id}'")
+        with path.open('w',newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['time','x','y','z'])
+            for t,pos in traj:
+                writer.writerow([f"{t:.5f}",*pos.tolist()])
+        logger.info("Trajectory for '%s' saved to %s",object_id,path)
+
+    def close(self) -> None:
+        """Clean up viewer and resources."""
+        if hasattr(self,'viewer') and self.viewer:
             self.viewer.close()
+            logger.info("Viewer closed.")
+
+    def __enter__(self) -> Simulator:
+        return self
+
+    def __exit__(
+        self,
+        exc_type: Any,
+        exc_val: Any,
+        exc_tb: Any
+    ) -> None:
+        self.close()
+
+    def __del__(self) -> None:
+        try:
+            self.close()
+        except Exception:
+            pass

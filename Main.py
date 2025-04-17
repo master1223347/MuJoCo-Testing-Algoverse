@@ -1,85 +1,112 @@
+#!/usr/bin/env python3
 """
-Experiment Runner Script
+Experiment Runner Script.
 
-This script iterates through a predefined list of scene IDs, runs experiments 
-using the `Experimental` class, and aggregates the results. The results are 
-stored in a dictionary and optionally saved to a JSON file.
-
-Dependencies:
-- openai_agent.py
-- scene.py
-- simulator.py
-- experimental.py
-
-Functions:
-- main(): Initializes and runs experiments for each scene ID, stores results, 
-  and saves them to a JSON file.
+Description:
+    Iterates through a list of scene IDs, runs experiments using the Experimental class,
+    aggregates results, and optionally saves them to a JSON file.
 
 Usage:
-Run the script directly to execute experiments and generate results.
+    python3 experiment_runner.py [--scenes SCENES] [--output OUTPUT] [--verbose]
 
-Example:
-$ python script.py
+Arguments:
+    --scenes    Comma-separated list of scene IDs (default: "Scene_1").
+    --output    Path to save the aggregated results JSON file (default: aggregated_results.json).
+    --verbose   Enable verbose logging.
 
-Output:
-- Results for each scene are printed to the console.
-- Aggregated results are saved in `aggregated_results.json`.
-
+Dependencies:
+    openai_agent.py
+    scene.py
+    simulator.py
+    experimental.py
 """
 
-import os
+import argparse
 import json
-# Assuming all files are in the same directory and correctly implemented
+import logging
+import sys
+from pathlib import Path
+
+# Assuming these modules are implemented in the same directory
 from OpenAIAgent import OpenAIAgent
 from Scene import Scene
 from Simulator import Simulator
 from Experimental import Experimental
 
-def main():
-    """
-    Executes experiments for predefined scene IDs, collects results, 
-    and saves them to a JSON file.
-    """
-    
-    # Predefined list of scene IDs to iterate through
-    scene_ids = ["Scene_1"]  # Replace with actual scene IDs
-    
-    # Initialize a dictionary to store aggregated results
-    aggregated_results = {}
-    
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Run experiments for specified scenes."
+    )
+    parser.add_argument(
+        "--scenes", "-s",
+        type=str,
+        default="Scene_1",
+        help="Comma-separated scene IDs (e.g., Scene_1,Scene_2)."
+    )
+    parser.add_argument(
+        "--output", "-o",
+        type=Path,
+        default=Path("aggregated_results.json"),
+        help="Output JSON file path."
+    )
+    parser.add_argument(
+        "--verbose", "-v",
+        action="store_true",
+        help="Enable verbose logging."
+    )
+    return parser.parse_args()
+
+def setup_logging(verbose: bool) -> None:
+    level = logging.DEBUG if verbose else logging.INFO
+    logging.basicConfig(
+        level=level,
+        format="[%(asctime)s] %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S"
+    )
+
+def run_experiments(scene_ids: list[str]) -> dict[str, dict]:
+    aggregated_results: dict[str, dict] = {}
     for scene_id in scene_ids:
-      
-        simulator = Simulator(scene_id)  # Initialize the simulator
-        scene = Scene(scene_id, simulator)  # Initialize the scene with the simulator
-    
-        # Print the generated prompt to the terminal
-        prompt = scene.generate_prompt()  # Generate the prompt from the Scene class
-        print(prompt)  # This will print the prompt to the terminal
-      
-        # Initialize an Experimental object for the current scene
-        experiment = Experimental(scene_id)
-        
-        # Run the experiment
-        results = experiment.run_experiment()
+        logging.info(f"Starting experiment for scene: {scene_id}")
+        try:
+            simulator = Simulator(scene_id)
+            scene = Scene(scene_id, simulator)
+            prompt = scene.generate_prompt()
+            logging.debug(f"Generated prompt for {scene_id}:\n{prompt}")
 
+            experiment = Experimental(scene_id)
+            results = experiment.run_experiment()
 
-        if results['answer_found']:
-            print("\n=== Answer Summary ===")
-            print(f"LLM's Answer: {results['llm_answer']}")
-            print(f"Correct Answer: {results['correct_answer']}")
-            print(f"Answer Correct: {results['correct']}")
-        else:
-            print("\nNo answer was provided by the LLM.")
-        
-        # Store the results in the aggregated_results dictionary
-        aggregated_results[scene_id] = results
-        
-        # Optionally, print or log the results for each scene
-        print(f"Results for Scene {scene_id}: {results}")
-    
-    # Optionally, save the aggregated results to a file
-    with open("aggregated_results.json", "w") as file:
-        json.dump(aggregated_results, file, indent=4)
+            if results.get("answer_found"):
+                logging.info("Answer Summary")
+                logging.info(f"LLM's Answer: {results.get('llm_answer')}")
+                logging.info(f"Correct Answer: {results.get('correct_answer')}")
+                logging.info(f"Answer Correct: {results.get('correct')}")
+            else:
+                logging.warning("No answer was provided by the LLM.")
+
+            aggregated_results[scene_id] = results
+        except Exception as e:
+            logging.error(f"Experiment for scene {scene_id} failed: {e}", exc_info=True)
+            aggregated_results[scene_id] = {"error": str(e)}
+    return aggregated_results
+
+def save_results(results: dict, output_path: Path) -> None:
+    try:
+        with output_path.open("w") as f:
+            json.dump(results, f, indent=4)
+        logging.info(f"Aggregated results saved to {output_path}")
+    except IOError as e:
+        logging.error(f"Failed to save results to {output_path}: {e}")
+
+def main():
+    args = parse_args()
+    setup_logging(args.verbose)
+    scene_ids = [s.strip() for s in args.scenes.split(",") if s.strip()]
+    logging.info(f"Scene IDs to process: {scene_ids}")
+
+    results = run_experiments(scene_ids)
+    save_results(results, args.output)
 
 if __name__ == "__main__":
     main()
