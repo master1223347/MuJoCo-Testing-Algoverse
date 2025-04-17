@@ -1,7 +1,7 @@
 {
   "metadata": {
       "scene_name": "Solid vs Hollow Sphere",
-      "task": "Determine which sphere is hollow based on their rolling behavior.",
+      "task": "Two spheres are positioned on a ground surface for reference and their heights are at z = 0. The spheres are positioned in close proximity to an incline plane whose maximum height is in the positive z direction, BUT ARE NOT DIRECTLY ON THE INCLINE PLANE! Determine which sphere is hollow based on their rolling behavior.",
       "problem_type": "comparison"
   },
 
@@ -18,11 +18,11 @@
     "object_2": { "name": "hollow_sphere", "object_id": "2" },
     "object_3": { "name": "surface", "object_id": "3" },
     "object_4": { "name": "incline", "object_id": "4" }
-  }
+  },
   "object_permissions": {
-    "object_1_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
-    "object_2_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": false, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
-    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true },
-    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true, "quat": true, "friction": true, "solref": true, "inertia": true, "axis": true, "range": true, "joint": true, "gear": true, "site": true, "texture": true }
+    "object_1_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true },
+    "object_2_permissions": { "type": true, "density": false, "mass": false, "radius": false, "name": true, "pos": true },
+    "object_3_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true },
+    "object_4_permissions": { "type": true, "density": true, "mass": true, "size": true, "name": true, "pos": true }
   }
 }

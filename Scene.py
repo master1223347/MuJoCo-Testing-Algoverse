@@ -168,7 +168,7 @@ class Scene:
             {"name": "apply_force", "description": "applies a force vector to an object", "arguments": {"object_id": "str", "force_vector": "list[float]"}, "return type": {"status": "str", "object_id": "int", "force": "list[float]"}},
             {"name": "get_velocity", "description": "retrieves the velocity vector of an object", "arguments": {"object_id": "str"}, "return type": {"velocity": "array"}},
             {"name": "detect_collision", "description": "checks if two objects have collided", "arguments": {"obj1_id": "str", "obj2_id": "str"}, "return type": {"collision_detected": "bool"}},
-            {"name": "get_parameters", "description": "fetches physical parameters like mass, bounding box, and type", "arguments": {"object_id": "str"}, "return type": {"mass": "float", "bounding_box": "list[float]", "type": "int"}},
+            {"name": "get_parameters", "description": "fetches physical parameters like mass, bounding box, and type", "arguments": {"object_id": "str // REMEMBER THAT YOU WRITE IT AS AN F-STRING THAT IS object_(object id), where object id is an integer"}, "return type": {"mass": "float", "bounding_box": "list[float]", "type": "int"}},
             {"name": "move_object", "description": "sets an object's position to a new coordinate", "arguments": {"object_id": "str", "x": "float", "y": "float", "z": "float"}, "return type": {"position": "tuple[float, float, float]"}},
             {"name": "get_position", "description": "gets the current position and time of an object", "arguments": {"object_id": "str"}, "return type": {"position": "tuple[float, float, float]", "time": "float"}},
             {"name": "get_displacement", "description": "gets how far an object has moved from its initial position", "arguments": {"object_id": "str"}, "return type": {"displacement": "float"}},
@@ -236,13 +236,13 @@ class Scene:
             f"\nTask: {self.scene_task}."
             f"\nAvailable Objects: {self.objects_str}"
             f"\n\nPermissions per Object:{self.permissions_str}"
-            f"\n\nThis is also a list of all the description of an object's permissions and what each of them means:{permission_explanations}"
-            f"\n\nYou may use the following tools along with their descriptionto interact with the scene. These functions accept parameters given below, and return data or perform simulation updates:\n{tools_str}"
+            f"\n\nThis is also a list of all the description of an object's permissions and what each of them means:\n{permission_explanations}"
+            f"\n\nYou may use the following tools along with their description to interact with the scene. These functions accept parameters given below, and return data or perform simulation updates:\n{tools_str}"
             f"\n\nEvery time you call a tool, you will receive a dictionary containing the outputs. For example, if you call `get_velocity` on `object_1`, the return might be:"
             f'\n{{"vx": 0.0, "vy": -3.2, "vz": 0.0}}'
             f"\n\nYou only have **one chance** to answer the question. When you're confident, submit your final answer using:"
-            f'\n`{{"tool": "answer", "parameters": {{"answer": "<your_answer>"}}}}`'
-            f"\n<THIS IS AN EXAMPLE OF THE INPUT(ASSISTANT) AND OUTPUTS(ENVIRONMENT)>"
+            f'\n`{{"tool": "answer", "parameters": {{"answer": "<your_answer>"}}}}`\n'
+            f"\n<THIS IS AN EXAMPLE PROBLEM OF THE INPUTS(ASSISTANT) AND OUTPUTS(ENVIRONMENT) THAT SHOULD TAKE PLACE>"
             f"\nProblem: You are given a ball and a ground surface for reference. Drop the ball from a height of 10 units and figure out the velocity of the object after 0.5 seconds."
             f"\n<assistant>\nI see that I have to move the ball up 10 units so I will do that.\n```json\n"
             f'[{{"tool": "move_object", "parameters": {{"object_id": "object_1", "x": 0, "y": 10, "z": 0}}}}]\n```\n'
@@ -278,10 +278,15 @@ class Scene:
         self.prompt += (
             f'\n\n***FINAL GUIDELINES***\n'
             f"\nYou must call `step` to simulate time progression.\n"
-            f'\n When you are trying to call functions, use a string that goes as object_{{object_id}} for the object id, and use the name of the function as the tool name.\n'
             f'\nDo not make any assumptions about the positions or states of objects, if you are unsure you can use tools get this information.\n'
+            f'\nThe z plane is the vertical plane, and the x and y planes are the horizontal planes.\n'
+            f'\nUnderstand that you can use the tools to gather necessary information pertainig to all objects in the scene, not just the one you are trying to analyze.\n'
             f'\nIf your json format is incorrect - the environment will tell you and the simulator will remain in the same state. If one of your tool calls has incorrect formatting, the previous tool calls will successfully execute but the incorrect tool and subsequent tools will not execute. You will see how your tool call was incorrect and get a chance to retry in the next iteration.\n'
-            f'\nRemember that YOU MUST PROVIDE YOUR REASONING FOR EVERY ACTION you take, and then make sure to add a valid JSON format of an array of tool calls.')
+            f'\nRemember that YOU MUST PROVIDE YOUR REASONING FOR EVERY ACTION you take, and then make sure to add a valid JSON format of an array of tool calls.\n'
+        )
+        self.prompt += (
+            f'\n***When you are trying to call functions, use a string that goes as object_{{object_id}} for the object id, and use the name of the function as the tool name.***\n'
+        )
 
         return self.prompt
 

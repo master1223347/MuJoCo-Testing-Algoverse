@@ -1,0 +1,17 @@
+{
+    "Scene_1": {
+        "correct": false,
+        "timeout": false,
+        "num_tool_calls": 8,
+        "iterations": 6,
+        "answer_found": false,
+        "tool_usage": {
+            "get_position": 3,
+            "move_object": 2,
+            "step": 1,
+            "get_displacement": 2
+        },
+        "llm_answer": null,
+        "correct_answer": null
+    }
+}

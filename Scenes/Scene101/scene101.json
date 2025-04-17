@@ -1,0 +1,35 @@
+{
+    "metadata": {
+      "scene_name": "Drop Test Diagnostic",
+      "task": "Determine whether the simulator correctly applies gravity to free-falling objects. You are given a ground plane for reference, and a sphere that acts like a ball. The ball's height is at z =  0. Determine the ball's velocity after 0.5 seconds if it should be 10 units above the ground plane. The ball should be falling under gravity, and the velocity should be approximately 2 * 9.81 = 19.6 m/s.",
+      "problem_type": "computation"
+    },
+    "answer": "-4.905",
+    "expected_behavior": "The LLM should set the position of the ball to 10 units, simulate the fall, and verify the velocity.",
+    "reasoning": "Since the ball is falling under gravity, we can use the formula v = gt, where g is the acceleration due to gravity (approximately 9.81 m/s^2) and t is the time in seconds. After 0.5 seconds, the velocity should be approximately 4.905 m/s.",
+    "number_of_objects": "2",
+    "objects": {
+      "object_1": {
+        "name": "sphere",
+        "object_id": "1"
+      },
+      "object_2": {
+        "name": "surface",
+        "object_id": "2"
+      }
+    },
+    "object_permissions": {
+      "object_1_permissions": {
+        "type": true,
+        "density": true,
+        "mass": true,
+        "radius": true
+      },
+      "object_2_permissions": {
+        "type": true,
+        "density": true,
+        "mass": true,
+        "radius": true
+      }
+    }
+  }

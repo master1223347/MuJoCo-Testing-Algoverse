@@ -1,0 +1,16 @@
+<mujoco model="ball_drop_half_second">
+    <option gravity="0 0 -9.81"/>
+    <worldbody>
+
+        <!-- Ball -->
+        <body name="object_1" pos="0 0 0.3">
+            <geom type="sphere" size="0.2" density="10" rgba="1 0.5 0 1"/>
+            <joint name="object_1_joint" type="free"/>
+        </body>
+
+        <!-- Plane -->
+        <body name="object_2" pos="0 0 0">
+            <geom type="plane" size="30 30 0.1" rgba="0.7 0.7 0.7 1" friction="1 1 1"/>
+        </body>
+    </worldbody>
+</mujoco>

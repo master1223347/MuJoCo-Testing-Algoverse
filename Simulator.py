@@ -35,6 +35,9 @@ class Simulator:
             self.time = 0
             self.prev_velocities = {}  # Store previous velocities for acceleration calculations
             
+            # Ensuring the initial velocity is zero
+            self.data.qvel[:] = 0.0  # Setting all initial velocities to zero
+            
         except Exception as e:
             logging.error(f"MuJoCo initialization failed: {e}")
             raise
@@ -68,26 +71,35 @@ class Simulator:
         """Step the simulation forward by a specified duration."""
         num_steps = int(duration / self.model.opt.timestep)
         remaining_time = duration - (num_steps * self.model.opt.timestep)
-
+        
         for _ in range(num_steps):
+            # Perform the simulation step
             mujoco.mj_step(self.model, self.data)
+            
+            # Ensure the simulation state is updated
+            mujoco.mj_forward(self.model, self.data)
+            
+            # Log the velocity for debugging
+            logging.debug(f"Step completed, current velocity: {self.data.qvel[:3]}")  # Log the first three velocities
+
             if self.viewer is not None:
                 self.viewer.sync()
 
         if remaining_time > 0:
+            # Final step for remaining time if any
             mujoco.mj_step(self.model, self.data)
+            
+            # Ensure the simulation state is updated
+            mujoco.mj_forward(self.model, self.data)
+            
+            # Log the velocity for debugging
+            logging.debug(f"Final step completed, velocity after remaining time: {self.data.qvel[:3]}")
+
             if self.viewer is not None:
                 self.viewer.sync()
 
         self.time += duration
-
-    def get_body_id(self, object_id: str) -> int:
-        object_id = str(object_id)
-        name = object_id
-        body_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, name)
-        if body_id == -1:
-            raise ValueError(f"Body with name '{name}' not found in the scene.")
-        return body_id
+        logging.info(f"Simulation time: {self.time} seconds")
 
     def move_object(self, object_id: str, x: float, y: float, z: float) -> dict:
         try:
@@ -106,6 +118,14 @@ class Simulator:
         
         except Exception as e:
             return {"error": str(e)}
+        
+    def get_body_id(self, object_id: str) -> int:
+        object_id = str(object_id)
+        name = object_id
+        body_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, name)
+        if body_id == -1:
+            raise ValueError(f"Body with name '{name}' not found in the scene.")
+        return body_id
 
     def compute_force(self, object_id: str, mass: float) -> dict:
         """Compute the force on an object using F = ma."""
@@ -116,25 +136,6 @@ class Simulator:
             "y": mass * acceleration["y"],
             "z": mass * acceleration["z"]
         }
-
-    def get_acceleration(self, object_id: str) -> dict:
-        try:
-            object_id = str(object_id)
-            body_id = self.get_body_id(object_id)
-            dof_adr = self.model.body_dofadr[body_id]
-            
-            # Save previous velocity
-            prev_vel = np.copy(self.data.qvel[dof_adr:dof_adr+3])
-            
-            # Step the sim slightly forward
-            mujoco.mj_step(self.model, self.data)
-            new_vel = self.data.qvel[dof_adr:dof_adr+3]
-            dt = self.model.opt.timestep
-            
-            acc = (new_vel - prev_vel) / dt
-            return {"x": float(acc[0]), "y": float(acc[1]), "z": float(acc[2])}
-        except Exception as e:
-            return {"error": str(e)}
         
     def get_center_of_mass(self) -> dict:
         try:
@@ -173,12 +174,30 @@ class Simulator:
         return {"status": "torque_applied", "object_id": object_id, "torque": torque_vector}
 
     def get_velocity(self, object_id: str) -> dict:
+        """Fetch the linear velocity of a given object in the simulation."""
         try:
-            object_id = str(object_id)  # Ensure object_id is a string
-            body_id = self.get_body_id(object_id)  # Get body ID based on object_id
-            vel = self.data.cvel[body_id][:3]  # Get the velocity for the body (linear part)
+            # Normalize object_id to format 'object_#'
+            if isinstance(object_id, int):
+                object_id = f"object_{object_id}"
+            elif object_id.isdigit():
+                object_id = f"object_{int(object_id)}"
+            elif not object_id.startswith("object_"):
+                return {"error": f"Invalid object_id format: {object_id}. Expected format: 'object_#'"}
+
+            # Ensure object_id is string
+            object_id = str(object_id)
+
+            # Get body ID based on the object_id
+            body_id = self.get_body_id(object_id)
+
+            # Use model.body_dofadr to safely extract correct velocity segment
+            dof_adr = self.model.body_dofadr[body_id]
+            vel = self.data.qvel[dof_adr:dof_adr + 3]  # Get linear velocity
+
             return {"velocity": vel.tolist()}
+
         except Exception as e:
+            logging.error(f"Error in get_velocity for object_id='{object_id}': {str(e)}")
             return {"error": str(e)}
 
 
@@ -204,6 +223,7 @@ class Simulator:
     def get_parameters(self, object_id: str) -> dict:
         """Retrieve parameters of an object, respecting scene-defined permissions."""
         # Check permissions for parameter access
+        object_id = str(object_id)
         permissions = getattr(self, 'permissions', {}).get(object_id, {})
         if not permissions.get("get_parameters", True):  # Default to allowed
             raise PermissionError(f"Access to parameters of object with ID {object_id} is not allowed.")

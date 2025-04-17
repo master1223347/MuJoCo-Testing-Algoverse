@@ -43,7 +43,7 @@ def main():
     """
     
     # Predefined list of scene IDs to iterate through
-    scene_ids = ["Scene_1"]  # Replace with actual scene IDs
+    scene_ids = ["Scene_101"]  # Replace with actual scene IDs
     
     # Initialize a dictionary to store aggregated results
     aggregated_results = {}
@@ -56,7 +56,7 @@ def main():
         # Print the generated prompt to the terminal
         prompt = scene.generate_prompt()  # Generate the prompt from the Scene class
         print(prompt)  # This will print the prompt to the terminal
-      
+    
         # Initialize an Experimental object for the current scene
         experiment = Experimental(scene_id)
         

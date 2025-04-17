@@ -168,12 +168,10 @@ class Experimental:
         tool_history = []  # Track tool calls to detect loops
         tool_usage = {}
         llm_input_prompt = scene_prompt
-        itr = 0  # Initialize iteration counter
-        
-        while itr < self.max_iterations:
-            remaining = self.max_iterations - (itr + 1)  # Calculate remaining iterations
+        itr = 0  # Initialize iteration counter to 0 before the loop starts
 
-            # Construct prompt based on previous results
+        while itr < self.max_iterations:
+            remaining = self.max_iterations - itr - 2  # Correct remaining iterations
 
             logging.info(f"STEP: {itr + 1}")
             logging.info(f"Input to model: {llm_input_prompt}")
@@ -192,19 +190,24 @@ class Experimental:
                 tool_calls_json_obj = json.loads(tool_calls_json_str)
                 tool_history.append(tool_calls_json_str)
             except ValueError as e:
-                error_msg = f"Error: Invalid JSON syntax for tool(s) - {', '.join([call['tool'] for call in tool_calls_json_obj if 'parameters' not in call or not isinstance(call['parameters'], dict)])}. Please try again with proper syntax - you are given another chance at the iteration you were last on."
+                # Construct the error message listing the tools that caused invalid JSON
+                error_msg = f"Error: Invalid JSON syntax for tool(s). Please try again with proper syntax."
+                
+                # Update the LLM input prompt with the error message
                 llm_input_prompt = (f"Previous results: {error_msg}\n"
                                     f"IMPORTANT: You have {remaining} iterations remaining to use the 'answer' tool.\n"
                                     f"What should I do next?")
-                continue #retry same iteration
-            
+
+                # Increment iteration number and proceed to the next iteration
+                itr += 1  # Move to the next iteration after an invalid JSON error
+                continue  # Proceed to the next iteration of the loop
 
             logging.info(f"\n=== Executing Tool Calls (Iteration {itr + 1}) ===")
-            
+
             # Answer logic: Check if any tool call contains an answer and check if it's correct
             answer_found = False
             correct_answer_found = False
-            
+
             for call in tool_calls_json_obj:  # Use the parsed object, not the string
                 if call['tool'] == 'answer':
                     final_answer = call['parameters'].get('answer')  # Get the answer from parameters
@@ -221,7 +224,7 @@ class Experimental:
                         tool_usage['answer'] = tool_usage.get('answer', 0) + 1
                         num_tool_calls += 1
                     else:
-                    # Log warning and provide feedback when null answer is given
+                        # Log warning and provide feedback when null answer is given
                         logging.warning("LLM provided a null answer value")
                         results.append({
                             "tool": "answer",
@@ -260,10 +263,11 @@ class Experimental:
                 num_tool_calls += len(results)  # Increment the tool call count after execution
 
                 llm_input_prompt = (f"Previous Results: {results}\n"
-                    f"IMPORTANT: You have {remaining} iterations remaining to use the 'answer' tool.\n"
-                    f"What should I do next?")
-                
-            itr += 1  # Increment the iteration counter    
+                                    f"IMPORTANT: You have {remaining} iterations remaining to use the 'answer' tool.\n"
+                                    f"What should I do next?")
+
+            itr += 1  # Increment the iteration counter only when iteration completes successfully
+   
                 
         # If the loop completes without finding the answer, set the timeout flag
         if itr == self.max_iterations - 1 and not answer_found:
@@ -299,7 +303,7 @@ class Experimental:
             for i, result in enumerate(results, 1):
                 f.write(f"  [{i}] {result}\n")
 
-            f.write(f"\nTotal number of iterations: {itr + 1 if not timeout_occurred else self.max_iterations}\n")
+            f.write(f"\nTotal number of iterations: {itr if not timeout_occurred else self.max_iterations}\n")
         
         # Return the results of the experiment, including whether the correct answer was found and other statistics
         experiment_results = {

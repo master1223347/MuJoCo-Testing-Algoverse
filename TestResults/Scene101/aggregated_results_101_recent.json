@@ -1,0 +1,17 @@
+{
+    "Scene_101": {
+        "correct": true,
+        "timeout": false,
+        "num_tool_calls": 4,
+        "iterations": 4,
+        "answer_found": true,
+        "tool_usage": {
+            "move_object": 1,
+            "step": 1,
+            "get_velocity": 1,
+            "answer": 1
+        },
+        "llm_answer": -4.905,
+        "correct_answer": "-4.905"
+    }
+}
