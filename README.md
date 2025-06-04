@@ -1,3 +1,6 @@
 This project integrates a large language model (LLM) with a MuJoCo-based physics simulation environment, enabling the LLM to reason about physical systems through direct interaction. Instead of passively analyzing data, the LLM is given access to a suite of custom methods it can call to manipulate the simulation—such as applying forces, measuring object properties, retrieving physical quantities (e.g., velocity, momentum, torque, energy), and triggering scene changes.
 
 The core idea is to treat the simulator like a "sandbox" environment, where the LLM acts as an autonomous agent or scientist. It can probe, collect data, run virtual experiments, and derive answers to physics-related questions by leveraging both its trained knowledge and the real-time feedback from the simulated environment. This creates a closed loop of hypothesis, experimentation, and explanation—bridging the gap between symbolic AI reasoning and grounded physical interaction.
+
+
+This directory is NOT updated, it has been moved to: https://github.com/DRJCompSciWiz/Algoverse-updated-pipeline (currently privated)
